@@ -18,6 +18,7 @@ function App() {
           <Route path="/user_menu" element={<UserMenu />} />
           <Route path="/admin_user_form" element={<AdminUserForm />} />
           <Route path="/loan_system_config" element={<LoanSystemConfig />} />
+          
           {/* Add more routes as needed */}
         </Routes>
       </Router>

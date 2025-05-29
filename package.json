@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
   "name": "frontend1",
-=======
-  "name": "frontend",
->>>>>>> 98149bfc0f3868b1eefbe3379e140f9f93533bc7
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -13,13 +9,9 @@
     "@testing-library/user-event": "^13.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-<<<<<<< HEAD
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.1",
     "react-scripts": "5.0.1",
-=======
-    "react-scripts": "^3.0.1",
->>>>>>> 98149bfc0f3868b1eefbe3379e140f9f93533bc7
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -49,10 +41,6 @@
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
-<<<<<<< HEAD
-    "tailwindcss": "^3.4.17"
-=======
     "tailwindcss": "^4.1.7"
->>>>>>> 98149bfc0f3868b1eefbe3379e140f9f93533bc7
   }
 }

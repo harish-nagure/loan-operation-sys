@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import "tailwindcss/tailwind.css";
 
 
@@ -16,9 +16,10 @@ import { LuBadgeHelp} from "react-icons/lu";
 
 
 const DashboardSidebar = () => {
+    const location = useLocation();
     const navigate = useNavigate();
     return (
-      <aside className="w-80 h-screen p-4 flex flex-col overflow-y-auto">
+      <aside className="w-72 h-screen pt-4 pl-4 flex flex-col overflow-y-auto">
         <div className="hidden lg:flex items-center rounded-md px-3 py-2 w-full max-w-md border border-gray-300 shadow-2xl hover:border-white">
           <IoSearch className="text-white mr-3 size-5" />
           <input
@@ -29,32 +30,80 @@ const DashboardSidebar = () => {
         </div>
 
         <div className="flex text-white mb-2 mt-6 text-sm font-semibold">General</div>
-        <ul className="pl-2 text-base">
-          <li className="py-1 text-white hover:text-blue-300 flex items-center cursor-pointer" onClick={() => navigate("")}>
-            <AiFillHome className="mr-2 size-5" />
-            <p>Dashboard</p>
-          </li>
-          <li className="py-1 text-white hover:text-blue-300 flex items-center cursor-pointer" onClick={() => navigate("/user_menu")}>
-            <PiCalendarStarBold className="mr-2 size-5" />
-            <p>User Menu</p>
-          </li>
-          <li className="py-1 text-white hover:text-blue-300 flex items-center cursor-pointer" onClick={() => navigate("/admin_user_form")}>
-            <MdOutlineAnalytics className="mr-2 size-5" />
-            <p>Admin User Form</p>
-          </li>
-          <li className="py-1 text-white hover:text-blue-300 flex items-center cursor-pointer" onClick={() => navigate("/loan_system_config")}>
-            <HiOutlineNewspaper className="mr-2 size-5" />
-            <p>System Configuration</p>
-          </li>
-          <li className="py-1 text-white hover:text-blue-300 flex items-center cursor-pointer">
-            <IoBagRemoveOutline className="mr-2 size-5" />
-            <p>Recruitment</p>
-          </li>
-          <li className="py-2 text-white hover:text-blue-300 flex items-center cursor-pointer">
-            <PiFolders className="mr-2 size-5" />
-            <p>Projects</p>
-          </li>
-        </ul>
+          <ul className="pl-2 text-base">
+            <li
+              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+                location.pathname === "/" 
+                  ? "bg-white text-blue-600 font-medium" 
+                  : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
+              }`}
+              onClick={() => navigate("/")}
+            >
+              <AiFillHome className="mr-2 size-5" />
+              <p>Dashboard</p>
+            </li>
+
+            <li
+              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+                location.pathname === "/user_menu"
+                  ? "bg-white text-blue-600 font-medium"
+                  : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
+              }`}
+              onClick={() => navigate("/user_menu")}
+            >
+              <PiCalendarStarBold className="mr-2 size-5" />
+              <p>User Menu</p>
+            </li>
+
+            <li
+              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+                location.pathname === "/admin_user_form"
+                  ? "bg-white text-blue-600 font-medium"
+                  : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
+              }`}
+              onClick={() => navigate("/admin_user_form")}
+            >
+              <MdOutlineAnalytics className="mr-2 size-5" />
+              <p>Admin User Form</p>
+            </li>
+
+            <li
+              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+                location.pathname === "/loan_system_config"
+                  ? "bg-white text-blue-600 font-medium"
+                  : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
+              }`}
+              onClick={() => navigate("/loan_system_config")}
+            >
+              <HiOutlineNewspaper className="mr-2 size-5" />
+              <p>System Configuration</p>
+            </li>
+
+            <li
+              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+                location.pathname === "/recruitment"
+                  ? "bg-white text-blue-600 font-medium"
+                  : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
+              }`}
+              onClick={() => navigate("/recruitment")}
+            >
+              <IoBagRemoveOutline className="mr-2 size-5" />
+              <p>Recruitment</p>
+            </li>
+
+            <li
+              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+                location.pathname === "/projects"
+                  ? "bg-white text-blue-600 font-medium"
+                  : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
+              }`}
+              onClick={() => navigate("/projects")}
+            >
+              <PiFolders className="mr-2 size-5" />
+              <p>Projects</p>
+            </li>
+          </ul>
+       
         <hr className="border-gray-300 my-3" />
 
         <div className="flex text-white mb-2 text-sm font-semibold">MySpace</div>

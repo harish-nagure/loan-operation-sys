@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { FaCog, FaTrash, FaPlus, FaSave } from 'react-icons/fa';
 
+import DashboardSidebar from "./DashboardSidebar";
+import DashboardHead from "./DashboardHead";
+
+
+
 const LoanSystemConfig = () => {
   const [minRate, setMinRate] = useState('');
   const [maxRate, setMaxRate] = useState('');
@@ -95,6 +100,15 @@ const LoanSystemConfig = () => {
   };
 
   return (
+
+    <div className="lg:flex md:block font-inter">
+  <div className="bg-gradient-to-r from-blue-600 to-blue-400 h-screen hidden lg:block fixed z-20">
+    <DashboardSidebar />
+  </div>
+    <main className="flex-1 lg:ml-80 bg-blue-400">
+      <DashboardHead />
+
+
     <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-start">
       <h1 className="text-3xl font-bold text-black-600 mb-6">
         System Configuration
@@ -275,6 +289,8 @@ const LoanSystemConfig = () => {
         </div>
       </div>
     </div>
+    </main>
+  </div>
   );
 };
 

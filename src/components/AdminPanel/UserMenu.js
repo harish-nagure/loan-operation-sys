@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 
-const Usermenu = () => {
+
+import DashboardSidebar from "./DashboardSidebar";
+import DashboardHead from "./DashboardHead";
+
+
+
+const UserMenu = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -46,83 +52,95 @@ const Usermenu = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">User Menu</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              value={formData.username}
-              onChange={handleChange}
-              className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
-            />
-            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
-          </div>
+<div className="lg:flex md:block font-inter">
+  <div className="bg-gradient-to-r from-blue-600 to-blue-400 h-screen hidden lg:block fixed z-20">
+    <DashboardSidebar />
+  </div>
+    <main className="flex-1 lg:ml-80 bg-blue-400">
+      <DashboardHead />
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-            />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-          </div>
+      {/* User Menu Form */}
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-md">
+          <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">User Menu</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                Username
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                value={formData.username}
+                onChange={handleChange}
+                className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+            </div>
 
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-              Role
-            </label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.role ? 'border-red-500' : 'border-gray-300'}`}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                Role
+              </label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.role ? 'border-red-500' : 'border-gray-300'}`}
+              >
+                <option value="">Select a role</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+                <option value="guest">Guest</option>
+              </select>
+              {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
+            </div>
+
+            <div className="flex items-center">
+              <input
+                id="userState"
+                name="userState"
+                type="checkbox"
+                checked={formData.userState}
+                onChange={handleChange}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="userState" className="ml-2 block text-sm text-gray-700">
+                Active User
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
             >
-              <option value="">Select a role</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-              <option value="guest">Guest</option>
-            </select>
-            {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
-          </div>
-
-          <div className="flex items-center">
-            <input
-              id="userState"
-              name="userState"
-              type="checkbox"
-              checked={formData.userState}
-              onChange={handleChange}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="userState" className="ml-2 block text-sm text-gray-700">
-              Active User
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
-          >
-            Submit
-          </button>
-        </form>
+              Submit
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+
+      
+    </main>
+  </div>
   );
 };
 
-export default Usermenu;
+export default UserMenu;
