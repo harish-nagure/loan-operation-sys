@@ -56,7 +56,7 @@ const UserMenu = () => {
   <div className="bg-gradient-to-r from-blue-600 to-blue-400 h-screen hidden lg:block fixed z-20">
     <DashboardSidebar />
   </div>
-    <main className="flex-1 lg:ml-80 bg-blue-400">
+    <main className="flex-1 lg:ml-72 bg-blue-400">
       <DashboardHead />
 
       {/* User Menu Form */}

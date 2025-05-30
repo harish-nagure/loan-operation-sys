@@ -1,6 +1,6 @@
 import React from "react";
 // import { useNavigate } from "react-router-dom";
-import "tailwindcss/tailwind.css";
+// import "tailwindcss/tailwind.css";
 
 // import { IoBarChartOutline, IoBagCheck } from "react-icons/io5";
 // import { LuClock } from "react-icons/lu";
@@ -206,12 +206,12 @@ import DashboardHead from "./DashboardHead";
 // };
 
 
-const Dashboard = (excelData) => (
+const Dashboard = () => (
   <div className="lg:flex md:block font-inter">
   <div className="bg-gradient-to-r from-blue-600 to-blue-400 h-screen hidden lg:block fixed z-20">
     <DashboardSidebar />
   </div>
-    <main className="flex-1 lg:ml-80 bg-blue-400">
+    <main className="flex-1 lg:ml-72 bg-blue-400">
       <DashboardHead />
       {/* <div className="flex-1 p-4 mt-4">
         <h1 className="text-3xl font-bold">Welcome, <span className="text-[#8204FF]">Shariq Shaikh</span></h1>

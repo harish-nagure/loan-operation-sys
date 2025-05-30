@@ -20,7 +20,8 @@ const DashboardSidebar = () => {
     const navigate = useNavigate();
     return (
       <aside className="w-72 h-screen pt-4 pl-4 flex flex-col overflow-y-auto">
-        <div className="hidden lg:flex items-center rounded-md px-3 py-2 w-full max-w-md border border-gray-300 shadow-2xl hover:border-white">
+        
+        <div className="hidden lg:flex items-center rounded-md px-3 py-2 w-11/12 max-w-md border border-gray-300 shadow-2xl hover:border-white">
           <IoSearch className="text-white mr-3 size-5" />
           <input
             type="text"
@@ -30,13 +31,14 @@ const DashboardSidebar = () => {
         </div>
 
         <div className="flex text-white mb-2 mt-6 text-sm font-semibold">General</div>
-          <ul className="pl-2 text-base">
+          <ul className="pl-2 text-base ">
             <li
-              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+              className={`flex items-center px-4 py-3 rounded-l-full cursor-pointer transition-all duration-200 ${
                 location.pathname === "/" 
-                  ? "bg-white text-blue-600 font-medium" 
+                  ? "bg-white text-blue-600 font-medium " 
                   : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
               }`}
+            
               onClick={() => navigate("/")}
             >
               <AiFillHome className="mr-2 size-5" />
@@ -44,7 +46,7 @@ const DashboardSidebar = () => {
             </li>
 
             <li
-              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+              className={`flex items-center px-4 py-3 rounded-l-full cursor-pointer transition-all duration-200 ${
                 location.pathname === "/user_menu"
                   ? "bg-white text-blue-600 font-medium"
                   : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
@@ -56,7 +58,7 @@ const DashboardSidebar = () => {
             </li>
 
             <li
-              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+              className={`flex items-center px-4 py-3 rounded-l-full cursor-pointer transition-all duration-200 ${
                 location.pathname === "/admin_user_form"
                   ? "bg-white text-blue-600 font-medium"
                   : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
@@ -68,7 +70,7 @@ const DashboardSidebar = () => {
             </li>
 
             <li
-              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+              className={`flex items-center px-4 py-3 rounded-l-full cursor-pointer transition-all duration-200 ${
                 location.pathname === "/loan_system_config"
                   ? "bg-white text-blue-600 font-medium"
                   : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
@@ -80,7 +82,7 @@ const DashboardSidebar = () => {
             </li>
 
             <li
-              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+              className={`flex items-center px-4 py-3 rounded-l-full cursor-pointer transition-all duration-200 ${
                 location.pathname === "/recruitment"
                   ? "bg-white text-blue-600 font-medium"
                   : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
@@ -92,7 +94,7 @@ const DashboardSidebar = () => {
             </li>
 
             <li
-              className={`p-2 flex items-center cursor-pointer rounded-l-2xl ${
+              className={`flex items-center px-4 py-3 rounded-l-full cursor-pointer transition-all duration-200 ${
                 location.pathname === "/projects"
                   ? "bg-white text-blue-600 font-medium"
                   : "text-white bg-transparent hover:bg-white hover:text-blue-600 hover:font-medium"
@@ -103,8 +105,8 @@ const DashboardSidebar = () => {
               <p>Projects</p>
             </li>
           </ul>
-       
-        <hr className="border-gray-300 my-3" />
+
+        <hr className="border-gray-300 my-2 w-11/12" />
 
         <div className="flex text-white mb-2 text-sm font-semibold">MySpace</div>
         <ul className="pl-2 text-base">
@@ -121,7 +123,7 @@ const DashboardSidebar = () => {
             <p>Privacy</p>
           </li>
         </ul>
-        <hr className="border-gray-300 my-3" />
+        <hr className="border-gray-300 my-2 w-11/12" />
 
         <div className="flex text-white mb-2 text-sm font-semibold">Support</div>
         <ul className="pl-2 text-base">
@@ -138,7 +140,7 @@ const DashboardSidebar = () => {
             <p>Chat</p>
           </li>
         </ul>
-        <hr className="border-gray-300 my-3" />
+        <hr className="border-gray-300 my-3 w-11/12" />
       </aside>
 
 

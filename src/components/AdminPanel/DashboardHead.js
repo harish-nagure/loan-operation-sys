@@ -12,7 +12,7 @@ const DashboardHead = () => {
             {/* Sidebar for Mobile */}
             <div
                 ref={sidebarRef}
-                className={`bg-white lg:hidden h-screen bg-gradient-to-r from-blue-600 to-blue-400 fixed z-20 transition-transform duration-300 ${
+                className={`bg-white lg:hidden h-screen bg-gradient-to-r from-blue-600 to-blue-400 fixed z-10 transition-transform duration-300 ${
                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
@@ -24,7 +24,7 @@ const DashboardHead = () => {
             </div>
 
             {/* Header */}
-            <div className="w-full h-16 bg-gradient-to-r from-blue-400 to-blue-300  px-4 flex items-center justify-between border-b border-gray-200">
+            <div className="w-full h-14 bg-gradient-to-r from-blue-400 to-blue-300  px-4 flex items-center justify-between border-b border-gray-200">
                 {/* Mobile Sidebar Toggle */}
                 <div className="lg:hidden">
                     <TiThMenu
@@ -35,7 +35,7 @@ const DashboardHead = () => {
 
                 {/* Search Bar */}
                 <div className="flex-1 mx-4">
-                    <div className="flex items-center bg-white rounded-lg px-3 py-2 w-full max-w-md border border-gray-300 hover:border-black">
+                    <div className="flex items-center bg-white rounded-lg px-3 py-1 w-full max-w-md border border-gray-300 hover:border-black">
                         <IoSearch className="text-gray-400 mr-3 size-7" />
                         <input
                             type="text"
