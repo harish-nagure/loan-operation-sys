@@ -102,10 +102,10 @@ const LoanSystemConfig = () => {
   return (
 
     <div className="lg:flex md:block font-inter">
-  <div className="bg-gradient-to-r from-blue-600 to-blue-400 h-screen hidden lg:block fixed z-20">
+  <div className="h-screen hidden lg:block fixed z-20">
     <DashboardSidebar />
   </div>
-    <main className="flex-1 lg:ml-72 bg-blue-400">
+    <main className="flex-1 lg:ml-72">
       <DashboardHead />
 
 
