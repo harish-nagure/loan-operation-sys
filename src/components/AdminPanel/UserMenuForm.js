@@ -83,7 +83,7 @@ const UserMenuForm = ({ initialData = null, onSubmit }) => {
                   type="text"
                   value={formData.username}
                   onChange={handleChange}
-                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
               </div>
@@ -98,7 +98,7 @@ const UserMenuForm = ({ initialData = null, onSubmit }) => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
@@ -112,7 +112,7 @@ const UserMenuForm = ({ initialData = null, onSubmit }) => {
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.role ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.role ? 'border-red-500' : 'border-gray-300'}`}
                 >
                   <option value="">Select a role</option>
                   <option value="admin">Admin</option>
@@ -122,14 +122,14 @@ const UserMenuForm = ({ initialData = null, onSubmit }) => {
                 {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
               </div>
 
-              <div className="flex items-center">
+              <div className="flex items-center ">
                 <input
                   id="userState"
                   name="userState"
                   type="checkbox"
                   checked={formData.userState}
                   onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-accent accent-accent focus:ring-accent border-gray-300 rounded"
                 />
                 <label htmlFor="userState" className="ml-2 block text-sm text-gray-700">
                   Active User
@@ -138,7 +138,7 @@ const UserMenuForm = ({ initialData = null, onSubmit }) => {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+                className="w-full bg-accent text-white py-2 px-4 rounded hover:bg-secondary transition"
               >
                 {isEditMode ? "Update User" : "Add User"}
               </button>

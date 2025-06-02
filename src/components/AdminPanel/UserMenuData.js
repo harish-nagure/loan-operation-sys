@@ -63,7 +63,7 @@ const UserMenuData = () => {
                 <h2 className="text-xl font-bold">User Summary</h2>
                 <button
                   onClick={handleAddUser}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                  className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded hover:bg-secondary transition"
                 >
                   <FaPlus /> Add User
                 </button>
@@ -85,7 +85,7 @@ const UserMenuData = () => {
                       <tr key={user.id} className="border-b hover:bg-gray-50">
                         <td className="py-2 px-4">{user.name}</td>
                         <td className="py-2 px-4 capitalize">{user.role}</td>
-                        <td className="py-2 px-4">{user.email}</td>
+                        <td className="py-2 px-4" title={user.email}>{user.email}</td>
                         <td className="py-2 px-4">
                           <span
                             className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
@@ -93,20 +93,24 @@ const UserMenuData = () => {
                                 ? "bg-green-100 text-green-700"
                                 : "bg-red-100 text-red-700"
                             }`}
+                            title={user.isActive ? "User is active" : "User is inactive"}
                           >
                             {user.isActive ? "Active" : "Inactive"}
+
                           </span>
                         </td>
                         <td className="py-2 px-4 text-center space-x-4">
                           <button
                             onClick={() => handleEdit(user)}
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-accent hover:text-secondary"
+                            title="Edit User"
                           >
                             <FaEdit />
                           </button>
                           <button
                             onClick={() => handleDelete(user.id)}
                             className="text-red-600 hover:text-red-800"
+                            title="Delete User"
                           >
                             <FaTrash />
                           </button>

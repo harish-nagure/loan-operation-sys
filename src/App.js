@@ -8,6 +8,7 @@ import Dashboard from "./components/AdminPanel/Dashboard";
 import AdminUserForm from "./components/AdminPanel/AdminUserForm";
 import LoanSystemConfig from "./components/AdminPanel/LoanSystemConfig";
 import UserMenuData from "./components/AdminPanel/UserMenuData";
+import AdminUserPanel from "./components/AdminPanel/AdminUserData";
 
 import Login from "./components/Login";
 // import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -24,6 +25,7 @@ function App() {
           <Route path="/loan_system_config" element={<LoanSystemConfig />} />
           <Route path="/user_menu_data" element={<UserMenuData />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin_user_data" element={<AdminUserPanel />} />
 
           {/* Add more routes as needed */}
         </Routes>

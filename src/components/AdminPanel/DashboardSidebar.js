@@ -69,7 +69,7 @@ const DashboardSidebar = () => {
         <SidebarItem icon={MdOutlineAnalytics} label="Admin User Form" path="/admin_user_form" />
         <SidebarItem icon={HiOutlineNewspaper} label="System Configuration" path="/loan_system_config" />
         <SidebarItem icon={IoBagRemoveOutline} label="Login" path="/login" />
-        <SidebarItem icon={PiFolders} label="Projects" path="/projects" />
+        <SidebarItem icon={PiFolders} label="ADMIN" path="/admin_user_data" />
       </ul>
     </aside>
   );

@@ -278,7 +278,7 @@ const LoanSystemConfig = () => {
         <div className="text-left">
           <button
             onClick={handleSave}
-            className={`bg-[#001F54] text-white px-6 py-2 rounded hover:bg-blue-900 transition flex items-center gap-2 ${
+            className={`bg-accent text-white px-6 py-2 rounded hover:bg-secondary transition flex items-center gap-2 ${
               Object.keys(errors).length > 0 ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={Object.keys(errors).length > 0}
