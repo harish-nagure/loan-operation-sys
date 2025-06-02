@@ -11,6 +11,8 @@ import UserMenuData from "./components/AdminPanel/UserMenuData";
 import AdminUserPanel from "./components/AdminPanel/AdminUserData";
 
 import Login from "./components/Login";
+import MenuForm from "./components/AdminPanel/MenuForm";
+import AccessControl from "./components/AdminPanel/AccessControl";
 // import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 
@@ -26,6 +28,8 @@ function App() {
           <Route path="/user_menu_data" element={<UserMenuData />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin_user_data" element={<AdminUserPanel />} />
+          <Route path="/menu_creation" element={<MenuForm />} />
+          <Route path="/access_control" element={<AccessControl />} />
 
           {/* Add more routes as needed */}
         </Routes>

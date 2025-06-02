@@ -2,17 +2,17 @@ import React from 'react';
 import { FaUserShield } from 'react-icons/fa';
 
 const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
-  const { roleName, description, permissions } = formData;
+  const { roleName, description } = formData;
 
   const isEditMode = Boolean(formData.id);
 
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      permissions: { ...prev.permissions, [name]: checked }
-    }));
-  };
+  // const handleCheckboxChange = (e) => {
+  //   const { name, checked } = e.target;
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     permissions: { ...prev.permissions, [name]: checked }
+  //   }));
+  // };
 
   return (
     <div className="bg-white p-6 mb-6 rounded-lg items-center shadow w-full max-w-xl">
@@ -21,7 +21,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
       </div>
 
       <h2 className="text-xl font-bold mb-4 text-center text-gray-700">
-        {isEditMode ? "Edit" : "Add"} Admin Role Form
+        {isEditMode ? "Edit" : "Add"} Role Form
       </h2>
 
       <form onSubmit={onSubmit} className="space-y-5">
@@ -46,7 +46,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
           />
         </div>
 
-        <div>
+        {/* <div>
           <h3 className="text-md font-semibold text-gray-700 mb-2">Permissions</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {Object.keys(permissions).map((perm) => (
@@ -62,7 +62,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
               </label>
             ))}
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-between gap-2">
           <button

@@ -21,7 +21,9 @@ import {
 const SidebarItem = ({ icon: Icon, label, path }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isActive = location.pathname === path;
+  // const isActive = location.pathname === path;
+  
+  const isActive = path.includes(location.pathname);
 
   return (
     <li
@@ -30,7 +32,7 @@ const SidebarItem = ({ icon: Icon, label, path }) => {
           ? "bg-gray-100 text-accent font-semibold shadow"
           : "text-gray-600 hover:bg-blue-50 hover:text-accent"
       }`}
-      onClick={() => navigate(path)}
+      onClick={() => navigate(path[0])}
     >
       <Icon className="text-lg" />
       <span>{label}</span>
@@ -49,7 +51,6 @@ const DashboardSidebar = () => {
             <p className="text-sm text-gray-500">Ryan Aldridge</p>
           </div>
         </div>
-        <button className="mt-4 text-sm text-red-500 hover:underline">Logout</button>
       </div>
       <div className="px-4">
         <div className="flex items-center px-4 py-2 border border-gray-300 bg-gray-100 rounded-md mb-4">
@@ -69,7 +70,9 @@ const DashboardSidebar = () => {
         <SidebarItem icon={MdOutlineAnalytics} label="Role Creation" path="/admin_user_data" />
         <SidebarItem icon={HiOutlineNewspaper} label="System Configuration" path="/loan_system_config" />
         <SidebarItem icon={IoBagRemoveOutline} label="Login" path="/login" />
-        <SidebarItem icon={PiFolders} label="ADMIN" path="/admin_user_data" />
+        <SidebarItem icon={PiFolders} label="Menu Creation" path={["/menu_creation", "/access_control"]}/>
+
+
       </ul>
     </aside>
   );
