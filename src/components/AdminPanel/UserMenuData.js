@@ -28,12 +28,12 @@ const UserMenuData = () => {
   };
 
   const handleAddUser = () => {
-    setEditingUser({}); // Empty object to trigger add mode
+    setEditingUser({});
   };
 
   const handleFormSubmit = (formUser) => {
     if (formUser.id) {
-      // Edit mode
+     
       setUserData(userData.map(user => (user.id === formUser.id ? formUser : user)));
     } else {
       // Add mode
@@ -56,6 +56,7 @@ const UserMenuData = () => {
             <UserMenuForm
               initialData={editingUser}
               onSubmit={handleFormSubmit}
+               onCancel={() => setEditingUser(null)}
             />
           ) : (
             <div className="bg-white p-6 rounded-lg shadow">

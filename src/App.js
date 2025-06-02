@@ -19,12 +19,12 @@ function App() {
     <div className=" bg-gray-100 min-h-screen">
       <Router>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Login />} />
           <Route path="/user_menu" element={<UserMenu />} />
           <Route path="/admin_user_form" element={<AdminUserForm />} />
           <Route path="/loan_system_config" element={<LoanSystemConfig />} />
           <Route path="/user_menu_data" element={<UserMenuData />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin_user_data" element={<AdminUserPanel />} />
 
           {/* Add more routes as needed */}

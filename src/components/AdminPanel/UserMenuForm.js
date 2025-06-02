@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 
 
 
-const UserMenuForm = ({ initialData = null, onSubmit }) => {
-  const isEditMode = !!initialData;
+const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
+  
+  const isEditMode = Boolean(initialData && initialData.id);
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -64,13 +66,14 @@ const UserMenuForm = ({ initialData = null, onSubmit }) => {
     }
   };
 
-
+  console.log("Form Data:", isEditMode);
   return (
 
         <div className="flex items-center justify-center p-4">
           <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-md">
             <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">
-              {isEditMode ? "Edit User" : "Add User"}
+              
+              {isEditMode ? "Update User" : "Add User"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -136,12 +139,21 @@ const UserMenuForm = ({ initialData = null, onSubmit }) => {
                 </label>
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-accent text-white py-2 px-4 rounded hover:bg-secondary transition"
-              >
-                {isEditMode ? "Update User" : "Add User"}
-              </button>
+              <div className="flex gap-4">
+            <button
+              type="submit"
+              className="w-full bg-accent text-white py-2 px-4 rounded hover:bg-secondary transition"
+            >
+              {isEditMode ? "Update User" : "Add User"}
+            </button>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400 transition"
+            >
+              Back
+            </button>
+          </div>
             </form>
           </div>
         </div>

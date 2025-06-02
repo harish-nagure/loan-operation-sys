@@ -4,6 +4,8 @@ import { FaUserShield } from 'react-icons/fa';
 const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
   const { roleName, description, permissions } = formData;
 
+  const isEditMode = Boolean(formData.id);
+
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setFormData(prev => ({
@@ -18,7 +20,9 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
         <FaUserShield size={40} className="text-accent" />
       </div>
 
-      <h2 className="text-xl font-bold mb-4 text-center text-gray-700">Admin Role Form</h2>
+      <h2 className="text-xl font-bold mb-4 text-center text-gray-700">
+        {isEditMode ? "Edit" : "Add"} Admin Role Form
+      </h2>
 
       <form onSubmit={onSubmit} className="space-y-5">
         <div>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [userType, setUserType] = useState('User');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,6 +21,8 @@ const LoginPage = () => {
       console.log('Form submitted:', { userType, username, password });
       
     }
+    navigate('/dashboard'); // Redirect to dashboard after successful login
+    
   };
 
   return (
@@ -27,7 +31,7 @@ const LoginPage = () => {
         
         {/* Left side illustration */}
         <div className="w-1/2 bg-[#029aaa] flex flex-col items-center justify-center p-8">
-          <h1 className="text-4xl font-bold text-white mb-8">Welcome to LOS</h1>
+          <h1 className="text-4xl font-bold text-white mb-8">Welcome to WSLOS</h1>
           <img
             src="https://acemoney.in/assets/images/fintech/neo%20bank-01.png"
             alt="Banking Illustration"
