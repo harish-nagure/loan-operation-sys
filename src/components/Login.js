@@ -8,22 +8,96 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
+ 
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   const newErrors = {};
+  //   if (!username.trim()) newErrors.username = 'Username is required';
+  //   if (!password.trim()) newErrors.password = 'Password is required';
+
+  //   setErrors(newErrors);
+
+  //   if (Object.keys(newErrors).length === 0) {
+  //     console.log('Form submitted:', { userType, username, password });
+      
+  //   }
+  //   navigate('/user_menu_data'); // Redirect to dashboard after successful login
+    
+  // };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const newErrors = {};
     if (!username.trim()) newErrors.username = 'Username is required';
     if (!password.trim()) newErrors.password = 'Password is required';
-
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      console.log('Form submitted:', { userType, username, password });
-      
+      // Dummy user list
+      const dummyUsers = [
+        { username: 'admin', password: 'admin123', type: 'Admin' },
+        { username: 'user', password: 'user123', type: 'User' }
+      ];
+
+      const matchedUser = dummyUsers.find(
+        (user) =>
+          user.username === username &&
+          user.password === password &&
+          user.type === userType
+      );
+
+      if (matchedUser) {
+        // Save session data
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('username', matchedUser.username);
+        sessionStorage.setItem('userType', matchedUser.type);
+
+        console.log('Login successful:', matchedUser);
+        navigate('/user_menu_data');
+      } else {
+        setErrors({ password: 'Invalid credentials or user type' });
+      }
     }
-    navigate('/user_menu_data'); // Redirect to dashboard after successful login
-    
   };
+
+//   const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   const newErrors = {};
+//   if (!username.trim()) newErrors.username = 'Username is required';
+//   if (!password.trim()) newErrors.password = 'Password is required';
+
+//   setErrors(newErrors);
+
+//   if (Object.keys(newErrors).length === 0) {
+//     try {
+//       const response = await fetch('', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ username, password, userType }),
+//       });
+
+//       const data = await response.json();
+
+//       if (response.ok) {
+//         console.log('Login successful:', data);
+//         // store token/user info if needed
+//         localStorage.setItem('token', data.token);
+//         navigate('/user_menu_data');
+//       } else {
+//         setErrors({ password: data.message || 'Invalid credentials' });
+//       }
+//     } catch (error) {
+//       console.error('Login error:', error);
+//       setErrors({ password: 'Something went wrong. Try again later.' });
+//     }
+//   }
+// };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#30c9d6]">

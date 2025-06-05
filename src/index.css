@@ -15,7 +15,8 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #029aaa; /* thumb color */
   border-radius: 8px;
-  border: 2px solid #f1f1f1; /* creates padding around thumb */
+  /* border: 2px solid #f1f1f1; creates padding around thumb */
+
 }
 
 /* Firefox */
@@ -23,3 +24,12 @@
   scrollbar-width: thin;
   scrollbar-color: #029aaa #f1f1f1;
 }
+
+.direction-rtl {
+  direction: rtl;
+}
+
+.direction-ltr {
+  direction: ltr;
+}
+

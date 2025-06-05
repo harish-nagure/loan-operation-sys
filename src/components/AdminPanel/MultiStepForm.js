@@ -38,7 +38,7 @@ const MultiStepForm = () => {
         <main className="flex-1 lg:ml-72">
           <DashboardHead />
 
-        <div className="bg-white rounded-lg shadow-lg p-6 my-10 mx-6">
+        <div className="bg-white rounded-lg shadow-lg p-10 my-10 mx-6">
 
           <div className="flex justify-start gap-8 mb-6 border-b border-gray-300">
             <button

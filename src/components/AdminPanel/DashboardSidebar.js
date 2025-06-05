@@ -50,9 +50,9 @@ const hasChildren = children.length > 0;
   return (
     <>
       <li
-        className={`flex items-center justify-between px-6 py-3 rounded-l-full cursor-pointer transition-colors duration-200 ${
+        className={`flex items-center justify-between px-6 py-3 rounded-l-full cursor-pointer ${
           isActive
-            ? "bg-gray-100 text-accent font-semibold shadow"
+            ? "bg-gray-100 text-accent font-semibold shadow-lg"
             : "text-gray-600 hover:bg-blue-50 hover:text-accent"
         }`}
         onClick={handleClick}
@@ -109,7 +109,8 @@ const DashboardSidebar = () => {
       </div>
 
       <div className="text-xs font-bold text-gray-400 px-4 uppercase mb-3">Menu</div>
-      <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar">
+      <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar direction-rtl">
+        <div className="direction-ltr">
         <SidebarItem icon={PiCalendarStarBold} label="User Menu" path={["/user_menu_data"]} />
         
         <SidebarItem icon={MdOutlineAnalytics} label="Role Creation" path={["/admin_user_data"]} />
@@ -152,6 +153,8 @@ const DashboardSidebar = () => {
         <SidebarItem icon={HiOutlineNewspaper} label="Content and Documentation" path={["/content_and_documentation"]} />
         
         <SidebarItem icon={IoBagRemoveOutline} label="Multi-Factor Authentication" path={["/multi_factor_authentication"]} />
+
+        </div>
       </ul>
 
     </aside>
