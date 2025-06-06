@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { loginUser } from '../api_service';
+
 const LoginPage = () => {
   const [userType, setUserType] = useState('User');
   const [username, setUsername] = useState('');
@@ -26,41 +28,64 @@ const LoginPage = () => {
     
   // };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
     if (!username.trim()) newErrors.username = 'Username is required';
     if (!password.trim()) newErrors.password = 'Password is required';
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // Dummy user list
-      const dummyUsers = [
-        { username: 'admin', password: 'admin123', type: 'Admin' },
-        { username: 'user', password: 'user123', type: 'User' }
-      ];
-
-      const matchedUser = dummyUsers.find(
-        (user) =>
-          user.username === username &&
-          user.password === password &&
-          user.type === userType
-      );
-
-      if (matchedUser) {
-        // Save session data
+      try {
+        const data = await loginUser({ username, password });
+        sessionStorage.setItem('token', data.token);
         sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('username', matchedUser.username);
-        sessionStorage.setItem('userType', matchedUser.type);
+        sessionStorage.setItem('username', username);
+        sessionStorage.setItem('loginTime', new Date().getTime().toString());
 
-        console.log('Login successful:', matchedUser);
         navigate('/user_menu_data');
-      } else {
-        setErrors({ password: 'Invalid credentials or user type' });
+      } catch (error) {
+        setErrors({ password: error.message });
       }
     }
   };
+  //const handleSubmit = (e) => {
+  //  e.preventDefault();
+
+   // const newErrors = {};
+ //   if (!username.trim()) newErrors.username = 'Username is required';
+//    if (!password.trim()) newErrors.password = 'Password is required';
+//    setErrors(newErrors);
+//
+  //if (Object.keys(newErrors).length === 0) {
+      // Dummy user list
+    //  const dummyUsers = [
+    //    { username: 'admin', password: 'admin123', type: 'Admin' },
+ //       { username: 'user', password: 'user123', type: 'User' }/
+  //];
+
+  //    const matchedUser = dummyUsers.find(
+  //      (user) =>
+  //        user.username === username &&
+ //         user.password === password &&
+ //         user.type === userType
+  //    );
+
+ //     if (matchedUser) {
+        // Save session data
+  //      sessionStorage.setItem('isLoggedIn', 'true');
+//        sessionStorage.setItem('username', matchedUser.username);
+  //      sessionStorage.setItem('userType', matchedUser.type);
+
+    //    console.log('Login successful:', matchedUser);
+    //    navigate('/user_menu_data');
+   //   } else {
+   //     setErrors({ password: 'Invalid credentials or user type' });
+  //    }
+//    }
+//  };
 
 //   const handleSubmit = async (e) => {
 //   e.preventDefault();
