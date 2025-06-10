@@ -1,12 +1,20 @@
-import React, { useState, useRef } from 'react';
-import { IoSearch, IoLogOutOutline, IoNotificationsOutline, IoChevronDownSharp } from "react-icons/io5";
+import React, { useState, useRef, useEffect } from 'react';
+import { IoLogOutOutline, IoNotificationsOutline, IoChevronDownSharp } from "react-icons/io5";
 import { TiThMenu, TiArrowBack } from "react-icons/ti";
 import DashboardSidebar from './DashboardSidebar';
 
 const DashboardHead = () => {
+    
+   
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const sidebarRef = useRef(null);
-
+    const [username, setUsername] = useState("");
+    useEffect(() => {
+    const storedUsername = sessionStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+        }
+    }, []);
     return (
         <div>
             {/* Sidebar for Mobile */}
@@ -35,24 +43,28 @@ const DashboardHead = () => {
 
                 {/* Search Bar */}
                 <div className="flex-1 mx-4">
-                    <div className="flex items-center bg-white rounded-lg px-3 py-1 w-full max-w-md border border-gray-500 hover:border-black">
+                    {/* <div className="flex items-center bg-white rounded-lg px-3 py-1 w-full max-w-md border border-gray-500 hover:border-black">
                         <IoSearch className="text-gray-400 mr-3 size-7" />
                         <input
                             type="text"
                             placeholder="Search"
                             className="bg-transparent outline-none w-full text-gray-800 text-sm sm:text-base"
                         />
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Icons and Profile */}
                 <div className="flex items-center gap-2 sm:gap-4">
                     <button>
-                        <IoNotificationsOutline className="text-gray-800 text-xl sm:text-2xl hover:text-violet-800" />
+                        <IoNotificationsOutline className="text-gray-800 text-xl sm:text-2xl hover:text-accent" />
                     </button>
 
                     <button>
-                        <IoLogOutOutline className="text-gray-800 text-xl hidden lg:block hover:text-violet-800" />
+                        <IoLogOutOutline onClick={() => {
+                            sessionStorage.clear();
+                            window.location.href = "/login";
+                            alert("You have been logged out successfully.");
+                        }} className="text-gray-800 text-xl hidden lg:block hover:text-violet-800" />
                     </button>
 
                     <div className="flex items-center gap-2">
@@ -62,7 +74,7 @@ const DashboardHead = () => {
                             className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300"
                         />
                         <span className="text-sm hidden lg:block text-gray-800 font-medium hover:text-violet-800">
-                            Shariq
+                            {username}
                         </span>
                         <IoChevronDownSharp className="text-gray-800" />
                     </div>

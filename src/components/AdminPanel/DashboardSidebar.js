@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import {
@@ -25,7 +25,9 @@ const SidebarItem = ({ icon: Icon, label, path, children = [] }) => {
   const isActive = path.includes(location.pathname);
 
   const [open, setOpen] = useState(false);
-const hasChildren = children.length > 0;
+  const hasChildren = children.length > 0;
+  
+  
   // return (
   //   <li
   //     className={`flex items-center gap-3 px-6 py-3 rounded-l-full cursor-pointer transition-colors duration-200 ${
@@ -39,6 +41,8 @@ const hasChildren = children.length > 0;
   //     <span>{label}</span>
   //   </li>
   // );
+  
+  
   const handleClick = () => {
     if (hasChildren) {
       setOpen(!open);
@@ -47,13 +51,15 @@ const hasChildren = children.length > 0;
     }
   };
 
+  
+
   return (
     <>
       <li
         className={`flex items-center justify-between px-6 py-3 rounded-l-full cursor-pointer ${
           isActive
-            ? "bg-gray-100 text-accent font-semibold shadow-lg"
-            : "text-gray-600 hover:bg-blue-50 hover:text-accent"
+            ? "bg-accent text-white font-semibold shadow-lg"
+            : "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
         }`}
         onClick={handleClick}
       >
@@ -86,20 +92,29 @@ const hasChildren = children.length > 0;
 };
 
 const DashboardSidebar = () => {
+
+
+    const [username, setUsername] = useState("");
+    useEffect(() => {
+    const storedUsername = sessionStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+        }
+    }, []);
   return (
-    <aside className="w-72 bg-white h-screen flex flex-col rounded-xl">
+    <aside className="w-72 bg-white h-screen flex flex-col">
       <div className="px-4 py-6 ">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-blue-200" />
           <div>
             <h2 className="text-lg font-semibold text-gray-800">File MG</h2>
-            <p className="text-sm text-gray-500">Ryan Aldridge</p>
+            <p className="text-sm text-gray-900">{username}</p>
           </div>
         </div>
       </div>
       <div className="px-4">
-        <div className="flex items-center px-4 py-2 border border-gray-300 bg-gray-100 rounded-md mb-4">
-          <IoSearch className="text-gray-500 mr-2" />
+        <div className="flex items-center px-4 py-2 border border-gray-400 bg-gray-200 rounded-lg mb-4">
+          <IoSearch className="text-secondary mr-2" />
           <input
             type="text"
             placeholder="Search"
@@ -108,7 +123,7 @@ const DashboardSidebar = () => {
         </div>
       </div>
 
-      <div className="text-xs font-bold text-gray-400 px-4 uppercase mb-3">Menu</div>
+      <div className="text-xs font-bold text-accent px-4 uppercase mb-3">Menu</div>
       <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar direction-rtl">
         <div className="direction-ltr">
         <SidebarItem icon={PiCalendarStarBold} label="User Menu" path={["/user_menu_data"]} />

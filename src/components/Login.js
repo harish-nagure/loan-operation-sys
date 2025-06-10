@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { loginUser } from '../api_service';
+import { loginUser } from './api_service';
 
 const LoginPage = () => {
   const [userType, setUserType] = useState('User');
@@ -28,6 +28,7 @@ const LoginPage = () => {
     
   // };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -47,7 +48,8 @@ const LoginPage = () => {
 
         navigate('/user_menu_data');
       } catch (error) {
-        setErrors({ password: error.message });
+        console.log('Login failed: ' + error.message);
+        setErrors({ password: 'Invalid credentials' , username: 'Invalid credentials' });
       }
     }
   };

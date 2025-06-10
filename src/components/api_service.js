@@ -1,6 +1,8 @@
 // src/api.js
 export async function loginUser({ username, password }) {
-  const response = await fetch('http://152.67.189.231:8842/api/auth/login', {
+
+  // console.log('Logging in user:', { username, password, processEnv: process.env.REACT_APP_API_URL });
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -16,3 +18,5 @@ export async function loginUser({ username, password }) {
   const data = await response.json();
   return data; // { token: '...' }
 }
+
+
