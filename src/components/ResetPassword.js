@@ -20,7 +20,7 @@ const ResetPassword = () => {
       setErrors({ username: "Username is required" });
       return;
     }
-<<<<<<< HEAD
+     HEAD
     
     
     // send OTP via API
