@@ -20,14 +20,11 @@ const ResetPassword = () => {
       setErrors({ username: "Username is required" });
       return;
     }
-     HEAD
-    
-    
-    // send OTP via API
 
-=======
-    // send OTP via API
->>>>>>> harish
+    setErrors({})
+    //Api call to send OTP
+    console.log("Requesting OTP for:", form.username);
+
     setStep(2);
   };
 
@@ -75,10 +72,7 @@ const ResetPassword = () => {
                   type="text"
                   name="username"
                   placeholder="Enter Username"
-<<<<<<< HEAD
-=======
                   value={form.username}
->>>>>>> harish
                   onChange={handleChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
                     errors.username ? "border-red-500" : "border-gray-300"
@@ -108,10 +102,7 @@ const ResetPassword = () => {
                   type="password"
                   name="password"
                   placeholder="New Password"
-<<<<<<< HEAD
-=======
                   value={form.password}
->>>>>>> harish  
                   onChange={handleChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
                     errors.password ? "border-red-500" : "border-gray-300"
@@ -125,10 +116,7 @@ const ResetPassword = () => {
                   type="password"
                   name="confirmPassword"
                   placeholder="Confirm Password"
-<<<<<<< HEAD
-=======
                   value={form.confirmPassword}
->>>>>>> harish
                   onChange={handleChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
                     errors.confirmPassword ? "border-red-500" : "border-gray-300"
