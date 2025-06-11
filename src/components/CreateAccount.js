@@ -65,6 +65,7 @@ const CreateAccount = () => {
                 type="text"
                 name="username"
                 placeholder="Username"
+                value={form.username}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
                   errors.username ? "border-red-500" : "border-gray-300"
@@ -79,6 +80,7 @@ const CreateAccount = () => {
                 type="email"
                 name="email"
                 placeholder="Email ID"
+                value={form.email}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
                   errors.email ? "border-red-500" : "border-gray-300"
@@ -93,6 +95,7 @@ const CreateAccount = () => {
                 type="password"
                 name="password"
                 placeholder="Set Password"
+                value={form.password}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
                   errors.password ? "border-red-500" : "border-gray-300"
@@ -107,6 +110,7 @@ const CreateAccount = () => {
                 type="password"
                 name="confirmPassword"
                 placeholder="Confirm Password"
+                value={form.confirmPassword}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
                   errors.confirmPassword ? "border-red-500" : "border-gray-300"
