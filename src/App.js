@@ -31,6 +31,15 @@ function App() {
           <Route path="/login" element={<Login />} />
 
 
+          <Route
+            path="/create_account"
+            element={<CreateAccount />}
+          />
+          <Route
+            path="/reset_password"  
+            element={<ResetPassword />}
+          />
+
           {/* <Route path="/user_menu" element={<UserMenu />} />
           <Route path="/admin_user_form" element={<AdminUserForm />} />
           <Route path="/loan_system_config" element={<LoanSystemConfig />} />
