@@ -54,6 +54,12 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
 
     setErrors(validationErrors);
 
+
+
+
+
+
+    
     if (Object.keys(validationErrors).length === 0) {
       const payload = {
         ...initialData,
@@ -67,10 +73,12 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
   };
 
   console.log("Form Data:", isEditMode);
+
+
   return (
 
-        <div className="flex items-center justify-center p-4">
-          <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-md">
+        <div className="flex items-center justify-center py-24 px-6">
+          <div className="bg-white shadow-md rounded-xl p-6 w-full">
             <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">
               
               {isEditMode ? "Update User" : "Add User"}

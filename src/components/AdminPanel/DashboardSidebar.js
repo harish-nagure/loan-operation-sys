@@ -169,6 +169,8 @@ const DashboardSidebar = () => {
         
         <SidebarItem icon={IoBagRemoveOutline} label="Multi-Factor Authentication" path={["/multi_factor_authentication"]} />
 
+        <SidebarItem icon={IoBagRemoveOutline} label="Form Field Settings" path={["/form_field_settings"]} />
+
         </div>
       </ul>
 

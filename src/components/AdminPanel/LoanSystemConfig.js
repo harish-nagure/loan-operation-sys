@@ -101,7 +101,7 @@ const LoanSystemConfig = () => {
 
   return (
 
-    <div className="lg:flex md:block font-inter">
+  <div className="lg:flex md:block font-inter">
   <div className="h-screen hidden lg:block fixed z-20">
     <DashboardSidebar />
   </div>
@@ -109,12 +109,12 @@ const LoanSystemConfig = () => {
       <DashboardHead />
 
 
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-start">
+    <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-start">
       <h1 className="text-3xl font-bold text-black-600 mb-6">
         System Configuration
       </h1>
 
-      <div className="w-full max-w-[90%] bg-white shadow rounded-lg p-6 space-y-6">
+      <div className="w-full max-w-[100%] bg-white shadow rounded-lg p-6 space-y-6">
         <div className="flex items-center gap-2 mb-6">
           <FaCog className="text-2xl text-gray-700" />
           <h2 className="text-2xl font-semibold text-black-600">System Configuration</h2>

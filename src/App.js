@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
@@ -15,14 +15,30 @@ import MenuForm from "./components/AdminPanel/MenuForm";
 import AccessControl from "./components/AdminPanel/AccessControl";
 import OrganizationForm from "./components/AdminPanel/OrganizationForm";
 import MultiStepForm from "./components/AdminPanel/MultiStepForm";
-
+import FormFieldSettings from "./components/AdminPanel/FormFieldSettings";
+import CreateAccount from "./components/CreateAccount";
+import ResetPassword from "./components/ResetPassword";
 
 
 import SessionValidator from "./components/SessionValidator";
 // import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 
+const defaultFields = [
+  "firstName", "lastName", "mobile", "email", "confirmEmail",
+  "dob", "monthlyIncome", "ssn", "confirmSsn", "amountNeeded",
+  "homeAddress", "homeAddress2", "zipCode", "city", "state",
+  "homeowner", "agreeTerms", "authorizeCredit", "applicationId",
+  "loanType", "loanAmount", "term", "interestRate", "startDate"
+];
+
+const initialSettings = Object.fromEntries(defaultFields.map(key => [key, true]));
+
 function App() {
+
+    const [fieldSettings, setFieldSettings] = useState(initialSettings);
+
+
   return (
     <div className=" bg-gray-100 min-h-screen">
       <Router>
@@ -30,6 +46,14 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
 
+          <Route
+            path="/create_account"
+            element={<CreateAccount />}
+          />
+          <Route
+            path="/reset_password"  
+            element={<ResetPassword />}
+          />
 
           {/* <Route path="/user_menu" element={<UserMenu />} />
           <Route path="/admin_user_form" element={<AdminUserForm />} />
@@ -119,10 +143,13 @@ function App() {
             path="/application_form"
             element={
               <SessionValidator>
-                <MultiStepForm />
+                <MultiStepForm fieldSettings={fieldSettings}/>
               </SessionValidator>
             }
           />
+          <Route path="/form_field_settings" element={<FormFieldSettings fieldSettings={fieldSettings} setFieldSettings={setFieldSettings} />} />
+
+
 
           {/* Add more routes as needed */}
         </Routes>

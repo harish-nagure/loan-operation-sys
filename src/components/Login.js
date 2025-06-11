@@ -40,12 +40,7 @@ const LoginPage = () => {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const data = await loginUser({ username, password });
-        sessionStorage.setItem('token', data.token);
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('username', username);
-        sessionStorage.setItem('loginTime', new Date().getTime().toString());
-
+        await loginUser({ username, password });
         navigate('/user_menu_data');
       } catch (error) {
         console.log('Login failed: ' + error.message);
@@ -190,7 +185,7 @@ const LoginPage = () => {
                 <input type="checkbox" className="mr-1" />
                 Remember me
               </label>
-              <a href="/forgot-password" className="text-[#029aaa] hover:underline">Forgot password?</a>
+              <a href="/reset_password" className="text-[#029aaa] hover:underline">Forgot password?</a>
             </div>
 
             {/* Login Button */}
@@ -204,7 +199,7 @@ const LoginPage = () => {
             {/* Create Account */}
             <p className="text-center text-sm text-gray-600">
               Don’t have an account?{' '}
-              <a href="/register" className="text-[#029aaa] hover:underline">Create Account</a>
+              <a href="/create_account" className="text-[#029aaa] hover:underline">Create Account</a>
             </p>
           </form>
         </div>
