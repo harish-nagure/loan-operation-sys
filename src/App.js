@@ -16,11 +16,15 @@ import AccessControl from "./components/AdminPanel/AccessControl";
 import OrganizationForm from "./components/AdminPanel/OrganizationForm";
 import MultiStepForm from "./components/AdminPanel/MultiStepForm";
 import FormFieldSettings from "./components/AdminPanel/FormFieldSettings";
+
+import SelectStepsPage from "./components/AdminPanel/SelectStepPage";
 import CreateAccount from "./components/CreateAccount";
 import ResetPassword from "./components/ResetPassword";
 
 
 import SessionValidator from "./components/SessionValidator";
+import FormsPage from "./components/AdminPanel/FormsPage";
+import LoanTypeSelectionPage from "./components/AdminPanel/LoanTypeSelectionPage";
 // import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 
@@ -147,7 +151,55 @@ function App() {
               </SessionValidator>
             }
           />
-          <Route path="/form_field_settings" element={<FormFieldSettings fieldSettings={fieldSettings} setFieldSettings={setFieldSettings} />} />
+          <Route
+            path="/form_field_settings"
+            element={
+              <SessionValidator>
+                <FormFieldSettings
+                  fieldSettings={fieldSettings}
+                  setFieldSettings={setFieldSettings}
+                />
+              </SessionValidator>
+            }
+          />
+
+          
+          <Route
+            path="/workflow_optimization"
+            element={
+              <SessionValidator>
+                <LoanTypeSelectionPage />
+              </SessionValidator>
+            } 
+          />
+
+          <Route
+            path="/selection_steps_page"
+            element={
+              <SessionValidator>
+                <SelectStepsPage />
+              </SessionValidator>
+            }
+          />
+
+          <Route
+            path="/forms_page"
+            element={
+              <SessionValidator>
+                <FormsPage />
+              </SessionValidator>
+            }
+          />
+
+          <Route
+            path="/business_rule_management"
+            element={
+              <SessionValidator>
+                <div>Business Rule Management</div>
+              </SessionValidator>
+            }
+          />
+          
 
 
 

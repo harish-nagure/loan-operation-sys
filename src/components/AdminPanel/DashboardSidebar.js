@@ -45,6 +45,8 @@ const SidebarItem = ({ icon: Icon, label, path, children = [] }) => {
   
   const handleClick = () => {
     if (hasChildren) {
+      
+      navigate(path[0]);
       setOpen(!open);
     } else {
       navigate(path[0]);
@@ -67,7 +69,7 @@ const SidebarItem = ({ icon: Icon, label, path, children = [] }) => {
           <Icon className="text-lg" />
           <span>{label}</span>
         </div>
-        {hasChildren && <span className="text-accent">{open ? "▲" : "▼"}</span>}
+        {hasChildren && <span className={` ${isActive ? "text-white" : "text-accent"}`}>{open ? "▲" : "▼"}</span>}
       </li>
 
       {open && children && (
@@ -156,7 +158,7 @@ const DashboardSidebar = () => {
         <SidebarItem
           icon={MdOutlineAnalytics}
           label="Workflow Optimization"
-          path={["/workflow_optimization"]}
+          path={["/workflow_optimization","/selection_steps_page"]}
           children={[
             { label: "Process Authentication", path: "/auth" },
             { label: "Custom Workflow", path: "/custom" },
