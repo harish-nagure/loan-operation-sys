@@ -15,7 +15,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
   // };
 
   return (
-    <div className="bg-white p-6 mb-6 rounded-lg items-center shadow w-full max-w-xl">
+    <div className="bg-white p-10 rounded-lg items-center shadow w-full">
       <div className="flex justify-center mb-4">
         <FaUserShield size={40} className="text-accent" />
       </div>
@@ -24,7 +24,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
         {isEditMode ? "Edit" : "Add"} Role Form
       </h2>
 
-      <form onSubmit={onSubmit} className="space-y-5">
+      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-5">
         <div>
           <label className="block text-gray-700 font-semibold mb-1">Role Name</label>
           <input

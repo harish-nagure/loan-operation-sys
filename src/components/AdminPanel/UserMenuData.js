@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import UserMenuForm from "./UserMenuForm";
 
+// import { fetchRoles } from "../api_service";
+
 const UserMenuData = () => {
+
+
+
+
 
   const [userData, setUserData] = useState([
     { id: 1, name: "Arjun Mehta", role: "admin", email: "arjun.mehta@example.com", isActive: true },
@@ -16,6 +22,24 @@ const UserMenuData = () => {
   ]);
 
   const [editingUser, setEditingUser] = useState(null);
+
+
+    // useEffect(() => {
+    //   const loadRoles = async () => {
+    //     try {
+    //       const data = await fetchRoles();
+    //       console.log('Fetched roles:', data);
+    //       if (!Array.isArray(data)) {
+    //         throw new Error('Invalid data format received from API');
+    //       }
+    //       setUserData(data); 
+    //     } catch (error) {
+    //       console.error('Error fetching roles:', error);
+    //     }
+    //   };
+
+    //   loadRoles();
+    // }, []);
 
   const handleEdit = (user) => {
     setEditingUser(user);

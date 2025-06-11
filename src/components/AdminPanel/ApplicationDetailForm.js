@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ApplicationDetailForm = () => {
+const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
   const [dob, setDob] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [ssn, setSsn] = useState("");
@@ -60,30 +60,30 @@ const ApplicationDetailForm = () => {
   const validate = () => {
     const newErrors = {};
 
-    if (!dob) newErrors.dob = "Date of Birth is required.";
-    if (!monthlyIncome) newErrors.monthlyIncome = "Monthly income is required.";
-    else if (isNaN(monthlyIncome)) newErrors.monthlyIncome = "Monthly income must be a number.";
+    if (!detail.dob) newErrors.dob = "Date of Birth is required.";
+    if (!detail.monthlyIncome) newErrors.monthlyIncome = "Monthly income is required.";
+    else if (isNaN(detail.monthlyIncome)) newErrors.monthlyIncome = "Monthly income must be a number.";
 
-    if (!ssn) newErrors.ssn = "SSN is required.";
-    else if (!/^\d{9}$/.test(ssn)) newErrors.ssn = "SSN must be exactly 9 digits.";
+    if (!detail.ssn) newErrors.ssn = "SSN is required.";
+    else if (!/^\d{9}$/.test(detail.ssn)) newErrors.ssn = "SSN must be exactly 9 digits.";
 
-    if (!confirmSsn) newErrors.confirmSsn = "Please confirm SSN.";
-    else if (ssn !== confirmSsn) newErrors.confirmSsn = "SSN and Confirm SSN must match.";
+    if (!detail.confirmSsn) newErrors.confirmSsn = "Please confirm SSN.";
+    else if (detail.ssn !== confirmSsn) newErrors.confirmSsn = "SSN and Confirm SSN must match.";
 
-    if (!amountNeeded) newErrors.amountNeeded = "Amount needed is required.";
-    else if (isNaN(amountNeeded)) newErrors.amountNeeded = "Amount needed must be a number.";
+    if (!detail.amountNeeded) newErrors.amountNeeded = "Amount needed is required.";
+    else if (isNaN(detail.amountNeeded)) newErrors.amountNeeded = "Amount needed must be a number.";
 
-    if (!homeAddress) newErrors.homeAddress = "Home address is required.";
+    if (!detail.homeAddress) newErrors.homeAddress = "Home address is required.";
 
-    if (!zipCode) newErrors.zipCode = "Zip code is required.";
-    else if (!/^\d{5,6}$/.test(zipCode)) newErrors.zipCode = "Zip code must be 5 or 6 digits.";
+    if (!detail.zipCode) newErrors.zipCode = "Zip code is required.";
+    else if (!/^\d{5,6}$/.test(detail.zipCode)) newErrors.zipCode = "Zip code must be 5 or 6 digits.";
 
-    if (!city) newErrors.city = "City is required.";
-    if (!state) newErrors.state = "State is required.";
-    if (!homeowner) newErrors.homeowner = "Please select homeowner status.";
+    if (!detail.city) newErrors.city = "City is required.";
+    if (!detail.state) newErrors.state = "State is required.";
+    if (!detail.homeowner) newErrors.homeowner = "Please select homeowner status.";
 
-    if (!agreeTerms) newErrors.agreeTerms = "You must agree to the terms.";
-    if (!authorizeCredit) newErrors.authorizeCredit = "You must authorize credit report.";
+    if (!detail.agreeTerms) newErrors.agreeTerms = "You must agree to the terms.";
+    if (!detail.authorizeCredit) newErrors.authorizeCredit = "You must authorize credit report.";
 
     setErrors(newErrors);
 
@@ -101,6 +101,7 @@ const ApplicationDetailForm = () => {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-full">
       <div className="flex flex-col md:flex-row gap-4 mb-6 w-full">
+        {fieldSettings.dob !== false && (
         <div className="flex-1">
           <label htmlFor="dob" className="block mb-1 font-medium">
             Date of Birth
@@ -108,15 +109,18 @@ const ApplicationDetailForm = () => {
           <input
             type="date"
             id="dob"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
+            value={detail.dob || ""}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.dob ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
           />
           {errors.dob && <p className="text-red-500 text-sm">{errors.dob}</p>}
         </div>
+        )}
 
+
+        {fieldSettings.monthlyIncome !== false && (
         <div className="flex-1">
           <label htmlFor="monthlyIncome" className="block mb-1 font-medium">
             Monthly Gross Income
@@ -125,8 +129,8 @@ const ApplicationDetailForm = () => {
             type="text"
             id="monthlyIncome"
             placeholder="Enter amount"
-            value={monthlyIncome}
-            onChange={(e) => setMonthlyIncome(e.target.value)}
+            value={detail.monthlyIncome|| ""}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.monthlyIncome ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
@@ -135,6 +139,7 @@ const ApplicationDetailForm = () => {
             <p className="text-red-500 text-sm">{errors.monthlyIncome}</p>
           )}
         </div>
+        )}
       </div>
 
       <p className="mb-6 italic text-sm text-gray-700">
@@ -144,6 +149,7 @@ const ApplicationDetailForm = () => {
 
       
       <div className="flex flex-col md:flex-row gap-4 mb-6 w-full">
+        {fieldSettings.ssn !== false && (
         <div className="flex-1">
           <label htmlFor="ssn" className="block mb-1 font-medium">
             SSN
@@ -152,15 +158,19 @@ const ApplicationDetailForm = () => {
             type="text"
             id="ssn"
             placeholder="Social Security Number"
-            value={ssn}
-            onChange={(e) => setSsn(e.target.value)}
+            value={detail.ssn || ""}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.ssn ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
           />
           {errors.ssn && <p className="text-red-500 text-sm">{errors.ssn}</p>}
+        
         </div>
+        )}
+        
 
+        {fieldSettings.confirmSsn !== false && (
         <div className="flex-1">
           <label htmlFor="confirmSsn" className="block mb-1 font-medium">
             Confirm SSN
@@ -169,17 +179,19 @@ const ApplicationDetailForm = () => {
             type="text"
             id="confirmSsn"
             placeholder="Confirm Social Security Number"
-            value={confirmSsn}
-            onChange={(e) => setConfirmSsn(e.target.value)}
+            value={detail.confirmSsn|| ""}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.confirmSsn ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
           />
           {errors.confirmSsn && <p className="text-red-500 text-sm">{errors.confirmSsn}</p>}
         </div>
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 mb-6 w-full">
+        {fieldSettings.amountNeeded !== false && (
         <div className="flex-1">
           <label htmlFor="amountNeeded" className="block mb-1 font-medium">
             How much do you need?
@@ -188,15 +200,17 @@ const ApplicationDetailForm = () => {
             type="text"
             id="amountNeeded"
             placeholder="Amount needed"
-            value={amountNeeded}
-            onChange={(e) => setAmountNeeded(e.target.value)}
+            value={detail.amountNeeded|| ""}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.amountNeeded ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
           />
           {errors.amountNeeded && <p className="text-red-500 text-sm">{errors.amountNeeded}</p>}
         </div>
-
+        )}
+        
+        {fieldSettings.setHomeAddress !== false && (
         <div className="flex-1">
           <label htmlFor="homeAddress" className="block mb-1 font-medium">
             Home Address
@@ -205,18 +219,20 @@ const ApplicationDetailForm = () => {
             type="text"
             id="homeAddress"
             placeholder="Street address"
-            value={homeAddress}
-            onChange={(e) => setHomeAddress(e.target.value)}
+            value={detail.homeAddress || ""}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.homeAddress ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
           />
           {errors.homeAddress && <p className="text-red-500 text-sm">{errors.homeAddress}</p>}
         </div>
+        )}
       </div>
 
      
       <div className="flex flex-col md:flex-row gap-4 mb-6 w-full">
+        {fieldSettings.homeAddress2 !== false && (
         <div className="flex-1">
           <label htmlFor="homeAddress2" className="block mb-1 font-medium">
             Home Address 2
@@ -225,12 +241,14 @@ const ApplicationDetailForm = () => {
             type="text"
             id="homeAddress2"
             placeholder="Apt, suite, etc. (optional)"
-            value={homeAddress2}
-            onChange={(e) => setHomeAddress2(e.target.value)}
+            value={detail.homeAddress2 || ""}
+            onChange={handleDetailChange}
             className="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-blue-600"
           />
         </div>
-
+        )}
+      
+      {fieldSettings.zipCode !== false && (
         <div className="flex-1">
           <label htmlFor="zipCode" className="block mb-1 font-medium">
             Zip Code
@@ -239,17 +257,19 @@ const ApplicationDetailForm = () => {
             type="text"
             id="zipCode"
             placeholder="Zip code"
-            value={zipCode}
-            onChange={(e) => setZipCode(e.target.value)}
+            value={detail.zipCode|| ""}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.zipCode ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
           />
           {errors.zipCode && <p className="text-red-500 text-sm">{errors.zipCode}</p>}
         </div>
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 mb-6 w-full">
+        {fieldSettings.city !== false && (
         <div className="flex-1">
           <label htmlFor="city" className="block mb-1 font-medium">
             City
@@ -258,23 +278,25 @@ const ApplicationDetailForm = () => {
             type="text"
             id="city"
             placeholder="City"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            value={detail.city||""}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.city ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
           />
           {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
         </div>
-
+        )}
+     
+        {fieldSettings.state !== false && (
         <div className="flex-1">
           <label htmlFor="state" className="block mb-1 font-medium">
             State
           </label>
           <select
             id="state"
-            value={state}
-            onChange={(e) => setState(e.target.value)}
+            value={detail.state}
+            onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.state ? "border-red-500" : "border-gray-400 focus:border-blue-600"
             }`}
@@ -287,8 +309,10 @@ const ApplicationDetailForm = () => {
           </select>
           {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
         </div>
+        )}
       </div>
-
+       
+       {fieldSettings.homeowner !==false && (
       <div className="flex items-center gap-4 mb-6 w-full">
         <h3 className="font-semibold">Are you a homeowner?</h3>
         <label className="flex items-center gap-1">
@@ -296,8 +320,8 @@ const ApplicationDetailForm = () => {
             type="radio"
             name="homeowner"
             value="yes"
-            checked={homeowner === "yes"}
-            onChange={() => setHomeowner("yes")}
+            checked={detail.homeowner === "yes"}
+            onChange={handleDetailChange}
             className="cursor-pointer accent-blue-600"
           />
           Yes
@@ -307,13 +331,14 @@ const ApplicationDetailForm = () => {
             type="radio"
             name="homeowner"
             value="no"
-            checked={homeowner === "no"}
-            onChange={() => setHomeowner("no")}
+            checked={detail.homeowner === "no"}
+            onChange={handleDetailChange}
             className="cursor-pointer accent-blue-600"
           />
           No
         </label>
       </div>
+      )}
       {errors.homeowner && <p className="text-red-500 text-sm mb-6">{errors.homeowner}</p>}
 
      
@@ -322,13 +347,13 @@ const ApplicationDetailForm = () => {
         identifying information if you proceed in using NewCo.
       </p>
 
-      
+      {fieldSettings.agreeTerms !== false && (
       <div className="mb-4 w-full">
         <label className="inline-flex items-center gap-2">
           <input
             type="checkbox"
-            checked={agreeTerms}
-            onChange={() => setAgreeTerms(!agreeTerms)}
+            checked={detail.agreeTerms}
+            onChange={handleDetailChange}
             className={`cursor-pointer accent-blue-600 ${
               errors.agreeTerms ? "border-red-500" : ""
             }`}
@@ -356,14 +381,15 @@ const ApplicationDetailForm = () => {
         </label>
         {errors.agreeTerms && <p className="text-red-500 text-sm">{errors.agreeTerms}</p>}
       </div>
+      )}
 
-      
+      {fieldSettings.authorizeCredit !== false && (
       <div className="mb-6 w-full">
         <label className="inline-flex items-center gap-2">
           <input
             type="checkbox"
-            checked={authorizeCredit}
-            onChange={() => setAuthorizeCredit(!authorizeCredit)}
+            checked={detail.authorizeCredit}
+            onChange={handleDetailChange}
             className={`cursor-pointer accent-blue-600 ${
               errors.authorizeCredit ? "border-red-500" : ""
             }`}
@@ -372,6 +398,7 @@ const ApplicationDetailForm = () => {
         </label>
         {errors.authorizeCredit && <p className="text-red-500 text-sm">{errors.authorizeCredit}</p>}
       </div>
+      )}
 
       <div className="flex justify-between w-full flex-wrap gap-4">
         <button

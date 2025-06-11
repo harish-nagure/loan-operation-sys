@@ -1,45 +1,116 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { UserCircle, FileText } from "lucide-react";
 import BasicInfoForm from "./BasicInfoForm";
 import ApplicationDetailForm from "./ApplicationDetailForm";
-
-
 import DashboardHead from "./DashboardHead";
 import DashboardSidebar from "./DashboardSidebar";
+import FormFieldSettings from "./FormFieldSettings";
 
-
-
-const MultiStepForm = () => {
+const MultiStepForm =({ fieldSettings = {} })=> {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    mobile: '',
-    email: '',
-    confirmEmail: '',
+  const [form, setForm] = useState({});
+  const [dynamicFields, setDynamicFields] = useState([]);
+
+  // Load dynamic fields from localStorage and initialize form
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("dynamicFields")) || {};
+    const basicInfoDynamic = saved.basicInfo || [];
+    setDynamicFields(basicInfoDynamic);
+
+    const initialForm = {
+      firstName: "",
+      lastName: "",
+      mobile: "",
+      email: "",
+      confirmEmail: "",
+      ...Object.fromEntries(basicInfoDynamic.map((field) => [field, ""])),
+    };
+
+    setForm(initialForm);
+  }, []);
+
+  const [detail, setDetail] = useState({
+    dob: "",
+    monthlyIncome: "",
+    ssn: "",
+    confirmSsn: "",
+    amountNeeded: "",
+    homeAddress: "",
+    homeAddress2: "",
+    zipCode: "",
+    city: "",
+    state: "",
+    homeowner: "",
+    agreeTerms: false,
+    authorizeCredit: false,
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const filledFields = Object.values(form).filter((val) => val.trim() !== '').length;
-  const progress = (filledFields / 5) * 100;
+  const handleDetailChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setDetail((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+ const validateBasicInfo = () => {
+  if (fieldSettings.firstName !== false && !(form.firstName || "").trim()) return false;
+  if (fieldSettings.lastName !== false && !(form.lastName || "").trim()) return false;
+
+  if (
+    fieldSettings.mobile !== false &&
+    (!(form.mobile || "").trim() || !/^\d{10}$/.test(form.mobile))
+  )
+    return false;
+
+  if (
+    fieldSettings.email !== false &&
+    (!(form.email || "").trim() || !/\S+@\S+\.\S+/.test(form.email))
+  )
+    return false;
+
+  if (
+    fieldSettings.confirmEmail !== false &&
+    (!(form.confirmEmail || "").trim() || form.confirmEmail !== form.email)
+  )
+    return false;
+
+  // Validate dynamic fields
+  for (let field of dynamicFields) {
+    if (fieldSettings[field] !== false && !(form[field] || "").trim()) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 
   const handleTabClick = (tab) => {
-    setStep(tab);
+    if (tab === 1) {
+      setStep(1);
+    } else if (tab === 2) {
+      if (validateBasicInfo()) {
+        setStep(2);
+      } else {
+        alert("Please complete the Basic Info form correctly before continuing.");
+      }
+    }
   };
 
   return (
-      <div className="lg:flex md:block font-inter">
-        <div className="h-screen hidden lg:block fixed z-20">
-          <DashboardSidebar />
-        </div>
-        <main className="flex-1 lg:ml-72">
-          <DashboardHead />
+    <div className="min-h-screen bg-gray-100 flex">
+      <DashboardSidebar />
 
-        <div className="bg-white rounded-lg shadow-lg p-10 my-10 mx-6">
+      <div className="flex-1 p-4">
+        <DashboardHead />
 
+        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-full mt-4">
           <div className="flex justify-start gap-8 mb-6 border-b border-gray-300">
             <button
               onClick={() => handleTabClick(1)}
@@ -54,35 +125,49 @@ const MultiStepForm = () => {
             </button>
 
             <button
-              onClick={() => handleTabClick(2)}
+              onClick={() => {
+                if (validateBasicInfo()) {
+                  handleTabClick(2);
+                }
+              }}
               className={`relative pb-2 font-semibold text-lg flex items-center gap-2 ${
                 step === 2
                   ? "text-[#30c9d6] after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[3px] after:w-full after:bg-[#30c9d6]"
-                  : "text-gray-600 hover:text-[#30c9d6]"
+                  : validateBasicInfo()
+                  ? "text-gray-600 hover:text-[#30c9d6]"
+                  : "text-gray-400 cursor-not-allowed"
               }`}
+              disabled={!validateBasicInfo()}
+              title={validateBasicInfo() ? "" : "Please complete Basic Info first"}
+              style={{ pointerEvents: validateBasicInfo() ? "auto" : "none" }}
             >
               <FileText className="w-5 h-5" />
               Application Detail
             </button>
           </div>
 
-        
-          <div className="w-full">
+          <div className="w-full mt-6">
             {step === 1 ? (
               <BasicInfoForm
                 form={form}
                 handleChange={handleChange}
-                progress={progress}
                 onContinue={() => setStep(2)}
+                fieldSettings={fieldSettings}
+                dynamicFields={dynamicFields}
               />
             ) : (
-              <ApplicationDetailForm onBack={() => setStep(1)} />
+              <ApplicationDetailForm
+                detail={detail}
+                handleDetailChange={handleDetailChange}
+                onBack={() => setStep(1)}
+                onContinue={() => alert("Form Submitted!")}
+                fieldSettings={fieldSettings}
+              />
             )}
           </div>
         </div>
-        </main>
       </div>
-     
+    </div>
   );
 };
 

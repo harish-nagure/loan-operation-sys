@@ -4,21 +4,15 @@ import DashboardSidebar from './DashboardSidebar';
 import DashboardHead from './DashboardHead';
 import AdminUserForm from './AdminUserForm';
 
+
+import { createRole } from '../api_service'; 
+
 const AdminUserPanel = () => {
   const [adminList, setAdminList] = useState([
     {
       id: 1,
       roleName: "Super Admin",
-      description: "Full system access",
-      permissions: {
-        create_user: true,
-        edit_user: true,
-        delete_user: true,
-        create_role: true,
-        edit_role: true,
-        delete_role: true,
-        manage_menus: true,
-      },
+      description: "Full system access"
     },
     {
       id: 2,
@@ -33,38 +27,77 @@ const AdminUserPanel = () => {
   const [formData, setFormData] = useState({
     roleName: '',
     description: '',
-   
   });
 
   const resetForm = () => {
     setFormData({
       roleName: '',
-      description: '',
-      permissions: {
-        create_user: false,
-        edit_user: false,
-        delete_user: false,
-        create_role: false,
-        edit_role: false,
-        delete_role: false,
-        manage_menus: false,
-      },
+      description: ''
     });
     setEditId(null);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editId) {
-      setAdminList((prev) =>
-        prev.map((admin) => (admin.id === editId ? { ...formData, id: editId } : admin))
-      );
-    } else {
-      setAdminList((prev) => [...prev, { id: Date.now(), ...formData }]);
-    }
-    resetForm();
-    setFormVisible(false);
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (editId) {
+  //     setAdminList((prev) =>
+  //       prev.map((admin) => (admin.id === editId ? { ...formData, id: editId } : admin))
+  //     );
+  //   } else {
+  //     setAdminList((prev) => [...prev, { id: Date.now(), ...formData }]);
+  //   }
+  //   resetForm();
+  //   setFormVisible(false);
+  // };
+
+const handleFormSubmit = async () => {
+    try {
+      console.log('Form data:', formData);
+
+      
+      if (!formData.roleName || !formData.description) {
+        alert('Role Name and Description are required');
+        return;}
+      const createdRole = await createRole({
+        roleName: formData.roleName,
+        description: formData.description,
+      });
+      setAdminList((prev) => [...prev, { ...createdRole }]);
+      resetForm();
+      setFormVisible(false);
+
+
+    } catch (error) {
+      console.error('Error creating role:', error.message);
+      alert('Failed to create role: ' + error.message);
+  }
+};
+
+
+//   const handleSubmit = async (formUser) => {
+//   if (formUser.id) {
+//     // Edit existing user locally
+//     setUserData(userData.map(user => (user.id === formUser.id ? formUser : user)));
+//     setEditingUser(null);
+//   } else {
+//     // Add new user and send to backend
+//     try {
+//       const newUser = {
+//         name: formUser.name || formUser.username,
+//         email: formUser.email,
+//         role: formUser.role,
+//         isActive: formUser.isActive || formUser.userState,
+//       };
+
+//       const createdUser = await createUser(newUser);
+//       setUserData([...userData, createdUser]);
+//       setEditingUser(null);
+//     } catch (error) {
+//       console.error("Error creating user:", error.message);
+//       alert("Failed to create user.");
+//     }
+//   }
+// };
 
   const handleEdit = (admin) => {
     setFormData(admin);
@@ -103,7 +136,7 @@ const AdminUserPanel = () => {
                 <AdminUserForm
                 formData={formData}
                 setFormData={setFormData}
-                onSubmit={handleSubmit}
+                onSubmit={handleFormSubmit}
                 onCancel={() => {
                     resetForm();
                     setFormVisible(false);

@@ -46,7 +46,7 @@ const OrganizationForm = () => {
       <main className="flex-1 lg:ml-72">
         <DashboardHead />
 
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+    <div className="flex items-center justify-center bg-gray-100 p-6">
       <div className="bg-white p-6 rounded-xl shadow-md max-w-xl w-full">
         <h2 className="text-2xl font-semibold mb-6 text-accent">🏢 Organization Details</h2>
         
