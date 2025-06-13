@@ -132,7 +132,7 @@ const DashboardSidebar = () => {
         
         <SidebarItem icon={MdOutlineAnalytics} label="Role Creation" path={["/admin_user_data"]} />
         
-        <SidebarItem icon={PiFolders} label="Menu Creation" path={["/access_control", "/menu_creation"]} />
+        <SidebarItem icon={PiFolders} label="Access Management" path={["/access_control", "/menu_creation"]} />
         
         <SidebarItem icon={IoSearch} label="Organization Form" path={["/organization_form"]} />
         

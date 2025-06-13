@@ -30,13 +30,15 @@ export async function loginUser({ username, password }) {
 }
 
 
-export async function Register({ username, password, role }) {
+
+
+export async function Register({ username, email, password }) {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, password, role }),
+    body: JSON.stringify({ username, email, password }),
   });
 
   if (!response.ok) {
@@ -85,6 +87,34 @@ export async function createRole({roleName, description}) {
   console.log('Fetched roles:', data);
   return data;
 }
+
+
+
+
+export async function resetPassword({ email, newPassword}) {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+
+      },
+      body: JSON.stringify({ email, newPassword}),
+    });
+
+    if (!response.ok) {
+      throw new Error('Password reset failed');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    throw error;
+  }
+}
+
+
 
 
 // export async function createRole (req, res){

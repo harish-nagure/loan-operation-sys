@@ -13,13 +13,54 @@ const UserMenuData = () => {
 
 
 
-  const [userData, setUserData] = useState([
-    { id: 1, name: "Arjun Mehta", role: "admin", email: "arjun.mehta@example.com", isActive: true },
-    { id: 2, name: "Neha Kapoor", role: "editor", email: "neha.k@example.com", isActive: false },
-    { id: 3, name: "Rahul Verma", role: "user", email: "rahul.v@example.com", isActive: true },
-    { id: 4, name: "Simran Sinha", role: "moderator", email: "simran.sinha@example.com", isActive: false },
-    { id: 5, name: "Yash Patel", role: "user", email: "yash.patel@example.com", isActive: true },
-  ]);
+    const [userData, setUserData] = useState([
+      {
+        id: 1,
+        firstName: "Arjun",
+        lastName: "Mehta",
+        role: "admin",
+        email: "arjun.mehta@example.com",
+        phone: "9876543210",
+        isActive: true,
+      },
+      {
+        id: 2,
+        firstName: "Neha",
+        lastName: "Kapoor",
+        role: "editor",
+        email: "neha.k@example.com",
+        phone: "9123456780",
+        isActive: false,
+      },
+      {
+        id: 3,
+        firstName: "Rahul",
+        lastName: "Verma",
+        role: "user",
+        email: "rahul.v@example.com",
+        phone: "9988776655",
+        isActive: true,
+      },
+      {
+        id: 4,
+        firstName: "Simran",
+        lastName: "Sinha",
+        role: "moderator",
+        email: "simran.sinha@example.com",
+        phone: "9012345678",
+        isActive: false,
+      },
+      {
+        id: 5,
+        firstName: "Yash",
+        lastName: "Patel",
+        role: "user",
+        email: "yash.patel@example.com",
+        phone: "9090909090",
+        isActive: true,
+      },
+    ]);
+
 
   const [editingUser, setEditingUser] = useState(null);
 
@@ -98,9 +139,11 @@ const UserMenuData = () => {
                 <table className="min-w-full text-sm text-left">
                   <thead className="sticky top-0 bg-gray-100 border-b">
                     <tr>
-                      <th className="py-2 px-4">Name</th>
+                      <th className="py-2 px-4">First Name</th>
+                      <th className="py-2 px-4">Last Name</th>
                       <th className="py-2 px-4">Role</th>
                       <th className="py-2 px-4">Email</th>
+                      <th className="py-2 px-4">Phone</th>
                       <th className="py-2 px-4">Active</th>
                       <th className="py-2 px-4 text-center">Actions</th>
                     </tr>
@@ -108,9 +151,11 @@ const UserMenuData = () => {
                   <tbody>
                     {userData.map((user) => (
                       <tr key={user.id} className="border-b hover:bg-gray-50">
-                        <td className="py-2 px-4">{user.name}</td>
+                        <td className="py-2 px-4">{user.firstName}</td>
+                        <td className="py-2 px-4">{user.lastName}</td>
                         <td className="py-2 px-4 capitalize">{user.role}</td>
                         <td className="py-2 px-4" title={user.email}>{user.email}</td>
+                        <td className="py-2 px-4">{user.phone}</td>
                         <td className="py-2 px-4">
                           <span
                             className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${

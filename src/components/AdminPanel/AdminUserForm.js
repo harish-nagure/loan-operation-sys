@@ -2,7 +2,7 @@ import React from 'react';
 import { FaUserShield } from 'react-icons/fa';
 
 const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
-  const { roleName, description } = formData;
+  const { firstName, lastName, roleName, phone, description } = formData;
 
   const isEditMode = Boolean(formData.id);
 
@@ -25,8 +25,30 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
       </h2>
 
       <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-5">
+
         <div>
-          <label className="block text-gray-700 font-semibold mb-1">Role Name</label>
+          <label className="block text-gray-700 font-semibold mb-1">First Name</label>  
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent focus:border-accent"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-semibold mb-1">Last Name</label>
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent focus:border-accent"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 font-semibold mb-1">Role</label>
           <input
             type="text"
             value={roleName}
@@ -36,6 +58,17 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
           />
         </div>
 
+        <div>
+          <label className="block text-gray-700 font-semibold mb-1">Phone</label>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent focus:border-accent"
+          />
+        </div>
+         
         <div>
           <label className="block text-gray-700 font-semibold mb-1">Description</label>
           <textarea
