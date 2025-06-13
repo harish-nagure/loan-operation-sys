@@ -42,16 +42,7 @@ function App() {
 
     const [fieldSettings, setFieldSettings] = useState(initialSettings);
     
-   
-    //  const isAdmin = sessionStorage.getItem("role")?.toLowerCase() === "admin" ? true : false;
-      // console.log("isAdmin:", isAdmin);
-    // const [isAdmin, setIsAdmin] = useState(false);
-
-    // useEffect(() => {
-    //   let role = sessionStorage.getItem("role")?.toLowerCase();
-    //   setIsAdmin(role === "admin");
-    // }, []);
-        const [role, setRole] = useState(null);
+      const [role, setRole] = useState(null);
 
   // Sync role from sessionStorage on reload safely
       useEffect(() => {
