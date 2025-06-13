@@ -51,7 +51,21 @@ function App() {
     //   let role = sessionStorage.getItem("role")?.toLowerCase();
     //   setIsAdmin(role === "admin");
     // }, []);
-    
+        const [role, setRole] = useState(null);
+
+  // Sync role from sessionStorage on reload safely
+      useEffect(() => {
+      const stored = sessionStorage.getItem('role');
+      if (stored && typeof stored === 'string') {
+        setRole(stored.toLowerCase());
+      } else {
+        setRole(null);
+      }
+    }, []);
+
+
+  console.log("Role   in App component:", role);
+
   return (
 
     <div className=" bg-gray-100 min-h-screen">
