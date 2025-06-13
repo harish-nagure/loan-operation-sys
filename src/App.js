@@ -42,11 +42,6 @@ function App() {
 
     const [fieldSettings, setFieldSettings] = useState(initialSettings);
     
-<<<<<<< HEAD
-    const isAdmin = sessionStorage.getItem("role")?.toLowerCase() === "admin" ? true : false;
-
-    
-=======
    
     //  const isAdmin = sessionStorage.getItem("role")?.toLowerCase() === "admin" ? true : false;
       // console.log("isAdmin:", isAdmin);
@@ -56,24 +51,7 @@ function App() {
     //   let role = sessionStorage.getItem("role")?.toLowerCase();
     //   setIsAdmin(role === "admin");
     // }, []);
-
-
-    const [role, setRole] = useState(null);
-
-  // Sync role from sessionStorage on reload safely
-      useEffect(() => {
-      const stored = sessionStorage.getItem('role');
-      if (stored && typeof stored === 'string') {
-        setRole(stored.toLowerCase());
-      } else {
-        setRole(null);
-      }
-    }, []);
-
-
-  console.log("Role   in App component:", role);
->>>>>>> main
-
+    
   return (
 
     <div className=" bg-gray-100 min-h-screen">
@@ -102,12 +80,7 @@ function App() {
         
           <Route path="/organization_form" element={<OrganizationForm />} />
           <Route path="/application_form" element={<MultiStepForm />} /> */}
-<<<<<<< HEAD
-          {
-            isAdmin ? (
-=======
           {role === 'admin' ? (
->>>>>>> main
               <>
           <Route
             path="/user_menu"
