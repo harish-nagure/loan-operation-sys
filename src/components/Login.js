@@ -5,7 +5,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { loginUser } from './api_service';
 
-const LoginPage = () => {
+const LoginPage = ({onLogin}) => {
   const [userType, setUserType] = useState('User');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -44,10 +44,15 @@ const LoginPage = () => {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        await loginUser({ username, password });
+        const data = await loginUser({ username, password });
+
+
+        console.log('Login successful:', { userType, username});
+        onLogin(data?.role?.toLowerCase());
         navigate('/user_menu_data');
       } catch (error) {
         console.log('Login failed: ' + error.message);
+        onLogin(null);
         setErrors({ password: 'Invalid credentials' , username: 'Invalid credentials' });
       }
     }
