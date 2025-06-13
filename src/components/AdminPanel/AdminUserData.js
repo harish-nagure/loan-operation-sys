@@ -8,30 +8,45 @@ import AdminUserForm from './AdminUserForm';
 import { createRole } from '../api_service'; 
 
 const AdminUserPanel = () => {
+
+
   const [adminList, setAdminList] = useState([
     {
       id: 1,
+      firstName: "Arjun",
+      lastName: "Mehta",
       roleName: "Super Admin",
+      phone : "9876543210",
       description: "Full system access"
+
     },
     {
       id: 2,
-      roleName: "Moderator",
-      description: "Can manage users and roles",
-    
+      firstName: "Neha",
+      lastName: "Kapoor",
+      roleName: "Editor",
+      phone : "9123456780",
+      description: "Can edit content",
     },
   ]);
 
   const [formVisible, setFormVisible] = useState(false);
   const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
+
+    firstName: '',
+    lastName: '', 
     roleName: '',
+    phone: '',
     description: '',
   });
 
   const resetForm = () => {
     setFormData({
+      firstName: '',
+      lastName: '',
       roleName: '',
+      phone: '',
       description: ''
     });
     setEditId(null);
@@ -50,29 +65,81 @@ const AdminUserPanel = () => {
   //   setFormVisible(false);
   // };
 
-const handleFormSubmit = async () => {
-    try {
-      console.log('Form data:', formData);
+// const handleFormSubmit = async () => {
+
+
+//     if (formData.firstName.trim() === '' || formData.lastName.trim() === '') {
+//       setError('First Name and Last Name are required');
+//     }
+//     if (formData.roleName.trim() === '') {
+//       setError('Role Name is required');
+//     }
+
+//     if (formData.phone.trim() === '') {
+//       setError('Phone number is required');
+//     }
+
+//     try {
+//       console.log('Form data:', formData);
 
       
-      if (!formData.roleName || !formData.description) {
-        alert('Role Name and Description are required');
-        return;}
-      const createdRole = await createRole({
-        roleName: formData.roleName,
-        description: formData.description,
-      });
-      setAdminList((prev) => [...prev, { ...createdRole }]);
-      resetForm();
-      setFormVisible(false);
+//       if (!formData.roleName || !formData.description) {
+//         alert('Role Name and Description are required');
+//         return;}
+//       const createdRole = await createRole({
+//         firstName: formData.firstName,
+//         lastName: formData.lastName,
+//         roleName: formData.roleName,
+//         phone: formData.phone,
+//         description: formData.description,
+//       });
+//       setAdminList((prev) => [...prev, { ...createdRole }]);
+//       resetForm();
+//       setFormVisible(false);
 
 
-    } catch (error) {
-      console.error('Error creating role:', error.message);
-      alert('Failed to create role: ' + error.message);
+//     } catch (error) {
+//       console.error('Error creating role:', error.message);
+//       alert('Failed to create role: ' + error.message);
+//   }
+// };
+
+const handleFormSubmit = async () => {
+  const errors = [];
+
+  if (!formData.firstName.trim()) errors.push("First Name is required.");
+  if (!formData.lastName.trim()) errors.push("Last Name is required.");
+  if (!formData.roleName.trim()) errors.push("Role Name is required.");
+  if (!formData.phone.trim()) {
+    errors.push("Phone number is required.");
+  } else if (!/^\d{10}$/.test(formData.phone)) {
+    errors.push("Phone number must be 10 digits.");
+  }
+  if (!formData.description.trim()) errors.push("Description is required.");
+
+  if (errors.length > 0) {
+    alert(errors.join("\n"));
+    return;
+  }
+
+  try {
+    const createdRole = await createRole(formData);
+
+    if (editId) {
+      setAdminList(prev =>
+        prev.map(admin => (admin.id === editId ? { ...formData, id: editId } : admin))
+      );
+    } else {
+      setAdminList(prev => [...prev, { ...createdRole }]);
+    }
+
+    resetForm();
+    setFormVisible(false);
+  } catch (error) {
+    console.error("Error creating role:", error.message);
+    alert("Failed to create role: " + error.message);
   }
 };
-
 
 //   const handleSubmit = async (formUser) => {
 //   if (formUser.id) {
@@ -150,7 +217,10 @@ const handleFormSubmit = async () => {
               <table className="min-w-full text-sm text-left">
                 <thead className="bg-gray-100 border-b text-gray-700">
                   <tr>
+                    <th className="py-2 px-4">First Name</th>
+                    <th className="py-2 px-4">Last Name</th>
                     <th className="py-2 px-4">Role</th>
+                    <th className="py-2 px-4">Phone</th>
                     <th className="py-2 px-4">Description</th>
                     {/* {Object.entries(formData.permissions).map(([perm]) => (
                       <th key={perm} className="py-2 px-4">
@@ -163,8 +233,11 @@ const handleFormSubmit = async () => {
                 <tbody>
                 {adminList.map((admin) => (
                     <tr key={admin.id} className="border-b hover:bg-gray-50 text-base">
-                    <td className="py-2 px-4 font-medium">{admin.roleName}</td>
-                    <td className="py-2 px-4">{admin.description}</td>
+                      <td className="py-2 px-4 font-medium">{admin.firstName}</td>
+                      <td className="py-2 px-4">{admin.lastName}</td>
+                      <td className="py-2 px-4">{admin.roleName}</td>
+                      <td className="py-2 px-4">{admin.phone}</td>
+                      <td className="py-2 px-4">{admin.description}</td>
 
 
                     {/* {Object.entries(admin.permissions).map(([perm, value]) => (

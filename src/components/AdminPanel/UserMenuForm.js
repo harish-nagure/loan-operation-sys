@@ -7,9 +7,11 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
   const isEditMode = Boolean(initialData && initialData.id);
 
   const [formData, setFormData] = useState({
-    username: "",
-    email: "",
+    firstname: "",
+    lastname: "",
     role: "",
+    email: "",
+    phone: "",
     userState: false,
   });
 
@@ -18,8 +20,10 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        username: initialData.name || "",
+        firstname: initialData.firstName || "",
+        lastname: initialData.lastName || "",
         email: initialData.email || "",
+        phone: initialData.phone || "",
         role: initialData.role || "",
         userState: initialData.isActive || false,
       });
@@ -38,8 +42,18 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
     e.preventDefault();
     const validationErrors = {};
 
-    if (!formData.username.trim()) {
-      validationErrors.username = "Username is required.";
+    if (!formData.firstname.trim()) {
+      validationErrors.firstname = "First name is required.";
+    }
+
+    if (!formData.lastname.trim()) {
+      validationErrors.lastname = "Last name is required.";
+    }
+
+    if (!formData.phone.trim()) {
+      validationErrors.phone = "Phone number is required."; 
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      validationErrors.phone = "Enter a valid 10-digit phone number.";
     }
 
     if (!formData.email.trim()) {
@@ -63,9 +77,11 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
     if (Object.keys(validationErrors).length === 0) {
       const payload = {
         ...initialData,
-        name: formData.username,
+        firstname: formData.firstname,
+        lastname: formData.lastname,
         email: formData.email,
         role: formData.role,
+        phone: formData.phone,
         isActive: formData.userState,
       };
       onSubmit(payload);
@@ -77,7 +93,7 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
 
   return (
 
-        <div className="flex items-center justify-center py-24 px-6">
+        <div className="flex items-center justify-center px-6">
           <div className="bg-white shadow-md rounded-xl p-6 w-full">
             <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">
               
@@ -86,17 +102,32 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                  Username
+                  First Name
                 </label>
                 <input
-                  id="username"
-                  name="username"
+                  id="firstname"
+                  name="firstname"
                   type="text"
                   value={formData.username}
                   onChange={handleChange}
-                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.firstname ? 'border-red-500' : 'border-gray-300'}`}
                 />
-                {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+                {errors.firstname && <p className="text-red-500 text-xs mt-1">{errors.firstname}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
+                  Last Name
+                </label>  
+                <input
+                  id="lastname"
+                  name="lastname"
+                  type="text"
+                  value={formData.lastname}
+                  onChange={handleChange}
+                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.lastname ? 'border-red-500' : 'border-gray-300'}`}
+                />
+                {errors.lastname && <p className="text-red-500 text-xs mt-1">{errors.lastname}</p>}
               </div>
 
               <div>
@@ -131,6 +162,22 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
                   <option value="guest">Guest</option>
                 </select>
                 {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
+              </div>
+
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700"> 
+                  Phone Number
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="text"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+                />
+                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
               </div>
 
               <div className="flex items-center ">

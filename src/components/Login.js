@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 import { loginUser } from './api_service';
 
 const LoginPage = () => {
   const [userType, setUserType] = useState('User');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -167,15 +171,21 @@ const LoginPage = () => {
             </div>
 
             {/* Password */}
-            <div>
+            <div className='relative'>
               <label className="block mb-1 text-gray-700">Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
               />
+              <span
+                className="absolute right-3 top-[38px] cursor-pointer text-gray-600"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
 

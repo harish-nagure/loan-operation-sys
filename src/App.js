@@ -41,9 +41,13 @@ const initialSettings = Object.fromEntries(defaultFields.map(key => [key, true])
 function App() {
 
     const [fieldSettings, setFieldSettings] = useState(initialSettings);
+    
+    const isAdmin = sessionStorage.getItem("role")?.toLowerCase() === "admin" ? true : false;
 
+    
 
   return (
+
     <div className=" bg-gray-100 min-h-screen">
       <Router>
         <Routes>
@@ -79,7 +83,9 @@ function App() {
         
           <Route path="/organization_form" element={<OrganizationForm />} />
           <Route path="/application_form" element={<MultiStepForm />} /> */}
-
+          {
+            isAdmin ? (
+              <>
           <Route
             path="/user_menu"
             element={
@@ -208,7 +214,22 @@ function App() {
               </SessionValidator>
             }
           />
-          
+          </>
+             ) : (
+              <>
+                <Route
+                  path="*"
+                  element={
+                    <div className="flex justify-center items-center h-screen">
+                      <h1 className="text-2xl font-bold text-gray-700">
+                        Access Denied. Admins Only.
+                      </h1>
+                    </div>
+                  }
+                />
+              </>
+            )
+          }
 
 
 
