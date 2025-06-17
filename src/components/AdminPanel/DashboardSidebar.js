@@ -46,7 +46,7 @@ const SidebarItem = ({ icon: Icon, label, path, children = [] }) => {
   const handleClick = () => {
     if (hasChildren) {
       
-      navigate(path[0]);
+      // navigate(path[0]);
       setOpen(!open);
     } else {
       navigate(path[0]);
@@ -69,7 +69,7 @@ const SidebarItem = ({ icon: Icon, label, path, children = [] }) => {
           <Icon className="text-lg" />
           <span>{label}</span>
         </div>
-        {hasChildren && <span className={` ${isActive ? "text-white" : "text-accent"}`}>{open ? "▲" : "▼"}</span>}
+        {hasChildren && <span className={` ${isActive ? "text-white " : "text-accent"}`}>{open ? "▲" : "▼"}</span>}
       </li>
 
       {open && children && (
@@ -79,8 +79,8 @@ const SidebarItem = ({ icon: Icon, label, path, children = [] }) => {
               key={index}
               className={`cursor-pointer px-3 py-2 rounded-md transition-colors duration-150 ${
                 location.pathname === child.path
-                  ? "bg-blue-100 text-accent font-medium"
-                  : "hover:bg-blue-50"
+                  ? "bg-blue-100 text-accent font-medium "
+                  : " text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
               }`}
               onClick={() => navigate(child.path)}
             >
@@ -131,9 +131,9 @@ const DashboardSidebar = () => {
         <SidebarItem icon={PiCalendarStarBold} label="User Menu" path={["/user_menu_data"]} />
         
         <SidebarItem icon={MdOutlineAnalytics} label="Role Creation" path={["/admin_user_data"]} />
-        
-        <SidebarItem icon={PiFolders} label="Access Management" path={["/access_control", "/menu_creation"]} />
-        
+
+        <SidebarItem icon={MdOutlineAnalytics} label="Access Control Setup" path={["/access_control_setup", "/access_control"]} />
+
         <SidebarItem icon={IoSearch} label="Organization Form" path={["/organization_form"]} />
         
         <SidebarItem icon={IoBagRemoveOutline} label="Login" path={["/login"]} />
@@ -143,6 +143,18 @@ const DashboardSidebar = () => {
         <SidebarItem icon={MdOutlineAnalytics} label="Application Form" path={["/application_form"]} />
 
 
+
+        
+        
+        <SidebarItem
+          icon={MdOutlineAnalytics}
+          label="Workflow Optimization"
+          path={["/workflow_optimization","/selection_steps_page"]}
+          children={[
+            { label: "Process Authentication", path: "/auth" },
+            { label: "Custom Workflow", path: "/custom_workflow" },
+          ]}
+        />
 
 
         
@@ -154,16 +166,6 @@ const DashboardSidebar = () => {
         
         <SidebarItem icon={MdOutlineAnalytics} label="Integration Management" path={["/integration_management"]} />
 
-        
-        <SidebarItem
-          icon={MdOutlineAnalytics}
-          label="Workflow Optimization"
-          path={["/workflow_optimization","/selection_steps_page"]}
-          children={[
-            { label: "Process Authentication", path: "/auth" },
-            { label: "Custom Workflow", path: "/custom" },
-          ]}
-        />
         
         <SidebarItem icon={MdOutlineAnalytics} label="Reporting and Analytics" path={["/reporting_and_analytics"]} />
         
