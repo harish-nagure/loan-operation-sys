@@ -5,7 +5,7 @@ import DashboardHead from './DashboardHead';
 import AdminUserForm from './AdminUserForm';
 
 
-import { createRole,getRoles,updateRole } from '../api_service'; 
+import { createRole,getRoles,updateRole, deleteRole } from '../api_service'; 
 
 const AdminUserPanel = () => {
 
@@ -83,11 +83,19 @@ const AdminUserPanel = () => {
     setFormVisible(true);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure to delete this role?')) {
-      setAdminList((prev) => prev.filter((admin) => admin.id !== id));
+const handleDelete = async (id) => {
+  if (window.confirm('Are you sure to delete this role?')) {
+    try {
+      await deleteRole(id);
+      setAdminList(prev => prev.filter(admin => admin.id !== id));
+      alert('Role deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting role:', error.message);
+      alert('Failed to delete role: ' + error.message);
     }
-  };
+  }
+};
+
 
   return (
     <div className="lg:flex md:block font-inter">

@@ -375,7 +375,7 @@ useEffect(() => {
               </Link>
             </div>
           </td>
-          {["read", "write", "view", "all"].map((perm) => (
+          {["read", "write", "all"].map((perm) => (
             <td key={perm}>
               <input
                 type="checkbox"
@@ -444,7 +444,7 @@ useEffect(() => {
                   <th className="p-3 text-left">Menu Name</th>
                   <th className="p-3 text-center">Read</th>
                   <th className="p-3 text-center">Write</th>
-                  <th className="p-3 text-center">View</th>
+                  {/* <th className="p-3 text-center">View</th> */}
                   <th className="p-3 text-center">All</th>
                   <th className="p-3 text-center">Actions</th>
                 </tr>

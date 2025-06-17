@@ -22,9 +22,10 @@ const SidebarItem = ({ icon: Icon, label, path, children = [] }) => {
   
   // const isActive = location.pathname === path;
   
-  const isActive = path.includes(location.pathname);
+  // const isActive = path.includes(location.pathname);
 
   const [open, setOpen] = useState(false);
+  const isActive = path.includes(location.pathname);
   const hasChildren = children.length > 0;
   const isChildActive = hasChildren && children.some(child => location.pathname === child.path);
 
@@ -62,7 +63,7 @@ const SidebarItem = ({ icon: Icon, label, path, children = [] }) => {
     <>
       <li
         className={`flex items-center justify-between px-6 py-3 rounded-l-full cursor-pointer ${
-          isActive || isChildActive
+          isActive || isChildActive || open
             ? "bg-accent text-white font-semibold shadow-lg"
             : "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
         }`}
@@ -139,7 +140,7 @@ const DashboardSidebar = () => {
 
         <SidebarItem icon={IoSearch} label="Organization Form" path={["/organization_form"]} />
         
-        <SidebarItem icon={IoBagRemoveOutline} label="Login" path={["/login"]} />
+        {/* <SidebarItem icon={IoBagRemoveOutline} label="Login" path={["/login"]} /> */}
         
         <SidebarItem icon={HiOutlineNewspaper} label="System Configuration" path={["/loan_system_config"]} />
 

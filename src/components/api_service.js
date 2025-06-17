@@ -1,3 +1,6 @@
+const API_URL = process.env.REACT_APP_API_URL;
+
+
 
 export async function loginUser({ username, password }) {
 
@@ -124,6 +127,22 @@ export async function updateRole(id, updatedData) {
 
   return await response.json();
 }
+
+
+export async function deleteRole(id){
+  const response = await fetch(`${API_URL}/roles/${id}`, {
+    method:'DELETE',
+    headers:{
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+    }
+  })
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to delete role');
+  }
+  return await response.json();
+}
+
 
 
 
