@@ -2,8 +2,10 @@ import React, { useState } from "react";
 
 const CreateAccount = () => {
   const [form, setForm] = useState({
-    username: "",
+    firstname: "",
+    lastname: "",
     email: "",
+    phonenumber: "",
     password: "",
     confirmPassword: "",
   });
@@ -16,8 +18,11 @@ const CreateAccount = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newErrors = {};
-    if (!form.username.trim()) newErrors.username = "Username is required";
+    if (!form.firstname.trim()) newErrors.firstname = "First name is required";
+    if (!form.lastname.trim()) newErrors.lastname = "Last name is required";
     if (!form.email.trim()) newErrors.email = "Email is required";
+    if (!form.phonenumber.trim()) newErrors.phonenumber = "Phone number is required";
+
     if (!form.password) newErrors.password = "Password is required";
     if (form.password !== form.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
@@ -63,15 +68,29 @@ const CreateAccount = () => {
             <div>
               <input
                 type="text"
-                name="username"
-                placeholder="Username"
-                value={form.username}
+                name="firstname"
+                placeholder="First Name"
+                value={form.firstname}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
-                  errors.username ? "border-red-500" : "border-gray-300"
+                  errors.firstname ? "border-red-500" : "border-gray-300"
                 }`}
               />
-              {errors.username && <p className="text-red-500 text-xs">{errors.username}</p>}
+              {errors.firstname && <p className="text-red-500 text-xs">{errors.firstname}</p>}
+            </div>
+
+            <div>
+              <input
+                type="text"
+                name="lastname" 
+                placeholder="Last Name"
+                value={form.lastname}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
+                  errors.lastname ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {errors.lastname && <p className="text-red-500 text-xs">{errors.lastname}</p>}
             </div>
 
             {/* Email */}
@@ -88,7 +107,20 @@ const CreateAccount = () => {
               />
               {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
             </div>
-
+            {/* Phone Number */}
+            <div>
+              <input
+                type="text" 
+                name="phonenumber"
+                placeholder="Phone Number"
+                value={form.phonenumber}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
+                  errors.phonenumber ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {errors.phonenumber && <p className="text-red-500 text-xs">{errors.phonenumber}</p>}
+            </div>
             {/* Password */}
             <div>
               <input
