@@ -102,7 +102,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
             type="submit"
             className="flex-1 bg-accent text-white py-2 rounded hover:bg-secondary font-semibold"
           >
-            Submit
+            {isEditMode ? "Update" : "Create"} Role
           </button>
           <button
             type="button"

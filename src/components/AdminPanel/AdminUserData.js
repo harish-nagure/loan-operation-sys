@@ -5,7 +5,7 @@ import DashboardHead from './DashboardHead';
 import AdminUserForm from './AdminUserForm';
 
 
-import { createRole,getRoles } from '../api_service'; 
+import { createRole,getRoles,updateRole } from '../api_service'; 
 
 const AdminUserPanel = () => {
 
@@ -22,10 +22,12 @@ const AdminUserPanel = () => {
 
 
   useEffect(() => {
+    
     const fetchRoles = async () => {
       try {
         const roles = await getRoles();
-        setAdminList(roles);
+        const sortedRoles = roles.sort((a, b) => a.id - b.id); 
+        setAdminList(sortedRoles);
       } catch (error) {
         console.error("Error fetching roles:", error.message);
       }
@@ -48,16 +50,17 @@ const AdminUserPanel = () => {
     }
 
     try {
-      const createdRole = await createRole(formData);
 
       if (editId) {
+        const updatedRole = await updateRole(editId, formData);
         setAdminList(prev =>
-          prev.map(admin => (admin.id === editId ? { ...formData, id: editId } : admin))
+          prev.map(admin => (admin.id === editId ? { ...updatedRole } : admin))
         );
       } else {
+        const createdRole = await createRole(formData);
         setAdminList(prev => [...prev, { ...createdRole }]);
       }
-
+      alert(editId ? "Role updated successfully!" : "Role created successfully!");
       resetForm();
       setFormVisible(false);
     } catch (error) {
@@ -125,6 +128,7 @@ const AdminUserPanel = () => {
               <table className="min-w-full text-sm text-left">
                 <thead className="bg-gray-100 border-b text-gray-700">
                   <tr>
+                    {/* <th className="py-2 px-4">ID</th> */}
                     <th className="py-2 px-4">Role</th>
                     <th className="py-2 px-4">Description</th>
                     {/* {Object.entries(formData.permissions).map(([perm]) => (
@@ -138,6 +142,7 @@ const AdminUserPanel = () => {
                 <tbody>
                 {adminList.map((admin) => (
                       <tr key={admin.id} className="border-b hover:bg-gray-50 text-base">
+                      {/* <td className="py-2 px-4">{admin.id}</td> */}
                       <td className="py-2 px-4">{admin.roleName}</td>
                       <td className="py-2 px-4">{admin.description}</td>
 

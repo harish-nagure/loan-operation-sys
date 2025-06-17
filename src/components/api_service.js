@@ -59,6 +59,10 @@ export async function Register({ username, email, password }) {
 //         "updtTime": null
 
 
+//ROLE CREATION API
+// This function creates a new role in the system.
+
+// To add a new role and its description, using the POST method to the `/roles` endpoint.
 export async function createRole({ roleName, description }) {
   console.log('Creating role:', { roleName, description, apiUrl: process.env.REACT_APP_API_URL });
 
@@ -85,7 +89,7 @@ export async function createRole({ roleName, description }) {
   return data;
 }
 
-
+// This fuction is to GET or FETCH all roles from the system.
 export async function getRoles() {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/roles`, {
     headers: {
@@ -101,6 +105,26 @@ export async function getRoles() {
   const data = await response.json();
   return data;
 }
+
+// This function updates an existing role in the system.
+export async function updateRole(id, updatedData) {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/roles/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+    },
+    body: JSON.stringify(updatedData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to update role');
+  }
+
+  return await response.json();
+}
+
 
 
 export async function resetPassword({ email, newPassword}) {

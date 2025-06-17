@@ -1,18 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { SiSimplelogin } from "react-icons/si";
 
 import { loginUser } from './api_service';
 
 const LoginPage = ({onLogin}) => {
-  const [userType, setUserType] = useState('User');
+  // const [OTP, setOTP] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+
+   const [OTP, setOTP] = useState('');
+  const [timer, setTimer] = useState(0);
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSendOTP = () => {
+    // Simulate OTP send API call
+    console.log('OTP sent');
+
+    setIsSending(true);
+    setTimer(20); // 20 seconds countdown
+  };
+
+  useEffect(() => {
+    let interval = null;
+
+    if (isSending && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      clearInterval(interval);
+      setIsSending(false);
+    }
+
+    return () => clearInterval(interval);
+  }, [isSending, timer]);
 
  
   // const handleSubmit = (e) => {
@@ -31,12 +60,28 @@ const LoginPage = ({onLogin}) => {
   //   navigate('/user_menu_data'); // Redirect to dashboard after successful login
     
   // };
+const handleVerifyOTP = () => {
+  const newErrors = {};
+  if (!OTP.trim()) newErrors.OTP = 'OTP is required';
+  else if (OTP.length !== 6) newErrors.OTP = 'OTP must be 6 digits';
+  setErrors(newErrors);
 
+  if (Object.keys(newErrors).length === 0) {
+    // Call your verify OTP API here
+    console.log('Verifying OTP:', OTP);
+  }
+
+};
   
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
+    if (!OTP.trim()) {
+      newErrors.OTP = 'OTP is required';
+    } else if (OTP.length !== 6) {
+      newErrors.OTP = 'OTP must be 6 digits';
+    } 
     if (!username.trim()) newErrors.username = 'Username is required';
     if (!password.trim()) newErrors.password = 'Password is required';
 
@@ -47,7 +92,7 @@ const LoginPage = ({onLogin}) => {
         const data = await loginUser({ username, password });
 
 
-        console.log('Login successful:', { userType, username});
+        console.log('Login successful:', { OTP, username});
         onLogin(data?.role?.toLowerCase());
         navigate('/user_menu_data');
       } catch (error) {
@@ -132,39 +177,35 @@ const LoginPage = ({onLogin}) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#30c9d6]">
-      <div className="bg-white rounded-2xl shadow-2xl flex overflow-hidden max-w-5xl w-full">
+
+
+       <div className="bg-white rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden w-full max-w-4xl">
         
-        {/* Left side illustration */}
-        <div className="w-1/2 bg-[#029aaa] flex flex-col items-center justify-center p-8">
-          <h1 className="text-4xl font-bold text-white mb-8">Welcome to WSLOS</h1>
-          <img
+         <div className="w-full md:w-1/2 bg-[#029aaa] flex flex-col items-center justify-center py-12 px-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">Join WSLOS</h1>
+            
+            {/* Hide image on small screens, show from md (768px) onwards */}
+            <img
             src="https://acemoney.in/assets/images/fintech/neo%20bank-01.png"
-            alt="Banking Illustration"
-            className="w-full max-w-xs rotate-2 px-5"
-          />
-        </div>
+            alt="Register"
+            className="w-full max-w-xs rotate-2 hidden md:block"
+            />
+        </div> 
+        
 
         {/* Right side form */}
-        <div className="w-1/2 p-10">
-          <h2 className="text-3xl font-bold text-[#01c4d5] mb-6">Admin / User Login</h2>
+        <div className="w-full md:w-1/2 p-10">
+        <h2 className="text-3xl font-bold text-[#01c4d5] mb-6 flex items-center gap-2">
+          <SiSimplelogin />
+          Login
+        </h2>
+
           <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* User Type */}
-            <div>
-              <label className="block mb-1 text-gray-700">Login As</label>
-              <select
-                value={userType}
-                onChange={(e) => setUserType(e.target.value)}
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa]"
-              >
-                <option value="User">User</option>
-                <option value="Admin">Admin</option>
-              </select>
-            </div>
-
+            
             {/* Username */}
             <div>
-              <label className="block mb-1 text-gray-700">Username</label>
+              <label className="block mb-1 text-gray-700">Username/Email</label>
               <input
                 type="text"
                 value={username}
@@ -202,6 +243,76 @@ const LoginPage = ({onLogin}) => {
               </label>
               <a href="/reset_password" className="text-[#029aaa] hover:underline">Forgot password?</a>
             </div>
+
+
+            {/* User Type */}
+            {/* <div>
+              <label className="block mb-1 text-gray-700">OTP</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="number"
+                  value={OTP}
+                  onChange={(e) => setOTP(e.target.value)}
+                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa]"
+                  placeholder="Enter OTP"
+                />
+                <button
+                  onClick={handleSendOTP}
+                  disabled={isSending}
+                  className={`px-4 w-1/4 py-0.5 text-sm rounded text-white ${
+                    isSending ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#029aaa] hover:bg-[#027c8a]'
+                  }`}
+                >
+                  {isSending ? `Resend in ${timer}s` : 'Send OTP'}
+                </button>
+              </div>
+
+              {errors.OTP && <p className="text-red-500 text-xs mt-1">{errors.OTP}</p>}
+            </div> */}
+            <div className="mb-4">
+              <label className="block mb-1 text-gray-700">OTP</label>
+              <div className="flex items-center gap-2">
+                {/* OTP Input */}
+                <div className="flex items-center border rounded px-3 py-2 focus-within:ring-2 focus-within:ring-[#029aaa] w-full max-w-xs">
+                  <input
+                    type="text"
+                    value={OTP}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (/^\d*$/.test(val)) setOTP(val); // only digits
+                    }}
+                    maxLength={6}
+                    placeholder="Enter OTP"
+                    className="flex-1 focus:outline-none"
+                  />
+                  <span
+                    onClick={handleSendOTP}
+                    className={`ml-2 text-sm cursor-pointer ${
+                      timer > 0 ? 'text-gray-400 pointer-events-none' : 'text-[#029aaa] hover:underline'
+                    }`}
+                  >
+                    {isSending ? (timer > 0 ? `Resend in ${timer}s` : 'Resend') : 'Send OTP'}
+                  </span>
+                </div>
+
+                {/* Verify OTP Button */}
+                <button
+                  onClick={handleVerifyOTP}
+                  disabled={OTP.length !== 6}
+                  className={`px-4 w-1/5 text-sm rounded text-white ${
+                    OTP.length !== 6 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#029aaa] hover:bg-[#027c8a]'
+                  }`}
+                >
+                  Verify OTP
+                </button>
+              </div>
+
+              {errors.OTP && <p className="text-red-500 text-xs mt-1">{errors.OTP}</p>}
+            </div>
+
+
+
+
 
             {/* Login Button */}
             <button
