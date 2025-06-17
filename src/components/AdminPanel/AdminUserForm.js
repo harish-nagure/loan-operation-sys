@@ -2,7 +2,7 @@ import React from 'react';
 import { FaUserShield } from 'react-icons/fa';
 
 const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
-  const { firstName, lastName, roleName, phone, description } = formData;
+  const { roleName, description } = formData;
 
   const isEditMode = Boolean(formData.id);
 
@@ -26,7 +26,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
 
       <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-5">
 
-        <div>
+        {/* <div>
           <label className="block text-gray-700 font-semibold mb-1">First Name</label>  
           <input
             type="text"
@@ -45,7 +45,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent focus:border-accent"
           />
-        </div>
+        </div> */}
 
         <div>
           <label className="block text-gray-700 font-semibold mb-1">Role</label>
@@ -58,7 +58,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
           />
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-gray-700 font-semibold mb-1">Phone</label>
           <input
             type="text"
@@ -67,7 +67,7 @@ const AdminUserForm = ({ formData, setFormData, onSubmit, onCancel }) => {
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent focus:border-accent"
           />
-        </div>
+        </div> */}
          
         <div>
           <label className="block text-gray-700 font-semibold mb-1">Description</label>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
@@ -12,6 +12,7 @@ import AdminUserPanel from "./components/AdminPanel/AdminUserData";
 
 import Login from "./components/Login";
 import MenuForm from "./components/AdminPanel/MenuForm";
+import AccessControlSetup from "./components/AdminPanel/AccessControlSetup";
 import AccessControl from "./components/AdminPanel/AccessControl";
 import OrganizationForm from "./components/AdminPanel/OrganizationForm";
 import MultiStepForm from "./components/AdminPanel/MultiStepForm";
@@ -41,32 +42,14 @@ const initialSettings = Object.fromEntries(defaultFields.map(key => [key, true])
 function App() {
 
     const [fieldSettings, setFieldSettings] = useState(initialSettings);
-    
-   
-    
 
-
-    const [role, setRole] = useState(null);
-
-      useEffect(() => {
-      const stored = sessionStorage.getItem('role');
-      if (stored && typeof stored === 'string') {
-        setRole(stored.toLowerCase());
-      } else {
-        setRole(null);
-      }
-    }, []);
-
-
-  console.log("Role   in App component:", role);
 
   return (
-
     <div className=" bg-gray-100 min-h-screen">
       <Router>
         <Routes>
-          <Route path="/" element={<Login onLogin={(r) => setRole(r)} />} />
-          <Route path="/login" element={<Login  onLogin={(r) => setRole(r)} />}  />
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
 
           <Route
             path="/create_account"
@@ -88,8 +71,7 @@ function App() {
         
           <Route path="/organization_form" element={<OrganizationForm />} />
           <Route path="/application_form" element={<MultiStepForm />} /> */}
-          {role === 'admin' ? (
-              <>
+
           <Route
             path="/user_menu"
             element={
@@ -147,6 +129,15 @@ function App() {
             }
           />
           <Route
+            path="/access_control_setup"
+            element={
+              <SessionValidator>
+                <AccessControlSetup />
+              </SessionValidator>
+            }
+          />
+
+           <Route
             path="/access_control"
             element={
               <SessionValidator>
@@ -218,22 +209,7 @@ function App() {
               </SessionValidator>
             }
           />
-          </>
-             ) : (
-              <>
-                <Route
-                  path="*"
-                  element={
-                    <div className="flex justify-center items-center h-screen">
-                      <h1 className="text-2xl font-bold text-gray-700">
-                        Access Denied. Admins Only.
-                      </h1>
-                    </div>
-                  }
-                />
-              </>
-            )
-          }
+          
 
 
 

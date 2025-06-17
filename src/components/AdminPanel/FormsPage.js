@@ -1,8 +1,6 @@
 import React, { useEffect, useState,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-
 const FormsPage = () => {
   const navigate = useNavigate();
   const [steps, setSteps] = useState([]);
@@ -12,22 +10,28 @@ const FormsPage = () => {
     return stored ? JSON.parse(stored) : [];
   });
 
-  useEffect(() => {
-    const stored = sessionStorage.getItem("selectedSteps");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setSteps(parsed);
-      setActive(parsed[0]);
-    } else {
-      navigate("/");
-    }
-  }, [navigate]);
+useEffect(() => {
+  const storedSteps = sessionStorage.getItem("selectedSteps");
+
+  if (storedSteps) {
+    const parsed = JSON.parse(storedSteps);
+    setSteps(parsed);
+    setActive(parsed[0]);
+  } else {
+    alert("Details are not stored");
+    // navigate("/"); // Optional: if you want to redirect
+  }
+}, []);
+
+
 
   const markAsSubmitted = (step) => {
     const updated = [...new Set([...submittedSteps, step])];
     setSubmittedSteps(updated);
     sessionStorage.setItem("submittedSteps", JSON.stringify(updated));
   };
+
+  const isSubmitted = (step) => submittedSteps.includes(step);
 
   const renderForm = (step) => {
     const props = {
@@ -49,8 +53,6 @@ const FormsPage = () => {
         return null;
     }
   };
-
-  const isSubmitted = (step) => submittedSteps.includes(step);
 
   return (
     <div className="flex min-h-screen bg-[#f5fcfd] text-gray-800">
@@ -84,29 +86,45 @@ const FormsPage = () => {
         </button>
       </div>
 
-     
+      {/* Main Content */}
       <div className="flex-1 px-10 py-8">
-        {/* Step Tabs */}
-        <div className="flex flex-wrap border-b border-[#d6f3f5] mb-6">
-          {steps.map((step) => (
-            <button
-              key={step}
-              onClick={() => !isSubmitted(step) && setActive(step)}
-              className={`mr-6 pb-3 text-base transition-all duration-200
-                ${
-                  active === step
-                    ? "border-b-4 border-[#30c9d6] text-[#029aaa] font-bold"
-                    : "text-gray-500 hover:text-[#30c9d6]"
-                }
-                ${isSubmitted(step) ? "opacity-50 cursor-not-allowed" : ""}
-              `}
-            >
-              {step} {isSubmitted(step) && "✔️"}
-            </button>
-          ))}
+        {/* Step Header */}
+        <div className="relative flex justify-between items-center mb-10">
+          <div className="absolute top-3 left-0 right-0 h-0.5 bg-gray-300 z-0" />
+          {steps.map((step, index) => {
+            const submitted = isSubmitted(step);
+            const isActive = active === step;
+            return (
+              <div
+                key={step}
+                className="relative z-10 flex flex-col items-center flex-1"
+              >
+                <div
+                  onClick={() => !submitted && setActive(step)}
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition 
+                    ${
+                      submitted
+                        ? "bg-[#029aaa] border-[#029aaa] text-white"
+                        : isActive
+                        ? "border-[#029aaa] bg-white"
+                        : "border-gray-300 bg-white"
+                    }`}
+                >
+                  {submitted ? "✔" : ""}
+                </div>
+                <div
+                  className={`mt-2 text-xs text-center max-w-[80px] truncate ${
+                    isActive ? "text-[#029aaa] font-medium" : "text-gray-500"
+                  }`}
+                >
+                  {step}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Form Container */}
+        {/* Form */}
         <div className="bg-white border border-[#e0f3f4] shadow rounded-xl p-8">
           {renderForm(active)}
         </div>
@@ -114,6 +132,7 @@ const FormsPage = () => {
     </div>
   );
 };
+
 
 
 
