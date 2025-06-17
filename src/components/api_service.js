@@ -59,36 +59,48 @@ export async function Register({ username, email, password }) {
 //         "updtTime": null
 
 
-export async function createRole({roleName, description}) {
-
+export async function createRole({ roleName, description }) {
   console.log('Creating role:', { roleName, description, apiUrl: process.env.REACT_APP_API_URL });
+
   if (!roleName || !description) {
     throw new Error('Role Name and Description are required');
   }
+
   const response = await fetch(`${process.env.REACT_APP_API_URL}/roles`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // 'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
     },
-    body: JSON.stringify({
-      roleName,
-      description
-    }),
-
+    body: JSON.stringify({ roleName, description }),
   });
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error("Hii" +errorData.message || 'Failed to create role');
+    throw new Error(errorData?.message || 'Failed to create role');
   }
 
   const data = await response.json();
-  console.log('Fetched roles:', data);
+  console.log('Role creation response:', data);
   return data;
 }
 
 
+export async function getRoles() {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/roles`, {
+    headers: {
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData?.message || 'Failed to fetch roles');
+  }
+
+  const data = await response.json();
+  return data;
+}
 
 
 export async function resetPassword({ email, newPassword}) {
