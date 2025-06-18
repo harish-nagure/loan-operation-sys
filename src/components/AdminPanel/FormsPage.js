@@ -1,5 +1,8 @@
 import React, { useEffect, useState,useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardSidebar from "./DashboardSidebar";
+import DashboardHead from "./DashboardHead";
+import { CheckCircle,Check } from "lucide-react";
 
 const FormsPage = () => {
   const navigate = useNavigate();
@@ -10,20 +13,16 @@ const FormsPage = () => {
     return stored ? JSON.parse(stored) : [];
   });
 
-useEffect(() => {
-  const storedSteps = sessionStorage.getItem("selectedSteps");
-
-  if (storedSteps) {
-    const parsed = JSON.parse(storedSteps);
-    setSteps(parsed);
-    setActive(parsed[0]);
-  } else {
-    alert("Details are not stored");
-    // navigate("/"); // Optional: if you want to redirect
-  }
-}, []);
-
-
+  useEffect(() => {
+    const storedSteps = sessionStorage.getItem("selectedSteps");
+    if (storedSteps) {
+      const parsed = JSON.parse(storedSteps);
+      setSteps(parsed);
+      setActive(parsed[0]);
+    } else {
+      alert("Details are not stored");
+    }
+  }, []);
 
   const markAsSubmitted = (step) => {
     const updated = [...new Set([...submittedSteps, step])];
@@ -57,81 +56,79 @@ useEffect(() => {
   return (
     <div className="flex min-h-screen bg-[#f5fcfd] text-gray-800">
       {/* Sidebar */}
-      <div className="w-72 bg-white border-r shadow-lg px-6 py-8">
-        <h2 className="text-2xl font-bold text-[#029aaa] mb-8">Menus</h2>
-        <div className="space-y-3">
-          {steps.map((step) => (
-            <div
-              key={step}
-              onClick={() => !isSubmitted(step) && setActive(step)}
-              className={`cursor-pointer px-4 py-2 rounded-lg transition-all duration-200 flex justify-between items-center
-                ${
-                  active === step
-                    ? "bg-[#e0f8fa] text-[#029aaa] font-semibold"
-                    : "hover:bg-[#f0f9fa]"
-                }
-                ${isSubmitted(step) ? "opacity-50 cursor-not-allowed" : ""}
-              `}
-            >
-              <span>{step}</span>
-              {isSubmitted(step) && <span className="text-blue-500">✔️</span>}
-            </div>
-          ))}
-        </div>
-        <button
-          onClick={() => navigate("/selection_steps_page")}
-          className="mt-8 block text-sm text-[#029aaa] hover:underline transition"
-        >
-          ⬅ Back to Selection
-        </button>
+      <div className="w-64 bg-white shadow-md z-10">
+        <DashboardSidebar />
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 px-10 py-8">
-        {/* Step Header */}
-        <div className="relative flex justify-between items-center mb-10">
-          <div className="absolute top-3 left-0 right-0 h-0.5 bg-gray-300 z-0" />
-          {steps.map((step, index) => {
-            const submitted = isSubmitted(step);
-            const isActive = active === step;
-            return (
-              <div
-                key={step}
-                className="relative z-10 flex flex-col items-center flex-1"
-              >
-                <div
-                  onClick={() => !submitted && setActive(step)}
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition 
-                    ${
-                      submitted
-                        ? "bg-[#029aaa] border-[#029aaa] text-white"
-                        : isActive
-                        ? "border-[#029aaa] bg-white"
-                        : "border-gray-300 bg-white"
-                    }`}
-                >
-                  {submitted ? "✔" : ""}
-                </div>
-                <div
-                  className={`mt-2 text-xs text-center max-w-[80px] truncate ${
-                    isActive ? "text-[#029aaa] font-medium" : "text-gray-500"
-                  }`}
-                >
-                  {step}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <DashboardHead />
 
-        {/* Form */}
-        <div className="bg-white border border-[#e0f3f4] shadow rounded-xl p-8">
-          {renderForm(active)}
+        <div className="flex-1 px-10 py-8 overflow-y-auto">
+          {/* Step Tracker */}
+          <div className="relative flex justify-between items-start mb-12 pl-8 pr-8">
+            {/* Background Line */}
+            <div className="absolute top-3 left-0 right-0 h-1 bg-gray-300 z-0" />
+
+            {steps.map((step, index) => {
+              const submitted = isSubmitted(step);
+              const isActive = active === step;
+              const isLast = index === steps.length - 1;
+
+              return (
+                <div key={step} className="relative z-10 flex flex-col items-center flex-1">
+                  {/* Circle */}
+                  <div
+                    onClick={() => !submitted && setActive(step)}
+                    className={`w-6 h-6 rounded-full border-4 flex items-center justify-center cursor-pointer transition
+                      ${submitted
+                        ? "bg-green-500 border-green-500 text-white"
+                        : isActive
+                        ? "border-green-500 bg-white"
+                        : "border-gray-300 bg-white"
+                      }`}
+                  >
+                    {submitted && (
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+
+                  {/* Line to next circle */}
+                  {!isLast && (
+                    <div className="absolute top-3 left-full w-40 h-1 bg-gray-300 -ml-1" />
+                  )}
+
+                  {/* Step Label */}
+                  <div className="mt-3 text-sm text-black text-center max-w-[100px] break-words leading-snug">
+                    {step}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Render Actual Form */}
+          <div className="bg-white border border-[#e0f3f4] shadow rounded-xl p-8">
+            {renderForm(active)}
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+
+
+
+
 
 
 

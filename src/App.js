@@ -65,6 +65,8 @@ function App() {
       }
     }, []);
 
+    console.log("Role from sessionStorage:", sessionStorage.getItem('token'));
+
 
   console.log("Role   in App component:", role);
 
@@ -239,7 +241,7 @@ function App() {
              ) : (
               <>
                 <Route
-                  path="*"
+                  path="/"
                   element={
                     <div className="flex justify-center items-center h-screen">
                       <h1 className="text-2xl font-bold text-gray-700">
@@ -248,6 +250,52 @@ function App() {
                     </div>
                   }
                 />
+
+                <Route
+                path="*"
+                element={
+                  <SessionValidator>
+                    <MultiStepForm fieldSettings={fieldSettings}/>
+                  </SessionValidator>
+                }
+              />
+
+              <Route
+            path="/custom_workflow"
+            element={
+              <SessionValidator>
+                <LoanTypeSelectionPage />
+              </SessionValidator>
+            } 
+          />
+
+          <Route
+            path="/selection_steps_page"
+            element={
+              <SessionValidator>
+                <SelectStepsPage />
+              </SessionValidator>
+            }
+          />
+
+          <Route
+            path="/forms_page"
+            element={
+              <SessionValidator>
+                <FormsPage />
+              </SessionValidator>
+            }
+          />
+
+          <Route
+            path="/business_rule_management"
+            element={
+              <SessionValidator>
+                <div>Business Rule Management</div>
+              </SessionValidator>
+            }
+            />
+
               </>
             )
           }

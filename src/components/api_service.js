@@ -2,10 +2,9 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 
 
-export async function loginUser({ username, password }) {
-
+export async function SendOTP({ username, password }) {
   // console.log('Logging in user:', { username, password, processEnv: process.env.REACT_APP_API_URL });
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/send-otp`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -17,22 +16,40 @@ export async function loginUser({ username, password }) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Login failed');
   }
+  const data = await response.json();
+  return data;
+}
+
+export async function VerifyOTP({ email, otp }) {
+
+  console.log('Logging in user:', { email, otp, processEnv: process.env.REACT_APP_API_URL });
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/verify-otp`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, otp }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Login failed');
+  }
 
   const data = await response.json();
   console.log('Login response data:', data);
   if (data.token) {
     sessionStorage.setItem('isLoggedIn', 'true');
-    sessionStorage.setItem('username', username);
-    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('username', data.userId);
     sessionStorage.setItem('role', data.role);
+    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('token', data.refreshToken);
     sessionStorage.setItem('loginTime', new Date().getTime());
   } else {
     throw new Error('Token not found in response');
   }
   return data;
 }
-
-
 
 
 export async function Register({ username, email, password }) {

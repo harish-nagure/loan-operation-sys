@@ -1,15 +1,28 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import BussinessCustomerInfo from "./BussinessCustomerInfo";
 import CompanyInfoForm from "./CompanyInfoForm";
 import OwnerInfoForm from "./OwnerInfoForm";
 import CollateralInfoForm from "./CollateralInfoForm";
 import { FaUser, FaBuilding, FaUsers, FaFileSignature } from "react-icons/fa";
-
+import DashboardHead from "./DashboardHead";
+import DashboardSidebar from "./DashboardSidebar";
 
 const FormHeader = () => {
   const [step, setStep] = useState(1);
+  const [userType, setUserType] = useState("retailer");
+  const navigate = useNavigate();
 
-  // Basic Info State
+  const handleUserTypeChange = (e) => {
+    const value = e.target.value;
+    setUserType(value);
+    if (value === "corporate") {
+      navigate("/form_header"); // Change to your desired route for Corporate
+    } else {
+      navigate("/application_form")
+    }
+  };
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -19,7 +32,6 @@ const FormHeader = () => {
     amountRequested: "",
   });
 
-  // Company Info State
   const [companyInfo, setCompanyInfo] = useState({
     dba: "",
     ssnItin: "",
@@ -34,7 +46,6 @@ const FormHeader = () => {
     taxId: "",
   });
 
-  // Owner Info State
   const [ownerInfo, setOwnerInfo] = useState([
     {
       firstName: "",
@@ -54,7 +65,7 @@ const FormHeader = () => {
   const [collateralInfo, setCollateralInfo] = useState({
     collateralType: "",
     propertyType: "",
-    isPrimaryResidence: "", // "yes" or "no"
+    isPrimaryResidence: "",
     streetAddress: "",
     zipCode: "",
     state: "",
@@ -68,18 +79,9 @@ const FormHeader = () => {
     description: "",
   });
 
-  
   const validateBasicInfo = () => {
-    const {
-      firstName,
-      lastName,
-      mobile,
-      email,
-      companyLegalName,
-      amountRequested,
-    } = form;
+    const { firstName, lastName, mobile, email, companyLegalName, amountRequested } = form;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     return (
       firstName.trim() &&
       lastName.trim() &&
@@ -106,7 +108,6 @@ const FormHeader = () => {
     } = companyInfo;
 
     const normalizedSSN = ssnItin.replace(/\D/g, "");
-
     return (
       dba.trim() &&
       normalizedSSN.length === 9 &&
@@ -123,53 +124,25 @@ const FormHeader = () => {
   };
 
   const validateOwnerInfo = () => {
-    for (const [index, owner] of ownerInfo.entries()) {
-      if (!owner.firstName.trim()) {
-        console.log(`Owner ${index + 1}: First Name is required`);
-        return false;
-      }
-      if (!owner.lastName.trim()) {
-        console.log(`Owner ${index + 1}: Last Name is required`);
-        return false;
-      }
-      if (!owner.dob.trim()) {
-        console.log(`Owner ${index + 1}: DOB is required`);
-        return false;
-      }
-      if (!owner.ownership.trim()) {
-        console.log(`Owner ${index + 1}: Ownership % is required`);
-        return false;
-      }
-      if (!owner.address1.trim()) {
-        console.log(`Owner ${index + 1}: Address 1 is required`);
-        return false;
-      }
-      if (!owner.zipCode.trim()) {
-        console.log(`Owner ${index + 1}: Zip Code is required`);
-        return false;
-      }
-      if (!owner.city.trim()) {
-        console.log(`Owner ${index + 1}: City is required`);
-        return false;
-      }
-      if (!owner.state.trim()) {
-        console.log(`Owner ${index + 1}: State is required`);
-        return false;
-      }
-      if (!owner.bureauConsent) {
-        console.log(`Owner ${index + 1}: Please give Bureau Consent`);
-        return false;
-      }
-      if (!owner.appConsent) {
-        console.log(`Owner ${index + 1}: Please give Application Consent`);
+    for (const owner of ownerInfo) {
+      if (
+        !owner.firstName.trim() ||
+        !owner.lastName.trim() ||
+        !owner.dob.trim() ||
+        !owner.ownership.trim() ||
+        !owner.address1.trim() ||
+        !owner.zipCode.trim() ||
+        !owner.city.trim() ||
+        !owner.state.trim() ||
+        !owner.bureauConsent ||
+        !owner.appConsent
+      ) {
         return false;
       }
     }
-    console.log("All owners validated successfully");
     return true;
   };
 
-  
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -182,14 +155,10 @@ const FormHeader = () => {
     setOwnerInfo(updatedOwners);
   };
 
- 
   const handleTabClick = (tab) => {
-    if (tab === 1) {
-      setStep(1);
-    } else if (tab === 2) {
-      if (validateBasicInfo()) setStep(2);
-      else alert("Please complete Basic Info first.");
-    } else if (tab === 3) {
+    if (tab === 1) setStep(1);
+    else if (tab === 2) validateBasicInfo() ? setStep(2) : alert("Please complete Basic Info first.");
+    else if (tab === 3) {
       if (!validateBasicInfo()) return alert("Please complete Basic Info first.");
       if (!validateCompanyInfo()) return alert("Please complete Company Info first.");
       setStep(3);
@@ -202,87 +171,116 @@ const FormHeader = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <div className="flex-1 p-4">
-        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-full mt-4">
-          <h2 className="text-2xl font-bold mb-2">Customer Business Info</h2>
+    <div className="flex min-h-screen bg-gray-100">
+      <DashboardSidebar />
 
-          <div className="text-gray-600 text-lg mb-2 font-semibold">
-         
-          </div>
+      <div className="flex-1">
+        <DashboardHead />
 
-         
+        <div className="p-4">
+          <div className="bg-white rounded-lg shadow-lg p-6 mt-4 w-full">
 
-          <div className="flex justify-start gap-8 mb-6 border-b border-gray-300">
-  {[
-    { step: 1, label: "Basic Info", icon: <FaUser className="mr-2" /> },
-    { step: 2, label: "Company Info", icon: <FaBuilding className="mr-2" /> },
-    { step: 3, label: "Owner Info", icon: <FaUsers className="mr-2" /> },
-    { step: 4, label: "Collateral Info", icon: <FaFileSignature className="mr-2" /> },
-  ].map((tab) => {
-    const disabled =
-      (tab.step === 2 && !validateBasicInfo()) ||
-      (tab.step === 3 && (!validateBasicInfo() || !validateCompanyInfo())) ||
-      (tab.step === 4 &&
-        (!validateBasicInfo() || !validateCompanyInfo() || !validateOwnerInfo()));
+            {/* ✅ USER TYPE RADIO SECTION */}
+            <div className="mb-6">
+              <label className="block text-gray-700 font-semibold mb-2">
+                Please select user type
+              </label>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="userType"
+                    value="retailer"
+                    checked={userType === "retailer"}
+                    onChange={handleUserTypeChange}
+                  />
+                  Retailer
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="userType"
+                    value="corporate"
+                    checked={userType === "corporate"}
+                    onChange={handleUserTypeChange}
+                  />
+                  Corporate
+                </label>
+              </div>
+            </div>
 
-    return (
-      <button
-        key={tab.step}
-        onClick={() => !disabled && handleTabClick(tab.step)}
-        disabled={disabled}
-        className={`flex items-center pb-2 font-semibold text-lg transition ${
-          step === tab.step
-            ? "text-[#30c9d6] border-b-4 border-[#30c9d6]"
-            : "text-gray-600 hover:text-[#30c9d6]"
-        } ${disabled ? "text-gray-400 cursor-not-allowed" : ""}`}
-      >
-        {tab.icon}
-        {tab.label}
-      </button>
-    );
-  })}
-</div>
+            {/* ✅ FORM TABS */}
+            <div className="flex justify-start gap-8 mb-6 border-b border-gray-300">
+              {[
+                { step: 1, label: "Basic Info", icon: <FaUser className="mr-2" /> },
+                { step: 2, label: "Company Info", icon: <FaBuilding className="mr-2" /> },
+                { step: 3, label: "Owner Info", icon: <FaUsers className="mr-2" /> },
+                { step: 4, label: "Collateral Info", icon: <FaFileSignature className="mr-2" /> },
+              ].map((tab) => {
+                const disabled =
+                  (tab.step === 2 && !validateBasicInfo()) ||
+                  (tab.step === 3 && (!validateBasicInfo() || !validateCompanyInfo())) ||
+                  (tab.step === 4 &&
+                    (!validateBasicInfo() || !validateCompanyInfo() || !validateOwnerInfo()));
+                return (
+                  <button
+                    key={tab.step}
+                    onClick={() => !disabled && handleTabClick(tab.step)}
+                    disabled={disabled}
+                    className={`flex items-center pb-2 font-semibold text-lg transition ${
+                      step === tab.step
+                        ? "text-[#30c9d6] border-b-4 border-[#30c9d6]"
+                        : "text-gray-600 hover:text-[#30c9d6]"
+                    } ${disabled ? "text-gray-400 cursor-not-allowed" : ""}`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
 
-
-          <div className="w-full">
-            {step === 1 && (
-              <BussinessCustomerInfo
-                form={form}
-                handleChange={handleChange}
-               
-                onContinue={() => {
-                  if (validateBasicInfo()) setStep(2);
-                  else alert("Please fill all Basic Info fields correctly.");
-                }}
-              />
-            )}
-            {step === 2 && (
-              <CompanyInfoForm
-                data={companyInfo}
-                onChange={handleCompanyInfoChange}
-                onBack={() => setStep(1)}
-                onContinue={() => {
-                  if (validateCompanyInfo()) setStep(3);
-                  else alert(
-                    "SSN/ITIN must be exactly 9 digits and all fields filled."
-                  );
-                }}
-              />
-            )}
-            {step === 3 && (
-              <OwnerInfoForm
-                data={ownerInfo}
-                onChange={handleOwnerInfoChange}
-                onBack={() => setStep(2)}
-                onContinue={() => {
-                  if (validateOwnerInfo()) setStep(4);
-                  else alert("Please fill all Owner Info fields correctly.");
-                }}
-              />
-            )}
-            {step === 4 && <CollateralInfoForm onBack={() => setStep(3)} onContinue={() => alert("Form Submitted!")}
-             />}
+            {/* ✅ FORM CONTENT BY STEP */}
+            <div className="w-full">
+              {step === 1 && (
+                <BussinessCustomerInfo
+                  form={form}
+                  handleChange={handleChange}
+                  onContinue={() => {
+                    if (validateBasicInfo()) setStep(2);
+                    else alert("Please fill all Basic Info fields correctly.");
+                  }}
+                />
+              )}
+              {step === 2 && (
+                <CompanyInfoForm
+                  data={companyInfo}
+                  onChange={handleCompanyInfoChange}
+                  onBack={() => setStep(1)}
+                  onContinue={() => {
+                    if (validateCompanyInfo()) setStep(3);
+                    else alert("SSN/ITIN must be exactly 9 digits and all fields filled.");
+                  }}
+                />
+              )}
+              {step === 3 && (
+                <OwnerInfoForm
+                  data={ownerInfo}
+                  onChange={handleOwnerInfoChange}
+                  onBack={() => setStep(2)}
+                  onContinue={() => {
+                    if (validateOwnerInfo()) setStep(4);
+                    else alert("Please fill all Owner Info fields correctly.");
+                  }}
+                />
+              )}
+              {step === 4 && (
+                <CollateralInfoForm
+                  onBack={() => setStep(3)}
+                  onContinue={() => alert("Form Submitted!")}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

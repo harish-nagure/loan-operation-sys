@@ -1,208 +1,120 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
 import { SiSimplelogin } from "react-icons/si";
+import { SendOTP, VerifyOTP } from './api_service';
 
-import { loginUser } from './api_service';
-
-const LoginPage = ({onLogin}) => {
-  // const [OTP, setOTP] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
+const LoginPage = ({ onLogin }) => {
   const navigate = useNavigate();
 
-
-   const [OTP, setOTP] = useState('');
-  const [timer, setTimer] = useState(0);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [OTP, setOTP] = useState('');
+  const [email, setEmail] = useState('');
+  const [isOTPVerified, setIsOTPVerified] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
   const [isSending, setIsSending] = useState(false);
-
-  const handleSendOTP = () => {
-    // Simulate OTP send API call
-    console.log('OTP sent');
-
-    setIsSending(true);
-    setTimer(20); // 20 seconds countdown
-  };
-
+  const [timer, setTimer] = useState(0);
+  const [loading, setLoading] = useState(false);
+  // OTP Timer
   useEffect(() => {
-    let interval = null;
-
     if (isSending && timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      clearInterval(interval);
+      const countdown = setTimeout(() => setTimer(t => t - 1), 1000);
+      return () => clearTimeout(countdown);
+    } else {
       setIsSending(false);
     }
+  }, [timer, isSending]);
 
-    return () => clearInterval(interval);
-  }, [isSending, timer]);
+  const handleSendOTP = async () => {
+    setLoading(true);
+    try {
+      const data = await SendOTP({ username, password });
 
- 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
+      if (data) {
+        setLoading(false);
+        alert("Send OTP to your registered email "+data.email);
+        console.log("OTP sent successfully:", data);
+        setEmail(data.email);
+        setIsSending(true);
+        setTimer(20);
+        setIsOTPVerified(false);
+        return;
+      } 
+     
+    } catch (err) {
+      setErrors({ username:'Invalid credentials', password:'Invalid credentials', OTP: 'Failed to send OTP. Check credentials.' });
+    }
+     finally {
+      setLoading(false);
+     }
+  };
 
-  //   const newErrors = {};
-  //   if (!username.trim()) newErrors.username = 'Username is required';
-  //   if (!password.trim()) newErrors.password = 'Password is required';
 
-  //   setErrors(newErrors);
-
-  //   if (Object.keys(newErrors).length === 0) {
-  //     console.log('Form submitted:', { userType, username, password });
-      
-  //   }
-  //   navigate('/user_menu_data'); // Redirect to dashboard after successful login
-    
-  // };
-const handleVerifyOTP = () => {
-  const newErrors = {};
-  if (!OTP.trim()) newErrors.OTP = 'OTP is required';
-  else if (OTP.length !== 6) newErrors.OTP = 'OTP must be 6 digits';
-  setErrors(newErrors);
-
-  if (Object.keys(newErrors).length === 0) {
-    // Call your verify OTP API here
-    console.log('Verifying OTP:', OTP);
-  }
-
-};
-  
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
-
+    // const newErrors = validateForm();
     const newErrors = {};
-    if (!OTP.trim()) {
-      newErrors.OTP = 'OTP is required';
-    } else if (OTP.length !== 6) {
-      newErrors.OTP = 'OTP must be 6 digits';
-    } 
     if (!username.trim()) newErrors.username = 'Username is required';
     if (!password.trim()) newErrors.password = 'Password is required';
+    if (!OTP.trim()) newErrors.OTP = 'OTP is required';
+    if (OTP.length !== 6) newErrors.OTP = 'OTP must be 6 digits';
+
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const data = await loginUser({ username, password });
 
+        console.log('Verifying OTP for user:', { email, otp: OTP });
 
-        console.log('Login successful:', { OTP, username});
+        const data = await VerifyOTP({ email, otp: OTP });
+        
+        console.log('Login successful:', { username, role: data?.role });
+        
         onLogin(data?.role?.toLowerCase());
-        navigate('/user_menu_data');
-      } catch (error) {
-        console.log('Login failed: ' + error.message);
+        const isAdmin = data?.role?.toLowerCase() === 'admin';
+        
+        navigate(isAdmin ? '/user_menu_data' : '/application_form');
+      } catch (err) {
+        console.error("Login error:", err.message);
         onLogin(null);
-        setErrors({ password: 'Invalid credentials' , username: 'Invalid credentials' });
-      }
+        setErrors({  OTP: 'Invalid OTP' });
+      }finally {
+      setLoading(false);
+    }
     }
   };
-  //const handleSubmit = (e) => {
-  //  e.preventDefault();
-
-   // const newErrors = {};
- //   if (!username.trim()) newErrors.username = 'Username is required';
-//    if (!password.trim()) newErrors.password = 'Password is required';
-//    setErrors(newErrors);
-//
-  //if (Object.keys(newErrors).length === 0) {
-      // Dummy user list
-    //  const dummyUsers = [
-    //    { username: 'admin', password: 'admin123', type: 'Admin' },
- //       { username: 'user', password: 'user123', type: 'User' }/
-  //];
-
-  //    const matchedUser = dummyUsers.find(
-  //      (user) =>
-  //        user.username === username &&
- //         user.password === password &&
- //         user.type === userType
-  //    );
-
- //     if (matchedUser) {
-        // Save session data
-  //      sessionStorage.setItem('isLoggedIn', 'true');
-//        sessionStorage.setItem('username', matchedUser.username);
-  //      sessionStorage.setItem('userType', matchedUser.type);
-
-    //    console.log('Login successful:', matchedUser);
-    //    navigate('/user_menu_data');
-   //   } else {
-   //     setErrors({ password: 'Invalid credentials or user type' });
-  //    }
-//    }
-//  };
-
-//   const handleSubmit = async (e) => {
-//   e.preventDefault();
-
-//   const newErrors = {};
-//   if (!username.trim()) newErrors.username = 'Username is required';
-//   if (!password.trim()) newErrors.password = 'Password is required';
-
-//   setErrors(newErrors);
-
-//   if (Object.keys(newErrors).length === 0) {
-//     try {
-//       const response = await fetch('', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ username, password, userType }),
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         console.log('Login successful:', data);
-//         // store token/user info if needed
-//         localStorage.setItem('token', data.token);
-//         navigate('/user_menu_data');
-//       } else {
-//         setErrors({ password: data.message || 'Invalid credentials' });
-//       }
-//     } catch (error) {
-//       console.error('Login error:', error);
-//       setErrors({ password: 'Something went wrong. Try again later.' });
-//     }
-//   }
-// };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#30c9d6]">
 
+      {loading && (
+        <div className="absolute inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
+          <div className="w-16 h-16 border-4 border-white border-t-[#029aaa] rounded-full animate-spin"></div>
+        </div>
+      )}
 
-       <div className="bg-white rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden w-full max-w-4xl">
-        
-         <div className="w-full md:w-1/2 bg-[#029aaa] flex flex-col items-center justify-center py-12 px-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">Join WSLOS</h1>
-            
-            {/* Hide image on small screens, show from md (768px) onwards */}
-            <img
+      {/* <div className="bg-white rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden w-full max-w-4xl"> */}
+      <div className={`bg-white rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden w-full max-w-4xl ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
+       
+        <div className="w-full md:w-1/2 bg-[#029aaa] flex flex-col items-center justify-center py-12 px-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">Join WSLOS</h1>
+          <img
             src="https://acemoney.in/assets/images/fintech/neo%20bank-01.png"
             alt="Register"
             className="w-full max-w-xs rotate-2 hidden md:block"
-            />
-        </div> 
-        
+          />
+        </div>
 
-        {/* Right side form */}
         <div className="w-full md:w-1/2 p-10">
-        <h2 className="text-3xl font-bold text-[#01c4d5] mb-6 flex items-center gap-2">
-          <SiSimplelogin />
-          Login
-        </h2>
+          <h2 className="text-3xl font-bold text-[#01c4d5] mb-6 flex items-center gap-2">
+            <SiSimplelogin /> Login
+          </h2>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-
-            
             {/* Username */}
             <div>
               <label className="block mb-1 text-gray-700">Username/Email</label>
@@ -217,7 +129,7 @@ const handleVerifyOTP = () => {
             </div>
 
             {/* Password */}
-            <div className='relative'>
+            <div className="relative">
               <label className="block mb-1 text-gray-700">Password</label>
               <input
                 type={showPassword ? "text" : "password"}
@@ -228,91 +140,54 @@ const handleVerifyOTP = () => {
               />
               <span
                 className="absolute right-3 top-[38px] cursor-pointer text-gray-600"
-                onClick={() => setShowPassword((prev) => !prev)}
+                onClick={() => setShowPassword(prev => !prev)}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
 
-            {/* Remember & Forgot */}
-            <div className="flex justify-between text-sm text-gray-600">
-              <label>
-                <input type="checkbox" className="mr-1" />
-                Remember me
-              </label>
-              <a href="/reset_password" className="text-[#029aaa] hover:underline">Forgot password?</a>
-            </div>
-
-
-            {/* User Type */}
-            {/* <div>
+            {/* OTP */}
+            <div>
               <label className="block mb-1 text-gray-700">OTP</label>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="number"
-                  value={OTP}
-                  onChange={(e) => setOTP(e.target.value)}
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa]"
-                  placeholder="Enter OTP"
-                />
-                <button
-                  onClick={handleSendOTP}
-                  disabled={isSending}
-                  className={`px-4 w-1/4 py-0.5 text-sm rounded text-white ${
-                    isSending ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#029aaa] hover:bg-[#027c8a]'
-                  }`}
-                >
-                  {isSending ? `Resend in ${timer}s` : 'Send OTP'}
-                </button>
-              </div>
-
-              {errors.OTP && <p className="text-red-500 text-xs mt-1">{errors.OTP}</p>}
-            </div> */}
-            <div className="mb-4">
-              <label className="block mb-1 text-gray-700">OTP</label>
-              <div className="flex items-center gap-2">
-                {/* OTP Input */}
-                <div className="flex items-center border rounded px-3 py-2 focus-within:ring-2 focus-within:ring-[#029aaa] w-full max-w-xs">
+              <div className="flex items-center">
+                <div className={`flex items-center border rounded px-3 py-2 w-full focus-within:ring-2 ${isOTPVerified ? 'border-green-500 ring-green-300' : 'focus-within:ring-[#029aaa]'}`}>
                   <input
                     type="text"
                     value={OTP}
                     onChange={(e) => {
                       const val = e.target.value;
-                      if (/^\d*$/.test(val)) setOTP(val); // only digits
+                      if (/^\d*$/.test(val)) setOTP(val);
+                      setIsOTPVerified(false);
                     }}
                     maxLength={6}
                     placeholder="Enter OTP"
                     className="flex-1 focus:outline-none"
                   />
-                  <span
-                    onClick={handleSendOTP}
-                    className={`ml-2 text-sm cursor-pointer ${
-                      timer > 0 ? 'text-gray-400 pointer-events-none' : 'text-[#029aaa] hover:underline'
-                    }`}
-                  >
-                    {isSending ? (timer > 0 ? `Resend in ${timer}s` : 'Resend') : 'Send OTP'}
-                  </span>
+                  {isOTPVerified ? (
+                    <FaCheckCircle className="text-green-500 ml-2" />
+                  ) : (
+                    <span
+                      onClick={handleSendOTP}
+                      className={`ml-2 text-sm cursor-pointer ${timer > 0 ? 'text-gray-400 pointer-events-none' : 'text-[#029aaa] hover:underline'}`}
+                    >
+                      {isSending ? `Resend in ${timer}s` : 'Send OTP'}
+                     
+                    </span> 
+                    
+                  )}
                 </div>
-
-                {/* Verify OTP Button */}
-                <button
+                {/* <button
+                  type="button"
                   onClick={handleVerifyOTP}
                   disabled={OTP.length !== 6}
-                  className={`px-4 w-1/5 text-sm rounded text-white ${
-                    OTP.length !== 6 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#029aaa] hover:bg-[#027c8a]'
-                  }`}
+                  className={`ml-2 px-3 py-1 text-sm text-white rounded ${OTP.length !== 6 ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#029aaa] hover:bg-[#027c8a]'}`}
                 >
-                  Verify OTP
-                </button>
+                  Verify
+                </button> */}
               </div>
-
               {errors.OTP && <p className="text-red-500 text-xs mt-1">{errors.OTP}</p>}
             </div>
-
-
-
-
 
             {/* Login Button */}
             <button
