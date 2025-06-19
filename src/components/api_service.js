@@ -17,8 +17,8 @@ export async function SendOTP({ username, password }) {
     throw new Error(errorData.message || 'Login failed');
   }
   const data_json = await response.json();
-  const data = data_json?.data;
-  return data;
+  // const data = data_json?.data;
+  return data_json;
 }
 
 export async function VerifyOTP({ email, otp }) {

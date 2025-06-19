@@ -30,14 +30,16 @@ const LoginPage = ({ onLogin }) => {
   const handleSendOTP = async () => {
     setLoading(true);
     try {
-      const data1 = await SendOTP({ username, password });
-      console.log("Send OTP response data:", data1);
-      const data = data1?.data;
+      const data_json = await SendOTP({ username, password });
+      console.log("Send OTP response data:", data_json);
+      const data = data_json?.data;
+
       if (data) {
         setLoading(false);
-        alert(data1.message +" "+ data.email);
-        console.log("OTP sent successfully:", data);
+        alert(data.message +" "+ data.email);
+        console.log("OTP sent successfully:", data.email);
         setEmail(data.email);
+
         setIsSending(true);
         setTimer(20);
         setIsOTPVerified(false);
@@ -86,6 +88,7 @@ const LoginPage = ({ onLogin }) => {
         
         navigate(isAdmin ? '/user_menu_data' : '/application_form');
       } catch (err) {
+
         console.error("Login error:", err.message);
         onLogin(null);
         setErrors({  OTP: 'Invalid OTP' });
