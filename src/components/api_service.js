@@ -43,7 +43,7 @@ export async function VerifyOTP({ email, otp }) {
     sessionStorage.setItem('username', data.userId);
     sessionStorage.setItem('role', data.role);
     sessionStorage.setItem('token', data.token);
-    sessionStorage.setItem('token', data.refreshToken);
+    sessionStorage.setItem('refreshToken', data.refreshToken);
     sessionStorage.setItem('loginTime', new Date().getTime());
   } else {
     throw new Error('Token not found in response');
@@ -70,6 +70,24 @@ export async function Register({ username, email, password }) {
   return data;
 }
 
+
+export async function CreateAccount( firstname, lastname, email, phonenumber, password) {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/create-account`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+    },
+    body: JSON.stringify({ firstname, lastname, email, phonenumber, password }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to create account');
+  }
+
+  return await response.json();
+}
 
 
 // "id": 1,
@@ -207,3 +225,40 @@ export async function resetPassword({ email, newPassword}) {
 //     res.status(500).json({ message: err.message });
 //   }
 // };
+
+
+
+// export async function refreshAccessToken(refreshToken) {
+//   try {
+//     if (!refreshToken) return false;
+
+//     const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ refreshToken }),
+//     });
+
+//     const data = await response.json();
+
+//     if (response.ok && data.token && data.refreshToken) {
+//       // Store new tokens and reset session time
+//       sessionStorage.setItem('token', data.token);
+//       sessionStorage.setItem('refreshToken', data.refreshToken);
+//       sessionStorage.setItem('loginTime', new Date().getTime());
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   } catch (error) {
+//     console.error('Token refresh failed:', error);
+//     return false;
+//   }
+// }
+
+
+
+
+
+

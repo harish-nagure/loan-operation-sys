@@ -21,7 +21,7 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUserType = sessionStorage.getItem("role");
+    const storedUserType = sessionStorage.getItem("role")?.toLowerCase();
     const savedLoans = JSON.parse(sessionStorage.getItem("loanTypes"));
 
     console.log("Stored User Type:", storedUserType);
@@ -45,7 +45,7 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
       onContinue(loanType);
     } else {
       // console.log("Selected Loan Type:", userType, loanType);
-      navigate(userType === "Admin" ? "/selection_steps_page" : "/forms_page");
+      navigate(userType === "admin" ? "/selection_steps_page" : "/forms_page");
     }
   };
 
@@ -101,7 +101,7 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
               ))}
 
               {/* Add Loan Type Widget Button */}
-              {userType === "Admin" && (
+              {userType === "admin" && (
                 <div
                   onClick={() => setShowModal(true)}
                   className="cursor-pointer border border-gray-300 rounded-xl p-5 text-center shadow-sm hover:bg-gray-100 transition-all"

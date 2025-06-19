@@ -59,11 +59,17 @@ const LoginPage = ({ onLogin }) => {
     const newErrors = {};
     if (!username.trim()) newErrors.username = 'Username is required';
     if (!password.trim()) newErrors.password = 'Password is required';
+    if (errors.username === 'Invalid credentials' || errors.password === 'Invalid credentials') {
+      newErrors.username = 'Invalid credentials';
+      newErrors.password = 'Invalid credentials';
+    }
     if (!OTP.trim()) newErrors.OTP = 'OTP is required';
+
     if (OTP.length !== 6) newErrors.OTP = 'OTP must be 6 digits';
 
-
+    if (newErrors) setLoading(false);
     setErrors(newErrors);
+
 
     if (Object.keys(newErrors).length === 0) {
       try {
@@ -110,7 +116,7 @@ const LoginPage = ({ onLogin }) => {
         </div>
 
         <div className="w-full md:w-1/2 p-10">
-          <h2 className="text-3xl font-bold text-[#01c4d5] mb-6 flex items-center gap-2">
+          <h2 className="text-3xl font-bold text-[#01c4d5] mb-6 flex w-full items-center justify-center">
             <SiSimplelogin /> Login
           </h2>
 

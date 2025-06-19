@@ -14,11 +14,11 @@ const steps = [
 const SelectStepsPage = () => {
   const [selected, setSelected] = useState([]);
   const navigate = useNavigate();
- const userType = sessionStorage.getItem("role");
+ const userType = sessionStorage.getItem("role")?.toLowerCase();
 
   useEffect(() => {
-    const userType = sessionStorage.getItem("role");
-    if (userType !== "Admin") {
+    const userType = sessionStorage.getItem("role")?.toLowerCase();
+    if (userType !== "admin") {
       navigate("/forms_page");
     }
   }, [navigate]);
@@ -35,7 +35,7 @@ const SelectStepsPage = () => {
   const handleSubmit = () => {
    
 
-    if (userType === "Admin") {
+    if (userType === "admin") {
       sessionStorage.setItem("adminSelectedSteps", JSON.stringify(selected));
       sessionStorage.setItem("selectedSteps", JSON.stringify(selected));
       alert("Permission is saved Successfully");

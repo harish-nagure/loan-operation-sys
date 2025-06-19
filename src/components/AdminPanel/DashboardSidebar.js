@@ -101,11 +101,15 @@ const DashboardSidebar = () => {
 
 
     const [username, setUsername] = useState("");
+    
+    const [isAdmin, setIsAdmin] = useState(false);
     useEffect(() => {
     const storedUsername = sessionStorage.getItem("username");
+    const role = sessionStorage.getItem("role");
     if (storedUsername) {
       setUsername(storedUsername);
         }
+    if (role?.toLowerCase() === "admin") setIsAdmin(true);
     }, []);
   return (
     <aside className="w-72 bg-white h-screen flex flex-col">
@@ -131,16 +135,18 @@ const DashboardSidebar = () => {
 
       <div className="text-xs font-bold text-accent px-4 uppercase mb-3">Menu</div>
       <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar direction-rtl">
+        
         <div className="direction-ltr">
-        <SidebarItem icon={PiCalendarStarBold} label="User Menu" path={["/user_menu_data"]} />
+
+        
+{isAdmin ? ( 
+  <>        <SidebarItem icon={PiCalendarStarBold} label="User Menu" path={["/user_menu_data"]} />
         
         <SidebarItem icon={MdOutlineAnalytics} label="Role Creation" path={["/admin_user_data"]} />
 
         <SidebarItem icon={MdOutlineAnalytics} label="Access Control Setup" path={["/access_control_setup", "/access_control"]} />
 
         <SidebarItem icon={IoSearch} label="Organization Form" path={["/organization_form"]} />
-        
-        {/* <SidebarItem icon={IoBagRemoveOutline} label="Login" path={["/login"]} /> */}
         
         <SidebarItem icon={HiOutlineNewspaper} label="System Configuration" path={["/loan_system_config"]} />
 
@@ -178,6 +184,12 @@ const DashboardSidebar = () => {
         <SidebarItem icon={IoBagRemoveOutline} label="Multi-Factor Authentication" path={["/multi_factor_authentication"]} />
 
         <SidebarItem icon={IoBagRemoveOutline} label="Form Field Settings" path={["/form_field_settings"]} />
+        </>
+):(
+          <>
+            <SidebarItem icon={MdOutlineAnalytics} label="Application Form" path={["/application_form"]} />
+          </>
+        )}
 
         </div>
       </ul>

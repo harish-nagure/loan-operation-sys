@@ -10,14 +10,14 @@ import DashboardSidebar from "./DashboardSidebar";
 
 const FormHeader = () => {
   const [step, setStep] = useState(1);
-  const [userType, setUserType] = useState("retailer");
+  const [userType, setUserType] = useState("corporate");
   const navigate = useNavigate();
 
   const handleUserTypeChange = (e) => {
     const value = e.target.value;
     setUserType(value);
     if (value === "corporate") {
-      navigate("/form_header"); // Change to your desired route for Corporate
+      navigate("/form_header"); 
     } else {
       navigate("/application_form")
     }

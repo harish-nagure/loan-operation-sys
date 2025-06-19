@@ -26,6 +26,7 @@ import SessionValidator from "./components/SessionValidator";
 import FormsPage from "./components/AdminPanel/FormsPage";
 import LoanTypeSelectionPage from "./components/AdminPanel/LoanTypeSelectionPage";
 import AccessControlSetup from "./components/AdminPanel/AccessControlSetup";
+import FormHeader from "./components/AdminPanel/FormHeader";
 // import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 
@@ -237,6 +238,16 @@ function App() {
               </SessionValidator>
             }
           />
+
+          <Route
+            path="/form_header"
+            element={
+              <SessionValidator>
+                <FormHeader/>
+              </SessionValidator>
+            }
+          />
+
           </>
              ) : (
               <>
@@ -295,6 +306,15 @@ function App() {
               </SessionValidator>
             }
             />
+
+            <Route
+            path="/form_header"
+            element={
+              <SessionValidator>
+                <FormHeader/>
+              </SessionValidator>
+            }
+          />
 
               </>
             )
