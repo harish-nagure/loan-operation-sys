@@ -30,11 +30,12 @@ const LoginPage = ({ onLogin }) => {
   const handleSendOTP = async () => {
     setLoading(true);
     try {
-      const data = await SendOTP({ username, password });
-
+      const data1 = await SendOTP({ username, password });
+      console.log("Send OTP response data:", data1);
+      const data = data1?.data;
       if (data) {
         setLoading(false);
-        alert("Send OTP to your registered email "+data.email);
+        alert(data1.message +" "+ data.email);
         console.log("OTP sent successfully:", data);
         setEmail(data.email);
         setIsSending(true);

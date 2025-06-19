@@ -16,7 +16,8 @@ export async function SendOTP({ username, password }) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Login failed');
   }
-  const data = await response.json();
+  const data_json = await response.json();
+  const data = data_json?.data;
   return data;
 }
 
@@ -36,7 +37,9 @@ export async function VerifyOTP({ email, otp }) {
     throw new Error(errorData.message || 'Login failed');
   }
 
-  const data = await response.json();
+  const data_json = await response.json();
+  const data = data_json?.data;
+  console.log('OTP verification response:', data);
   console.log('Login response data:', data);
   if (data.token) {
     sessionStorage.setItem('isLoggedIn', 'true');
@@ -51,24 +54,6 @@ export async function VerifyOTP({ email, otp }) {
   return data;
 }
 
-
-export async function Register({ username, email, password }) {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username, email, password }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to fetch user data');
-  }
-
-  const data = await response.json();
-  return data;
-}
 
 
 export async function CreateAccount( firstname, lastname, email, phonenumber, password) {
