@@ -24,8 +24,8 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
         lastname: initialData.lastName || "",
         email: initialData.email || "",
         phone: initialData.phone || "",
-        role: initialData.role || "",
-        userState: initialData.isActive || false,
+        role: initialData.role?.roleName.toLowerCase() || "",
+        userState: initialData.active || false,
       });
     }
   }, [initialData]);
@@ -75,6 +75,7 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
 
     
     if (Object.keys(validationErrors).length === 0) {
+      
       const payload = {
         ...initialData,
         firstname: formData.firstname,
@@ -84,11 +85,11 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
         phone: formData.phone,
         isActive: formData.userState,
       };
+      
       onSubmit(payload);
     }
   };
 
-  console.log("Form Data:", isEditMode);
 
 
   return (
@@ -108,7 +109,7 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
                   id="firstname"
                   name="firstname"
                   type="text"
-                  value={formData.username}
+                  value={formData.firstname}
                   onChange={handleChange}
                   className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.firstname ? 'border-red-500' : 'border-gray-300'}`}
                 />

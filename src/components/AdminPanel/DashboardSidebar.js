@@ -133,7 +133,7 @@ const DashboardSidebar = () => {
         </div>
       </div>
 
-      <div className="text-xs font-bold text-accent px-4 uppercase mb-3">Menu</div>
+      {/* <div className="text-xs font-bold text-accent px-4 uppercase mb-3">Menu</div> */}
       <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar direction-rtl">
         
         <div className="direction-ltr">

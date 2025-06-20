@@ -36,7 +36,7 @@ const LoginPage = ({ onLogin }) => {
 
       if (data) {
         setLoading(false);
-        alert(data.message +" "+ data.email);
+        alert(data_json.message +" "+ data.email);
         console.log("OTP sent successfully:", data.email);
         setEmail(data.email);
 
@@ -124,7 +124,7 @@ const LoginPage = ({ onLogin }) => {
             <SiSimplelogin /> Login
           </h2>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} autoComplete="on" className="space-y-5">
             {/* Username */}
             <div>
               <label className="block mb-1 text-gray-700">Username/Email</label>
@@ -132,6 +132,8 @@ const LoginPage = ({ onLogin }) => {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                autoFocus
                 placeholder="Enter your username"
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
               />
@@ -145,6 +147,7 @@ const LoginPage = ({ onLogin }) => {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
                 placeholder="Enter your password"
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
               />
@@ -156,6 +159,18 @@ const LoginPage = ({ onLogin }) => {
               </span>
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
+
+            {/* <div onClick={() => navigate('/reset_password')}>Forgot password</div> */}
+
+            <div className="flex items-center justify-between mb-2">
+              <label className="flex items-center text-sm text-gray-700">
+              </label>
+
+              <p className="text-sm text-[#029aaa] hover:underline cursor-pointer" onClick={() => navigate('/reset_password')}>
+                Forgot password?
+              </p>
+            </div>
+
 
             {/* OTP */}
             <div>

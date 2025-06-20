@@ -107,12 +107,14 @@ export async function createRole({ roleName, description }) {
     throw new Error(errorData?.message || 'Failed to create role');
   }
 
-  const data = await response.json();
+  const data_json = await response.json();
+  const data = data_json?.data;
   console.log('Role creation response:', data);
   return data;
 }
 
 // This fuction is to GET or FETCH all roles from the system.
+
 export async function getRoles() {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/roles`, {
     headers: {
@@ -125,8 +127,10 @@ export async function getRoles() {
     throw new Error(errorData?.message || 'Failed to fetch roles');
   }
 
-  const data = await response.json();
-  return data;
+  const data_json = await response.json();
+  console.log('Fetched roles:', data_json);
+  // const data = data_json?.data;
+  return data_json;
 }
 
 // This function updates an existing role in the system.
@@ -145,7 +149,9 @@ export async function updateRole(id, updatedData) {
     throw new Error(errorData.message || 'Failed to update role');
   }
 
-  return await response.json();
+  const data_json = await response.json();
+  const data = data_json?.data;
+  return data;
 }
 
 
@@ -154,14 +160,96 @@ export async function deleteRole(id){
     method:'DELETE',
     headers:{
       'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
-    }
-  })
+    },
+    body: JSON.stringify(id),
+  });
+
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to delete role');
   }
-  return await response.json();
+  const data_json = await response.json();
+  return data_json?.message || 'Role Not Found';
 }
+
+
+
+// function to create a new user in the system.
+
+export async function createUser({ firstname, lastname, email, phone, role, isActive }) {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    },
+    body: JSON.stringify({
+      firstName: firstname,
+      lastName: lastname,
+      email,
+      phone,
+      active: isActive,
+      rcreationUser: 'system', // or pass dynamically
+      role: { roleName: role } // assumes backend maps roleName to roleId
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to create user');
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+
+
+export async function getAllUsers() {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
+    headers: {
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData?.message || 'Failed to fetch users');
+  }
+
+  const data_json = await response.json();
+  console.log('Fetched users:', data_json);
+  // const data = data_json?.data;
+  return data_json;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

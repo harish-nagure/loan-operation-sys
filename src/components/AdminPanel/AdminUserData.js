@@ -5,7 +5,7 @@ import DashboardHead from './DashboardHead';
 import AdminUserForm from './AdminUserForm';
 
 
-import { createRole,getRoles,updateRole, deleteRole } from '../api_service'; 
+import { createRole,getRoles,updateRole, deleteRole, getAllUsers } from '../api_service'; 
 
 const AdminUserPanel = () => {
 
@@ -25,9 +25,11 @@ const AdminUserPanel = () => {
     
     const fetchRoles = async () => {
       try {
-        const roles = await getRoles();
-        const sortedRoles = roles.sort((a, b) => a.id - b.id); 
-        setAdminList(sortedRoles);
+        const data_json = await getRoles();
+        const roles = data_json?.data;
+        console.log("Fetched roles HIi:", roles);
+        // const sortedRoles = roles.sort((a, b) => a.id - b.id);
+        setAdminList(roles);
       } catch (error) {
         console.error("Error fetching roles:", error.message);
       }
