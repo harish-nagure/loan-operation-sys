@@ -1,0 +1,17 @@
+/* index.css */
+.custom-toast {
+  border-radius: 0.75rem;
+  padding: 1rem;
+  font-family: 'Inter', sans-serif;
+  background-color: white;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid #029aaa; /* Default: teal border */
+}
+
+.custom-toast--error {
+  border-left-color: #e11d48 !important; /* Tailwind's red-600 */
+}
+
+.custom-toast--success {
+  border-left-color: #059669 !important; /* Tailwind's green-600 */
+}

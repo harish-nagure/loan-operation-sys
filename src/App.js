@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -75,6 +77,16 @@ function App() {
 
     <div className=" bg-gray-100 min-h-screen">
       <Router>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          toastClassName="custom-toast"
+          bodyClassName="text-sm"
+        />
         <Routes>
           <Route path="/" element={<Login onLogin={(r) => setRole(r)} />} />
           <Route path="/login" element={<Login  onLogin={(r) => setRole(r)} />}  />

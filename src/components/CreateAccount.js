@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createAccountApi } from "./api_service";
 
 const CreateAccount = () => {
   const [form, setForm] = useState({
@@ -15,7 +16,7 @@ const CreateAccount = () => {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
     if (!form.firstname.trim()) newErrors.firstname = "First name is required";
@@ -31,7 +32,26 @@ const CreateAccount = () => {
 
     if (Object.keys(newErrors).length === 0) {
       console.log("Creating account:", form);
-      // Call API here
+
+try {
+      const UserDetails = {
+        email: form.email,
+        firstName: form.firstname,
+        lastName: form.lastname,
+        password: form.password,
+        roleId: "2", // Assuming roleId is static for now, adjust as needed
+        phoneNumber: form.phonenumber,
+      };
+
+      const result = await createAccountApi(UserDetails);
+      console.log("Account created:", result);
+      alert("Account created successfully!");
+      // You can navigate or reset form here
+    } catch (error) {
+      console.error("Error:", error.message);
+      alert("Failed to create account: " + error.message);
+    }
+        // Call API here
     }
   };
 

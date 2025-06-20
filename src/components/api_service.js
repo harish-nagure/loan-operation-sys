@@ -56,23 +56,22 @@ export async function VerifyOTP({ email, otp }) {
 
 
 
-export async function CreateAccount( firstname, lastname, email, phonenumber, password) {
+export const createAccountApi = async (UserDetails) => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/create-account`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ firstname, lastname, email, phonenumber, password }),
+    body: JSON.stringify(UserDetails),
   });
 
+  const data = await response.json();
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to create account');
+    throw new Error(data.message || "Failed to create account");
   }
+  return data;
+};
 
-  return await response.json();
-}
 
 
 // "id": 1,
@@ -223,17 +222,27 @@ export async function getAllUsers() {
   return data_json;
 }
 
+// Fetch User by ID
+// Purpose: Retrieves a user by their userId.
 
+export async function getUserById(userId) {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/fetch-user/${userId}`,
+    {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+      },
+    }
+  );
 
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData?.message || 'Failed to fetch user');
+  }
 
-
-
-
-
-
-
-
-
+  const data_json = await response.json();
+  return data_json;
+}
 
 
 

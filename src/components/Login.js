@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
 import { SiSimplelogin } from "react-icons/si";
 import { SendOTP, VerifyOTP } from './api_service';
+import { toast } from 'react-toastify';
+
+;
 
 const LoginPage = ({ onLogin }) => {
   const navigate = useNavigate();
@@ -36,7 +39,10 @@ const LoginPage = ({ onLogin }) => {
 
       if (data) {
         setLoading(false);
-        alert(data_json.message +" "+ data.email);
+        toast.success(data_json.message, {
+          className: "custom-toast custom-toast--success",
+        });
+        // alert(data_json.message +" "+ data.email);
         console.log("OTP sent successfully:", data.email);
         setEmail(data.email);
 

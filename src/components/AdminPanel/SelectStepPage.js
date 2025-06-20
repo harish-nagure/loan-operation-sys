@@ -15,7 +15,7 @@ const SelectStepsPage = () => {
   const [selected, setSelected] = useState([]);
   const navigate = useNavigate();
  const userType = sessionStorage.getItem("role")?.toLowerCase();
-
+  const loanType = sessionStorage.getItem("selectedLoanType");
   useEffect(() => {
     const userType = sessionStorage.getItem("role")?.toLowerCase();
     if (userType !== "admin") {
@@ -56,7 +56,7 @@ const SelectStepsPage = () => {
         <div className="p-6 flex items-center justify-center">
           <div className="bg-white shadow-2xl rounded-3xl w-full max-w-5xl p-10 md:p-14">
             <h1 className="text-2xl font-bold text-[#029aaa] mb-8 text-center">
-              Approval Process Flow Setup
+              {loanType.charAt(0).toUpperCase() + loanType.slice(1)} Loan -&gt; Approval Process Flow Setup
             </h1>
 
             {/* Selected Steps */}

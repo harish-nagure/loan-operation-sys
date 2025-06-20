@@ -5,6 +5,7 @@ import BasicInfoForm from "./BasicInfoForm";
 import ApplicationDetailForm from "./ApplicationDetailForm";
 import DashboardHead from "./DashboardHead";
 import DashboardSidebar from "./DashboardSidebar";
+import { getUserById } from "../api_service";
 
 const MultiStepForm = ({ fieldSettings = {} }) => {
   const navigate = useNavigate();
@@ -26,22 +27,46 @@ const MultiStepForm = ({ fieldSettings = {} }) => {
     }
   }, [selectedFormType, navigate]);
 
-  useEffect(() => {
+  // useEffect(async () => {
+  //   const saved = JSON.parse(localStorage.getItem("dynamicFields")) || {};
+  //   const basicInfoDynamic = saved.basicInfo || [];
+  //   setDynamicFields(basicInfoDynamic);
+  //   const data_json = await getUserById(sessionStorage.getItem("userId"));
+  //   console.log("User data:", data_json);
+  //   const initialForm = {
+  //     firstName: "",
+  //     lastName: "",
+  //     mobile: "",
+  //     email: "",
+  //     confirmEmail: "",
+  //     ...Object.fromEntries(basicInfoDynamic.map((field) => [field, ""])),
+  //   };
+
+  //   setForm(initialForm);
+  // }, []);
+useEffect(() => {
+  (async () => {
     const saved = JSON.parse(localStorage.getItem("dynamicFields")) || {};
     const basicInfoDynamic = saved.basicInfo || [];
     setDynamicFields(basicInfoDynamic);
+    
+    const data_json = await getUserById(sessionStorage.getItem("username"));
+
+    const data = data_json?.data;
+    console.log("User data:", data_json);
 
     const initialForm = {
-      firstName: "",
-      lastName: "",
-      mobile: "",
-      email: "",
-      confirmEmail: "",
+      firstName: data.firstName || "",
+      lastName: data.lastName || "",
+      mobile: data.phone || "",
+      email: data.email || "",
+      confirmEmail:"",
       ...Object.fromEntries(basicInfoDynamic.map((field) => [field, ""])),
     };
 
     setForm(initialForm);
-  }, []);
+  })();
+}, []);
 
   const [detail, setDetail] = useState({
     dob: "",
@@ -118,10 +143,10 @@ const MultiStepForm = ({ fieldSettings = {} }) => {
         <DashboardHead />
 
         {/* 🔘 User Type Selection */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+        <div className="bg-white rounded-lg shadow-md  py-8  px-12 mb-4">
           <p className="text-gray-700 font-medium mb-2">Please select user type</p>
           <div className="flex gap-6">
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2" >
               <input
                 type="radio"
                 name="formType"
