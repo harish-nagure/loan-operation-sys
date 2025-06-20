@@ -60,7 +60,7 @@ useEffect(() => {
       lastName: data.lastName || "",
       mobile: data.phone || "",
       email: data.email || "",
-      confirmEmail:"",
+      confirmEmail: data.email || "",
       ...Object.fromEntries(basicInfoDynamic.map((field) => [field, ""])),
     };
 

@@ -287,60 +287,41 @@ export async function resetPassword({ email, newPassword}) {
 }
 
 
+export async function validateAndRefreshToken(refreshToken) {
 
+  // alert("Stored refreshToken API called:", refreshToken);
+  if (!refreshToken) {
+    alert('Refresh token is required');
+  }
 
-// export async function createRole (req, res){
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
 
-//   try {
-//     const { id, roleName, description } = req.body;
+    if (!response.ok) {
+      throw new Error('Token refresh failed with non-200 response');
+    }
 
-//     const newRole = new Role({
-//       id,
-//       roleName,
-//       description,
-//     });
+    const result = await response.json();
 
-//     await newRole.save(); // saves to MongoDB
+    if (result.status === 200 && result.data) {
+      const { token, refreshToken } = result.data;
 
-//     res.status(201).json({ message: 'Role created successfully', role: newRole });
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-
-
-
-// export async function refreshAccessToken(refreshToken) {
-//   try {
-//     if (!refreshToken) return false;
-
-//     const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ refreshToken }),
-//     });
-
-//     const data = await response.json();
-
-//     if (response.ok && data.token && data.refreshToken) {
-//       // Store new tokens and reset session time
-//       sessionStorage.setItem('token', data.token);
-//       sessionStorage.setItem('refreshToken', data.refreshToken);
-//       sessionStorage.setItem('loginTime', new Date().getTime());
-//       return true;
-//     } else {
-//       return false;
-//     }
-//   } catch (error) {
-//     console.error('Token refresh failed:', error);
-//     return false;
-//   }
-// }
-
-
-
-
-
-
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('refreshToken', refreshToken);
+      sessionStorage.setItem('loginTime', Date.now().toString());
+      alert('Token refreshed successfully');
+      return token;
+    } else {
+      throw new Error(result.message || 'Invalid token refresh response');
+    }
+  } catch (error) {
+    console.error('validateAndRefreshToken error:', error);
+    throw error;
+  }
+}

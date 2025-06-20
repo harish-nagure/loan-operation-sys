@@ -22,7 +22,8 @@ import FormFieldSettings from "./components/AdminPanel/FormFieldSettings";
 import SelectStepsPage from "./components/AdminPanel/SelectStepPage";
 import CreateAccount from "./components/CreateAccount";
 import ResetPassword from "./components/ResetPassword";
-
+import UserDashboard from "./components/AdminPanel/UserDashboard";
+import AdminDashboard from "./components/AdminPanel/AdminDashboard";
 
 import SessionValidator from "./components/SessionValidator";
 import FormsPage from "./components/AdminPanel/FormsPage";
@@ -113,6 +114,16 @@ function App() {
           <Route path="/application_form" element={<MultiStepForm />} /> */}
           {role === 'admin' ? (
               <>
+
+          
+          <Route
+            path="/admindashboard"
+            element={
+              <SessionValidator>
+                <AdminDashboard />
+              </SessionValidator>
+            } 
+          />
           <Route
             path="/user_menu"
             element={
@@ -263,17 +274,27 @@ function App() {
           </>
              ) : (
               <>
-                <Route
-                  path="/"
-                  element={
-                    <div className="flex justify-center items-center h-screen">
-                      <h1 className="text-2xl font-bold text-gray-700">
-                        Access Denied. Admins Only.
-                      </h1>
-                    </div>
-                  }
-                />
 
+
+
+              <Route
+                path="/"
+                element={
+                  <div className="flex justify-center items-center h-screen">
+                    <h1 className="text-2xl font-bold text-gray-700">
+                      Access Denied. Admins Only.
+                    </h1>
+                  </div>
+                }
+              />
+                <Route
+                path="/userdashboard"
+                element={
+                  <SessionValidator>
+                    <UserDashboard />
+                  </SessionValidator>
+                }
+              />  
                 <Route
                 path="*"
                 element={

@@ -109,6 +109,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="date"
             id="dob"
+            name="dob"
             value={detail.dob || ""}
             onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
@@ -128,6 +129,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="text"
             id="monthlyIncome"
+            name="monthlyIncome"
             placeholder="Enter amount"
             value={detail.monthlyIncome|| ""}
             onChange={handleDetailChange}
@@ -157,6 +159,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="text"
             id="ssn"
+            name="ssn"
             placeholder="Social Security Number"
             value={detail.ssn || ""}
             onChange={handleDetailChange}
@@ -178,6 +181,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="text"
             id="confirmSsn"
+            name="confirmSsn"
             placeholder="Confirm Social Security Number"
             value={detail.confirmSsn|| ""}
             onChange={handleDetailChange}
@@ -199,6 +203,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="text"
             id="amountNeeded"
+            name="amountNeeded"
             placeholder="Amount needed"
             value={detail.amountNeeded|| ""}
             onChange={handleDetailChange}
@@ -218,6 +223,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="text"
             id="homeAddress"
+            name="homeAddress"
             placeholder="Street address"
             value={detail.homeAddress || ""}
             onChange={handleDetailChange}
@@ -240,6 +246,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="text"
             id="homeAddress2"
+            name="homeAddress2"
             placeholder="Apt, suite, etc. (optional)"
             value={detail.homeAddress2 || ""}
             onChange={handleDetailChange}
@@ -256,6 +263,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="text"
             id="zipCode"
+            name="zipCode"
             placeholder="Zip code"
             value={detail.zipCode|| ""}
             onChange={handleDetailChange}
@@ -277,6 +285,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           <input
             type="text"
             id="city"
+            name="city"
             placeholder="City"
             value={detail.city||""}
             onChange={handleDetailChange}
@@ -295,6 +304,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           </label>
           <select
             id="state"
+            name="state"
             value={detail.state}
             onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
@@ -352,6 +362,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
         <label className="inline-flex items-center gap-2">
           <input
             type="checkbox"
+            name="agreeTerms"
             checked={detail.agreeTerms}
             onChange={handleDetailChange}
             className={`cursor-pointer accent-blue-600 ${
@@ -388,6 +399,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
         <label className="inline-flex items-center gap-2">
           <input
             type="checkbox"
+            name="authorizeCredit"
             checked={detail.authorizeCredit}
             onChange={handleDetailChange}
             className={`cursor-pointer accent-blue-600 ${

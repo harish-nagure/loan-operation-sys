@@ -7,6 +7,7 @@ import {
 } from "react-icons/pi";
 import {
   MdOutlineAnalytics,
+  MdSpaceDashboard
 } from "react-icons/md";
 import {
   HiOutlineNewspaper,
@@ -140,7 +141,11 @@ const DashboardSidebar = () => {
 
         
 {isAdmin ? ( 
-  <>        <SidebarItem icon={PiCalendarStarBold} label="User Menu" path={["/user_menu_data"]} />
+  <>        
+        
+        <SidebarItem icon={MdSpaceDashboard}  label="Dashboard" path={["/admindashboard"]} />
+        
+        <SidebarItem icon={PiCalendarStarBold} label="User Menu" path={["/user_menu_data"]} />
         
         <SidebarItem icon={MdOutlineAnalytics} label="Role Creation" path={["/admin_user_data"]} />
 
@@ -150,7 +155,7 @@ const DashboardSidebar = () => {
         
         <SidebarItem icon={HiOutlineNewspaper} label="System Configuration" path={["/loan_system_config"]} />
 
-        <SidebarItem icon={MdOutlineAnalytics} label="Application Form" path={["/application_form"]} />
+        <SidebarItem icon={MdOutlineAnalytics} label="Application Form" path={["/application_form","/form_header"]} />
 
 
 
@@ -187,7 +192,9 @@ const DashboardSidebar = () => {
         </>
 ):(
           <>
-            <SidebarItem icon={MdOutlineAnalytics} label="Application Form" path={["/application_form"]} />
+
+          <SidebarItem icon={MdSpaceDashboard}  label="Dashboard" path={["/userdashboard"]} />
+          <SidebarItem icon={MdOutlineAnalytics} label="Application Form" path={["/application_form","/form_header"]} />
           </>
         )}
 

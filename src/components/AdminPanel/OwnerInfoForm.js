@@ -307,7 +307,7 @@ const OwnerInfoForm = ({ data, onChange, onBack, onContinue }) => {
         onChange={(e) => handleInputChange(idx, "bureauConsent", e.target.checked)}
         className="w-4 h-4"
       />
-      <span>I authorize NewCo Financial to pull Credit Report</span>
+      <span>I authorize Druk PNB Bank Ltd. to pull Credit Report</span>
     </label>
     {owner.errors.bureauConsent && (
       <p className="text-red-600 text-sm">{owner.errors.bureauConsent}</p>

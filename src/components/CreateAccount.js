@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createAccountApi } from "./api_service";
 
 const CreateAccount = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     firstname: "",
     lastname: "",
@@ -39,19 +41,18 @@ try {
         firstName: form.firstname,
         lastName: form.lastname,
         password: form.password,
-        roleId: "2", // Assuming roleId is static for now, adjust as needed
+        roleId: "2", 
         phoneNumber: form.phonenumber,
       };
 
       const result = await createAccountApi(UserDetails);
       console.log("Account created:", result);
       alert("Account created successfully!");
-      // You can navigate or reset form here
+      navigate("/login");
     } catch (error) {
       console.error("Error:", error.message);
       alert("Failed to create account: " + error.message);
-    }
-        // Call API here
+    } 
     }
   };
 

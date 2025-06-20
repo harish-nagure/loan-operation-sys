@@ -49,6 +49,7 @@ const LoginPage = ({ onLogin }) => {
         setIsSending(true);
         setTimer(20);
         setIsOTPVerified(false);
+        setErrors({});
         return;
       } 
      
@@ -92,7 +93,7 @@ const LoginPage = ({ onLogin }) => {
         onLogin(data?.role?.toLowerCase());
         const isAdmin = data?.role?.toLowerCase() === 'admin';
         
-        navigate(isAdmin ? '/user_menu_data' : '/application_form');
+        navigate(isAdmin ? '/admindashboard' : '/userdashboard');
       } catch (err) {
 
         console.error("Login error:", err.message);

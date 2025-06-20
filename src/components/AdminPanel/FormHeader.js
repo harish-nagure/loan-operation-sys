@@ -177,11 +177,10 @@ const FormHeader = () => {
       <div className="flex-1">
         <DashboardHead />
 
-        <div className="p-4">
-          <div className="bg-white rounded-lg shadow-lg p-6 mt-4 w-full">
 
-            {/* ✅ USER TYPE RADIO SECTION */}
-            <div className="mb-6">
+       {/* ✅ USER TYPE RADIO SECTION */}
+            <div className="p-4">
+        <div className="bg-white rounded-lg shadow-md  py-8  px-12 mb-4">
               <label className="block text-gray-700 font-semibold mb-2">
                 Please select user type
               </label>
@@ -190,11 +189,11 @@ const FormHeader = () => {
                   <input
                     type="radio"
                     name="userType"
-                    value="retailer"
-                    checked={userType === "retailer"}
+                    value="retail"
+                    checked={userType === "retail"}
                     onChange={handleUserTypeChange}
                   />
-                  Retailer
+                  Retail
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -208,6 +207,12 @@ const FormHeader = () => {
                 </label>
               </div>
             </div>
+
+
+        {/*  */}
+          <div className="bg-white rounded-lg shadow-lg p-6 mt-4 w-full">
+
+         
 
             {/* ✅ FORM TABS */}
             <div className="flex justify-start gap-8 mb-6 border-b border-gray-300">

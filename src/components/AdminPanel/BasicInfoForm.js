@@ -190,7 +190,7 @@ const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
         <img src={smartphone} alt="Smartphone" className="w-6 h-6 mt-1 flex-shrink-0" />
         <p className="text-sm text-gray-700">
           By choosing to proceed, I agree to the electronic Communication and E-Sign Agreement,
-          as well as to receive communications by phone or Email from NewCo.
+          as well as to receive communications by phone or Email from Druk PNB Bank Ltd.
         </p>
       </div>
 
@@ -215,7 +215,7 @@ const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
 
       <div className="mt-6 text-center text-sm">
         <span style={{ color: "black" }}>
-          NewCo Financial's{" "}
+          Druk PNB Bank Ltd.'s{" "}
           <a
             href="/terms"
             target="_blank"
