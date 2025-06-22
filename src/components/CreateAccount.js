@@ -41,13 +41,15 @@ try {
         firstName: form.firstname,
         lastName: form.lastname,
         password: form.password,
-        roleId: "2", 
-        phoneNumber: form.phonenumber,
+        roleId: "1", 
+        phone: form.phonenumber,
       };
+
+      console.log(UserDetails);
 
       const result = await createAccountApi(UserDetails);
       console.log("Account created:", result);
-      alert("Account created successfully!");
+      alert("Account created successfully! with User ID: "+result.data.userId);
       navigate("/login");
     } catch (error) {
       console.error("Error:", error.message);

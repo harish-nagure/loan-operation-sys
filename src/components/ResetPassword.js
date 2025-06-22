@@ -1,46 +1,89 @@
 import React, { useState } from "react";
+import { forgetPassword,resetPassword } from "./api_service";
+import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
-    username: "",
+    email: "",
     otp: "",
-    password: "",
-    confirmPassword: "",
+    newPassword: "",
+    // confirmnewPassword: "",
   });
 
   const [errors, setErrors] = useState({});
 
-  const handleChange = (e) =>
+  const handleChange =  (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleRequestOTP = (e) => {
-    e.preventDefault();
-    if (!form.username.trim()) {
-      setErrors({ username: "Username is required" });
-      return;
-    }
+  // const handleRequestOTP = async (e) => {
 
-    setErrors({})
-    //Api call to send OTP
-    console.log("Requesting OTP for:", form.username);
+  //   e.preventDefault();
+  //   if (!form.email.trim()) {
+  //     setErrors({ email: "email is required" });
+  //     return;
+  //   }
 
+
+  //   // setErrors({})
+    
+  //   const data = await forgetPassword( {userId : form.email.trim()});
+  //   alert("ddjfhks"+data);
+  //   console.log("Requesting OTP for:", data);
+
+  //   setStep(2);
+  // };
+
+  const handleRequestOTP = async (e) => {
+  e.preventDefault();
+
+  if (!form.email.trim()) {
+    setErrors({ email: "Email is required" });
+    return;
+  }
+
+  try {
+    const userID = {
+      userId : form.email.trim(),
+    };
+    const data = await forgetPassword(userID);
+    alert(data.message);
+    console.log("Requesting OTP for:", data);
     setStep(2);
-  };
+  } catch (error) {
+    alert("Failed to request OTP: " + error.message);
+    console.error("OTP request error:", error);
+    setErrors({email: error.message})
+  }
+};
 
-  const handleReset = (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
     const newErrors = {};
     if (!form.otp.trim()) newErrors.otp = "OTP is required";
-    if (!form.password) newErrors.password = "Password is required";
-    if (form.password !== form.confirmPassword)
+    if (!form.newPassword) newErrors.newPassword = "Password is required";
+    if (form.newPassword !== form.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      console.log("Resetting password for:", form.username);
-      // reset password via API
+      console.log("Resetting newPassword for:", form.email);
+      try{
+        const resetData = {
+          email: form.email || "",
+          otp: form.otp || "",
+          newPassword: form.newPassword || "",
+        }
+        const data = await resetPassword(resetData);
+        alert(data.message);
+        navigate("/login");
+      }catch(error){
+        alert("Failed to request OTP: " + error.message);
+        console.error("OTP request error:", error);
+        setErrors({otp:error.message})
+      }
     }
   };
 
@@ -69,17 +112,18 @@ const ResetPassword = () => {
             {step === 1 ? (
               <>
                 <input
-                  type="text"
-                  name="username"
-                  placeholder="Enter Username"
-                  value={form.username}
+                  type="email"
+                  name="email"
+                  autoFocus
+                  placeholder="Enter Email"
+                  value={form.email}
                   onChange={handleChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
-                    errors.username ? "border-red-500" : "border-gray-300"
+                    errors.email ? "border-red-500" : "border-gray-300"
                   }`}
                 />
-                {errors.username && (
-                  <p className="text-red-500 text-xs">{errors.username}</p>
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email}</p>
                 )}
               </>
             ) : (
@@ -100,16 +144,16 @@ const ResetPassword = () => {
 
                 <input
                   type="password"
-                  name="password"
+                  name="newPassword"
                   placeholder="New Password"
-                  value={form.password}
+                  value={form.newPassword}
                   onChange={handleChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#029aaa] ${
-                    errors.password ? "border-red-500" : "border-gray-300"
+                    errors.newPassword ? "border-red-500" : "border-gray-300"
                   }`}
                 />
-                {errors.password && (
-                  <p className="text-red-500 text-xs">{errors.password}</p>
+                {errors.newPassword && (
+                  <p className="text-red-500 text-xs">{errors.newPassword}</p>
                 )}
 
                 <input

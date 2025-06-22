@@ -54,9 +54,8 @@ export async function VerifyOTP({ email, otp }) {
   return data;
 }
 
-
-
-export const createAccountApi = async (UserDetails) => {
+export async function createAccountApi(UserDetails){
+  try{  
   const response = await fetch(`${process.env.REACT_APP_API_URL}/create-account`, {
     method: "POST",
     headers: {
@@ -70,7 +69,63 @@ export const createAccountApi = async (UserDetails) => {
     throw new Error(data.message || "Failed to create account");
   }
   return data;
+
+  }catch (error) {
+    console.error('Error resetting password:', error);
+    throw error;
+  }
 };
+
+export async function forgetPassword(userID) {
+  try {
+    console.log(userID);
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/forget-password`, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userID),
+    });
+    
+    const data = await response.json();
+    console.log("forgetPassword response:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to send OTP");
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in forgotPassword:', error);
+    throw error; 
+  }
+}
+
+
+
+export async function resetPassword(resetData) {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+
+      },
+      body: JSON.stringify(resetData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Password reset failed');
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    throw error;
+  }
+}
 
 
 
@@ -180,7 +235,7 @@ export async function createUser({ firstname, lastname, email, phone, role, isAc
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+      // Authorization: `Bearer ${sessionStorage.getItem('token')}`,
     },
     body: JSON.stringify({
       firstName: firstname,
@@ -222,6 +277,29 @@ export async function getAllUsers() {
   return data_json;
 }
 
+
+export async function addUserApi(UserInfo) {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/register`,{
+    method: 'POST',
+    headers:{
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+    },
+    body: JSON.stringify(UserInfo),
+  });
+
+  if (!response.ok){
+    const errorData = await response.json();
+    throw new Error(errorData?.message || 'Failed to add user');
+
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+
+
 // Fetch User by ID
 // Purpose: Retrieves a user by their userId.
 
@@ -242,48 +320,6 @@ export async function getUserById(userId) {
 
   const data_json = await response.json();
   return data_json;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export async function resetPassword({ email, newPassword}) {
-  try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/reset-password`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-
-      },
-      body: JSON.stringify({ email, newPassword}),
-    });
-
-    if (!response.ok) {
-      throw new Error('Password reset failed');
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error resetting password:', error);
-    throw error;
-  }
 }
 
 
@@ -322,6 +358,30 @@ export async function validateAndRefreshToken(refreshToken) {
     }
   } catch (error) {
     console.error('validateAndRefreshToken error:', error);
+    throw error;
+  }
+}
+
+
+export async function submitApplicationDetails(data) {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/add_appdetails`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to submit application.");
+    }
+
+    return await response.json();
+  } catch (error) {
     throw error;
   }
 }

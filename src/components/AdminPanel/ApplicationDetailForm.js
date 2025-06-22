@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { submitApplicationDetails } from "../api_service";
+
 const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
   const [dob, setDob] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
@@ -14,6 +16,8 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
   const [homeowner, setHomeowner] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [authorizeCredit, setAuthorizeCredit] = useState(false);
+
+
 
   const [errors, setErrors] = useState({});
 
@@ -68,7 +72,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
     else if (!/^\d{9}$/.test(detail.ssn)) newErrors.ssn = "SSN must be exactly 9 digits.";
 
     if (!detail.confirmSsn) newErrors.confirmSsn = "Please confirm SSN.";
-    else if (detail.ssn !== confirmSsn) newErrors.confirmSsn = "SSN and Confirm SSN must match.";
+    else if (detail.ssn !== detail.confirmSsn) newErrors.confirmSsn = "SSN and Confirm SSN must match.";
 
     if (!detail.amountNeeded) newErrors.amountNeeded = "Amount needed is required.";
     else if (isNaN(detail.amountNeeded)) newErrors.amountNeeded = "Amount needed must be a number.";
@@ -90,13 +94,43 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      alert("Form submitted successfully!");
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (validate()) {
+  //     alert("Form submitted successfully!");
       
-    }
-  };
+  //   }
+  // };
+
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (validate()) {
+        try {
+          
+          const requestData = {
+            userId: sessionStorage.getItem("username"),
+            dateOfBirth: detail.dob,
+            monthlyGrossIncome: parseFloat(detail.monthlyIncome),
+            ssn: detail.ssn,
+            confirmSsn: detail.confirmSsn,
+            howMuchDoYouNeed: parseFloat(detail.amountNeeded),
+            homeAddress: detail.homeAddress,
+            homeAddress2: detail.homeAddress2,
+            zipCode: parseInt(detail.zipCode),
+            city: detail.city,
+            state: detail.state,
+            isHomeOwner: detail.homeowner === "yes",
+          };
+          console.log("Request Data:", requestData);
+          const response = await submitApplicationDetails(requestData);
+          alert("Application submitted successfully!");
+          console.log("API Response:", response);
+        } catch (error) {
+          alert("Failed to submit application: " + error.message);
+        }
+      }
+    };
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-full">
@@ -354,7 +388,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
      
       <p className="font-bold mb-4 w-full">
         Anti-money laundering and counter-terrorism financing laws require that we collect and verify
-        identifying information if you proceed in using NewCo.
+        identifying information if you proceed in using Druk PNB Bank Ltd.
       </p>
 
       {fieldSettings.agreeTerms !== false && (
@@ -370,7 +404,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             }`}
           />
           <span>
-            By checking the box and submitting my application I agree to NewCo{" "}
+            By checking the box and submitting my application I agree to Druk PNB Bank Ltd{" "}
             <a
               href="/terms"
               target="_blank"

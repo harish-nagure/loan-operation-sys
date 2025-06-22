@@ -5,7 +5,7 @@ import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import UserMenuForm from "./UserMenuForm";
 
-import { getAllUsers } from "../api_service"; // Adjust the import path as needed
+import { getAllUsers,addUserApi, getRoles } from "../api_service"; // Adjust the import path as needed
 
 // import { fetchRoles } from "../api_service";
 
@@ -13,56 +13,8 @@ const UserMenuData = () => {
 
 
 
-
-
-    const [userData, setUserData] = useState([
-      // {
-      //   id: 1,
-      //   firstName: "Arjun",
-      //   lastName: "Mehta",
-      //   role: "admin",
-      //   email: "arjun.mehta@example.com",
-      //   phone: "9876543210",
-      //   isActive: true,
-      // },
-      // {
-      //   id: 2,
-      //   firstName: "Neha",
-      //   lastName: "Kapoor",
-      //   role: "editor",
-      //   email: "neha.k@example.com",
-      //   phone: "9123456780",
-      //   isActive: false,
-      // },
-      // {
-      //   id: 3,
-      //   firstName: "Rahul",
-      //   lastName: "Verma",
-      //   role: "user",
-      //   email: "rahul.v@example.com",
-      //   phone: "9988776655",
-      //   isActive: true,
-      // },
-      // {
-      //   id: 4,
-      //   firstName: "Simran",
-      //   lastName: "Sinha",
-      //   role: "moderator",
-      //   email: "simran.sinha@example.com",
-      //   phone: "9012345678",
-      //   isActive: false,
-      // },
-      // {
-      //   id: 5,
-      //   firstName: "Yash",
-      //   lastName: "Patel",
-      //   role: "user",
-      //   email: "yash.patel@example.com",
-      //   phone: "9090909090",
-      //   isActive: true,
-      // },
-    ]);
-
+  const [roles, setRoles] = useState([]);
+  const [userData, setUserData] = useState([])
 
   const [editingUser, setEditingUser] = useState(null);
 
@@ -102,11 +54,29 @@ const UserMenuData = () => {
         };
 
         fetchAllUsers();
+
+            
+        
       }, []);
 
   const handleEdit = (user) => {
     setEditingUser(user);
   };
+
+  useEffect(() => {
+ const fetchRoles = async () => {
+        try {
+            const response = await getRoles();
+            console.log(response);
+            setRoles(response?.data);
+          } catch (error) {
+            console.error("Failed to fetch roles:", error);
+          }
+        };
+
+        fetchRoles();
+}, []);
+
 
   const handleDelete = (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
@@ -118,17 +88,57 @@ const UserMenuData = () => {
     setEditingUser({});
   };
 
-  const handleFormSubmit = (formUser) => {
-    if (formUser.id) {
+
+  // const handleFormSubmit = (formUser) => {
+  //   if (formUser.id) {
      
+  //     setUserData(userData.map(user => (user.id === formUser.id ? formUser : user)));
+  //   } else {
+  //     // Add mode
+  //     const newUser = { ...formUser, id: Date.now() };
+  //     setUserData([...userData, newUser]);
+  //   }
+  //   setEditingUser(null); 
+  // };
+
+  const handleFormSubmit = async (formUser) => {
+  try {
+    if (formUser.id) {
+      // Edit mode (local update for now)
       setUserData(userData.map(user => (user.id === formUser.id ? formUser : user)));
     } else {
-      // Add mode
-      const newUser = { ...formUser, id: Date.now() };
-      setUserData([...userData, newUser]);
+
+      const matchedRole = roles.find(
+      (r)=> r.roleName?.toLowerCase() == formUser.role?.toLowerCase()
+      );
+
+      if (!matchedRole) {
+        alert("Invalid role selected");
+        return;
+      }
+
+      const UserInfo = {
+        email: formUser.email,
+        firstName: formUser.firstname,
+        lastName: formUser.lastname,
+        roleId: matchedRole.id,
+        createdBy: "admin",
+        phone: formUser.phone,
+      };
+
+      console.log(roles,UserInfo);
+      const response = await addUserApi(UserInfo);
+      alert("User created: " + response.data.userId);
+
+      const data_json = await getAllUsers();
+      const users = data_json?.data;
+      setUserData(users);
     }
     setEditingUser(null);
-  };
+  } catch (error) {
+    alert("Failed to submit form: " + error.message);
+  }
+};
 
   return (
     <div className="lg:flex md:block font-inter">
@@ -143,7 +153,8 @@ const UserMenuData = () => {
             <UserMenuForm
               initialData={editingUser}
               onSubmit={handleFormSubmit}
-               onCancel={() => setEditingUser(null)}
+              onCancel={() => setEditingUser(null)}
+              roles= {roles}
             />
           ) : (
             <div className="bg-white p-6 rounded-lg shadow">
@@ -157,7 +168,7 @@ const UserMenuData = () => {
                 </button>
               </div>
 
-              <div className="overflow-auto max-h-[450px] scrollbar-thin">
+              <div className="overflow-auto max-h-[550px] scrollbar-thin">
                 <table className="min-w-full text-sm text-left">
                   <thead className="sticky top-0 bg-gray-100 border-b">
                     <tr>

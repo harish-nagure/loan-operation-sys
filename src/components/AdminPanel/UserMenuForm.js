@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 
+import { getRoles } from "../api_service";
 
-
-const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
+const UserMenuForm = ({ initialData = null, onSubmit, onCancel,roles=[] }) => {
   
   const isEditMode = Boolean(initialData && initialData.id);
-
+  
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -28,6 +28,8 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
         userState: initialData.active || false,
       });
     }
+
+
   }, [initialData]);
 
   const handleChange = (e) => {
@@ -158,9 +160,11 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel }) => {
                   className={`mt-1 w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-accent ${errors.role ? 'border-red-500' : 'border-gray-300'}`}
                 >
                   <option value="">Select a role</option>
-                  <option value="admin">Admin</option>
-                  <option value="user">User</option>
-                  <option value="guest">Guest</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.roleName?.toLowerCase()}>
+                      {role.roleName}
+                    </option>
+                  ))}
                 </select>
                 {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
               </div>
