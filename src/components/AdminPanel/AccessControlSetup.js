@@ -1,15 +1,40 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
+import { getRoles  } from "../api_service";
 
 const AccessControlSetup = () => {
-  const [currentUserRole, setCurrentUserRole] = useState("admin");
+  const [roles, setRoles] = useState([]);
+  const [currentUserRole, setCurrentUserRole] = useState("");
   const navigate = useNavigate();
+  
+
+    useEffect(() => {
+      
+      const fetchRoles = async () => {
+        try {
+          const data_json = await getRoles();
+          const roles = data_json?.data;
+          console.log("Fetched roles SET up:", roles);
+
+          setRoles(roles);
+          if (roles.length > 0) {
+            setCurrentUserRole(roles[0].id); 
+          }
+         
+        } catch (error) {
+          console.error("Error fetching roles:", error.message);
+        }
+      };
+  
+      fetchRoles();
+    }, []);
+
+
 
   const handleContinue = () => {
-    sessionStorage.setItem("selectedRole", currentUserRole);
-    navigate("/access_control");
+    navigate(`/access_control/${currentUserRole}`);
   };
 
   return (
@@ -34,8 +59,11 @@ const AccessControlSetup = () => {
                 onChange={(e) => setCurrentUserRole(e.target.value)}
                 className="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
+                {roles.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.roleName}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex justify-end">

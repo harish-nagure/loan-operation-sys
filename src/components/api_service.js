@@ -1,3 +1,5 @@
+import { data } from "react-router-dom";
+
 const API_URL = process.env.REACT_APP_API_URL;
 
 
@@ -385,3 +387,111 @@ export async function submitApplicationDetails(data) {
     throw error;
   }
 }
+
+
+
+
+
+export const fetchAllMenus = async () => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/all-menus`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+    }
+  });
+
+  const data = await response.json();
+  // alert(data);
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch menus");
+  }
+  return data?.data;
+};
+
+
+
+// export const savePermissionsApi = async (permissions) => {
+  
+//   const response = await  fetch(`${process.env.REACT_APP_API_URL}/savePermissions`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+//     },
+//     body: JSON.stringify(permissions),
+//   });
+
+//   const data = await response.json();
+//   console.log("Save"+data.message);
+
+//   if (!response.ok) {
+//     throw new Error(data.message );
+//   }
+
+//   return data;
+// };
+
+
+
+// this.http.post(`${process.env.REACT_APP_API_URL}/savePermissions`, data, {
+
+//   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+
+// }).subscribe(response => {
+
+//   console.log(response);
+
+// });
+ 
+export const savePermissionsApi = async (permissions) => {
+
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/savePermissions`, {
+
+    method: "POST",
+
+    headers: {
+
+      "Content-Type": "application/json",
+
+      "Authorization": `Bearer ${sessionStorage.getItem('token')}`,
+
+    },
+
+    body: JSON.stringify(permissions), // keep this as is
+
+  });
+ 
+  const data = await response.json();
+
+  console.log("Save " + data.message);
+ 
+  if (!response.ok) {
+
+    throw new Error(data.message);
+
+  }
+ 
+  return data;
+
+};
+
+ 
+
+export const getMenusWithPermissions = async (roleId) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/getMenusWithPermissions/${roleId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+    }
+  });
+
+  const data_json = await response.json();
+  const data = data_json.data;
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch menu permissions");
+  }
+
+  return data;
+};

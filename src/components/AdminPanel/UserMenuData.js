@@ -109,7 +109,7 @@ const UserMenuData = () => {
     } else {
 
       const matchedRole = roles.find(
-      (r)=> r.roleName?.toLowerCase() == formUser.role?.toLowerCase()
+      (r)=> r.roleName?.toLowerCase() === formUser.role?.toLowerCase()
       );
 
       if (!matchedRole) {

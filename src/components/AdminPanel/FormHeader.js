@@ -19,7 +19,7 @@ const FormHeader = () => {
     if (value === "corporate") {
       navigate("/form_header"); 
     } else {
-      navigate("/application_form")
+      navigate("/application-form")
     }
   };
 

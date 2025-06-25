@@ -29,6 +29,7 @@ const AdminUserPanel = () => {
         const roles = data_json?.data;
         console.log("Fetched roles HIi:", roles);
         // const sortedRoles = roles.sort((a, b) => a.id - b.id);
+        
         setAdminList(roles);
       } catch (error) {
         console.error("Error fetching roles:", error.message);

@@ -25,6 +25,7 @@ import ResetPassword from "./components/ResetPassword";
 import UserDashboard from "./components/AdminPanel/UserDashboard";
 import AdminDashboard from "./components/AdminPanel/AdminDashboard";
 
+import SubmittedApplication from "./components/AdminPanel/SubmittedApplication";
 import SessionValidator from "./components/SessionValidator";
 import FormsPage from "./components/AdminPanel/FormsPage";
 import LoanTypeSelectionPage from "./components/AdminPanel/LoanTypeSelectionPage";
@@ -117,13 +118,15 @@ function App() {
 
           
           <Route
-            path="/admindashboard"
+            path="/dashboard"
             element={
               <SessionValidator>
                 <AdminDashboard />
               </SessionValidator>
             } 
           />
+
+
           <Route
             path="/user_menu"
             element={
@@ -133,6 +136,16 @@ function App() {
             }
           />
           <Route
+            path="/user"
+            element={
+              <SessionValidator>
+                <UserMenuData />
+              </SessionValidator>
+            }
+          />
+
+
+          <Route
             path="/admin_user_form"
             element={
               <SessionValidator>
@@ -141,47 +154,16 @@ function App() {
             }
           />
           <Route
-            path="/loan_system_config"
-            element={
-              <SessionValidator>
-                <LoanSystemConfig />
-              </SessionValidator>
-            }
-          />
-          <Route
-            path="/user_menu_data"
-            element={
-              <SessionValidator>
-                <UserMenuData />
-              </SessionValidator>
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              <SessionValidator>
-                <Dashboard />
-              </SessionValidator>
-            }
-          />
-          <Route
-            path="/admin_user_data"
+            path="/roles"
             element={
               <SessionValidator>
                 <AdminUserPanel />
               </SessionValidator>
             }
           />
+          
           <Route
-            path="/menu_creation"
-            element={
-              <SessionValidator>
-                <MenuForm />
-              </SessionValidator>
-            }
-          />
-          <Route
-            path="/access_control"
+            path="/access_control/:roleId"
             element={
               <SessionValidator>
                 <AccessControl />
@@ -189,7 +171,7 @@ function App() {
             }
           />
           <Route
-            path="/access_control_setup"
+            path="/access-control"
             element={
               <SessionValidator>
                 <AccessControlSetup />
@@ -197,22 +179,43 @@ function App() {
             }
           />
 
+
+
           <Route
-            path="/organization_form"
+            path="/system-config"
+            element={
+              <SessionValidator>
+                <LoanSystemConfig />
+              </SessionValidator>
+            }
+          />
+          
+           <Route
+            path="/organization"
             element={
               <SessionValidator>
                 <OrganizationForm />
               </SessionValidator>
             }
           />
-          <Route
-            path="/application_form"
+
+            <Route
+            path="/application-form"
             element={
               <SessionValidator>
                 <MultiStepForm fieldSettings={fieldSettings}/>
               </SessionValidator>
             }
           />
+
+          <Route
+            path="/menu_creation"
+            element={
+              <SessionValidator>
+                <MenuForm />
+              </SessionValidator>
+            }
+          />          
           <Route
             path="/form_field_settings"
             element={
@@ -226,8 +229,11 @@ function App() {
           />
 
           
+
+
+
           <Route
-            path="/custom_workflow"
+            path="/workflow/custom"
             element={
               <SessionValidator>
                 <LoanTypeSelectionPage />
@@ -274,29 +280,25 @@ function App() {
           </>
              ) : (
               <>
-
-
-
-              <Route
-                path="/"
-                element={
-                  <div className="flex justify-center items-center h-screen">
-                    <h1 className="text-2xl font-bold text-gray-700">
-                      Access Denied. Admins Only.
-                    </h1>
-                  </div>
-                }
-              />
                 <Route
-                path="/userdashboard"
+                path="/dashboard"
                 element={
                   <SessionValidator>
                     <UserDashboard />
                   </SessionValidator>
                 }
               />  
-                <Route
-                path="*"
+
+              <Route
+                path="/submitted_application"
+                element={
+                  <SessionValidator>
+                    <SubmittedApplication/>
+                  </SessionValidator>
+                }
+                />
+              <Route
+                path="/application-form"
                 element={
                   <SessionValidator>
                     <MultiStepForm fieldSettings={fieldSettings}/>
@@ -304,8 +306,8 @@ function App() {
                 }
               />
 
-              <Route
-            path="/custom_workflow"
+            <Route
+            path="/workflow/custom"
             element={
               <SessionValidator>
                 <LoanTypeSelectionPage />

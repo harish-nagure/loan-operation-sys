@@ -283,7 +283,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             name="homeAddress2"
             placeholder="Apt, suite, etc. (optional)"
             value={detail.homeAddress2 || ""}
-            onChange={handleDetailChange}
+              onChange={handleDetailChange}
             className="w-full border-b border-gray-400 py-2 focus:outline-none focus:border-blue-600"
           />
         </div>

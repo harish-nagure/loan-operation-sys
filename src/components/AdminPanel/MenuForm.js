@@ -194,7 +194,7 @@ const MenuForm = () => {
 
             <button
               type="button"
-              onClick={() => navigate("/access_control")}
+              onClick={() => navigate("/access-control")}
               className="w-full bg-accent text-white py-2 rounded-xl hover:bg-secondary transition"
             >
               View Menu

@@ -1,285 +1,48 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { savePermissionsApi, fetchAllMenus, getMenusWithPermissions } from "../api_service";
 
-
-import {
-  FaTachometerAlt,
-  FaPhone,
-  FaCog,
-  FaChartLine,
-  FaUsers,
-  FaQuestionCircle,
-  FaUserCircle,
-  FaInfoCircle,
-  FaBell,
-  FaEdit,
-  FaTrash,
-} from "react-icons/fa";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 
-import {
-  User,
-  Settings,
-  ShieldCheck,
-  Lock,
-  Building,
-  LogIn,
-  FileText,
-  Code,
-  Sliders,
-  Activity,
-  Layers,
-  Shuffle,
-  BarChart2,
-  File,
-  
-  Settings2,
-} from "lucide-react";
-
-const iconMap = {
-  dashboard: FaTachometerAlt,
-  "contact us": FaPhone,
-  settings: FaCog,
-  reports: FaChartLine,
-  users: FaUsers,
-  help: FaQuestionCircle,
-  profile: FaUserCircle,
-  about: FaInfoCircle,
-  notifications: FaBell,
-
-  // Lucide-react keys
-  user: User,
-  shield: ShieldCheck,
-  lock: Lock,
-  building: Building,
-  "log-in": LogIn,
-  "file-text": FileText,
-  code: Code,
-  sliders: Sliders,
-  activity: Activity,
-  layers: Layers,
-  shuffle: Shuffle,
-  "bar-chart-2": BarChart2,
-  file: File,
-  
-  "settings-2": Settings2,
-};
-
-
-
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const AccessControl = () => {
+  const { roleId } = useParams();
   const navigate = useNavigate();
-  const [currentUserRole, setCurrentUserRole] = useState("admin");
   const [menuList, setMenuList] = useState([]);
   const [expandedMenus, setExpandedMenus] = useState({});
 
-useEffect(() => {
-  const sidebarMenus = [
-  {
-    id: "1",
-    name: "User Menu",
-    iconKey: "user",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "2",
-    name: "Role Creation",
-    iconKey: "shield",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "3",
-    name: "Access Control",
-    iconKey: "lock",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "4",
-    name: "Organization Form",
-    iconKey: "building",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "5",
-    name: "Login",
-    iconKey: "log-in",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "6",
-    name: "System Configuration",
-    iconKey: "settings",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "7",
-    name: "Application Form",
-    iconKey: "file-text",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "8",
-    name: "Technical Role Management",
-    iconKey: "code",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "9",
-    name: "Bussiness Rule Management",
-    iconKey: "sliders",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "10",
-    name: "System Monitoring and Performance",
-    iconKey: "activity",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "11",
-    name: "Integration Management",
-    iconKey: "layers",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "12",
-    name: "Workflow Optimization",
-    iconKey: "settings",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [
-      {
-        id: "12-1",
-        name: "Process Authentication",
-        iconKey: "shield-check",
-        read: false,
-        write: false,
-        view: false,
-        all: false,
-      },
-      {
-        id: "12-2",
-        name: "Custom Workflow",
-        iconKey: "shuffle",
-        read: false,
-        write: false,
-        view: false,
-        all: false,
-      },
-    ],
-  },
-  {
-    id: "13",
-    name: "Reporting and Analytics",
-    iconKey: "bar-chart-2",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "14",
-    name: "Content and Documnetation",
-    iconKey: "file",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "15",
-    name: "Multi-Factor Authentication",
-    iconKey: "shield",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-  {
-    id: "16",
-    name: "Form Field Settings",
-    iconKey: "settings-2",
-    read: false,
-    write: false,
-    view: false,
-    all: false,
-    children: [],
-  },
-];
+  useEffect(() => {
+    const getMenus = async () => {
+      try {
+        // const data = await fetchAllMenus();
+          const data = await getMenusWithPermissions(roleId);
+        console.log("Menus with permissions:", data);
 
+        const enrichMenus = (menus) =>
+          menus.map((menu) => ({
+            id: menu.menuId,
+            name: menu.menuName,
+            read: menu.canRead || false,
+            write: menu.canWrite || false,
+            all: menu.canAll || false,
+            children: menu.subMenus?.length ? enrichMenus(menu.subMenus) : [],
+          }));
 
-  const storedMenus = sessionStorage.getItem("menus");
-  const addedMenus = storedMenus ? JSON.parse(storedMenus) : [];
+        const enrichedMenus = enrichMenus(data || []);
+        setMenuList(enrichedMenus);
+      } catch (err) {
+        console.error("Failed to load menus:", err);
+        alert("Error loading menus");
+      }
+    };
 
-  // Avoid duplicates based on menu id
-  const uniqueAddedMenus = addedMenus.filter(
-    (added) => !sidebarMenus.some((existing) => existing.id === added.id)
-  );
-
-  // Merge default menus + hardcoded menus + added ones
-  const fullMenus = [ ...sidebarMenus, ...uniqueAddedMenus];
-  setMenuList(fullMenus);
-}, []);
-
-
+    getMenus();
+  }, [roleId]);
 
   const toggleExpand = (id) => {
     setExpandedMenus((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const editMenu = (menu) => {
-    navigate("/menu_creation");
   };
 
   const handlePermissionChange = (id, type) => {
@@ -289,22 +52,20 @@ useEffect(() => {
         updated.read = !updated.read;
         if (!updated.read) {
           updated.write = false;
-          updated.view = false;
           updated.all = false;
         }
       } else if (type === "write") {
         updated.write = !updated.write;
-        if (updated.write) updated.read = true;
-        else updated.all = false;
-      } else if (type === "view") {
-        updated.view = !updated.view;
-        if (updated.view) updated.read = true;
-        else updated.all = false;
+        if (updated.write) {
+          updated.read = true;
+          updated.all = true;
+        } else {
+          updated.all = false;
+        }
       } else if (type === "all") {
         updated.all = !updated.all;
         updated.read = updated.all;
         updated.write = updated.all;
-        updated.view = updated.all;
       }
       return updated;
     };
@@ -321,26 +82,51 @@ useEffect(() => {
     setMenuList(updateMenuList(menuList));
   };
 
-  const handleSavePermissions = () => {
-    const flattenMenus = (menus) => {
-      let flat = [];
-      menus.forEach((menu) => {
-        const { children, ...rest } = menu;
-        flat.push(rest);
-        if (children?.length) flat = flat.concat(flattenMenus(children));
-      });
-      return flat;
-    };
-    const flatMenus = flattenMenus(menuList);
-    sessionStorage.setItem("menus", JSON.stringify(flatMenus));
-    alert("Permissions saved!");
+  const flattenMenus = (menus) => {
+    let flat = [];
+    menus.forEach((menu) => {
+      const { children, ...rest } = menu;
+      flat.push(rest);
+      if (children?.length) flat = flat.concat(flattenMenus(children));
+    });
+    return flat;
+  };
+
+  const handleSavePermissions = async () => {
+    try {
+      const flatMenus = flattenMenus(menuList);
+
+      const formattedData = flatMenus.map((menu) => ({
+        roleId: parseInt(roleId),
+        menuId: parseInt(menu.id),
+        canRead: menu.read || false,
+        canWrite: menu.write || false,
+        canAll: menu.all || false,
+      }));
+
+      console.log("DATA:\n" + JSON.stringify(formattedData, null, 2));
+
+      const result = await savePermissionsApi(formattedData);
+
+      console.log(result);
+      alert(result.message || "Permissions saved successfully");
+
+      // sessionStorage.setItem("menus", JSON.stringify(flatMenus));
+
+      // setMenuList()
+    } catch (error) {
+      console.error("Error saving permissions:", error.message);
+      alert("Failed to save permissions");
+    }
+  };
+
+  const editMenu = (menu) => {
+    navigate("/menu_creation");
   };
 
   const renderMenuRow = (menu, level = 0, isChild = false) => {
     const hasChildren = menu.children?.length > 0;
     const isExpanded = expandedMenus[menu.id];
-    const iconKey = menu.iconKey?.toLowerCase?.();
-    const IconComponent = iconMap[iconKey];
 
     return (
       <React.Fragment key={menu.id}>
@@ -356,20 +142,14 @@ useEffect(() => {
               onClick={() => hasChildren && toggleExpand(menu.id)}
             >
               {hasChildren ? (
-                <span className="mr-2 text-accent">
-                  {isExpanded ? "▼" : "▶"}
-                </span>
+                <span className="mr-2 text-accent">{isExpanded ? "▼" : "▶"}</span>
               ) : (
                 <span className="inline-block w-4 mr-2" />
               )}
               {isChild && (
                 <span className="text-gray-400 mr-1 select-none">└──</span>
               )}
-              {IconComponent ? (
-                <IconComponent className="text-secondary bg-white rounded-full p-1 text-2xl mr-2 shadow-sm" />
-              ) : (
-                <span className="text-xl mr-2">📁</span>
-              )}
+              <span className="text-xl mr-2">📁</span>
               <Link to="#" className="hover:underline text-gray-800">
                 {menu.name}
               </Link>
@@ -392,7 +172,10 @@ useEffect(() => {
             >
               <FaEdit />
             </button>
-            <button className="text-red-500 hover:underline text-sm">
+            <button
+              onClick={() => alert(`Delete not implemented for ${menu.name}`)}
+              className="text-red-500 hover:underline text-sm"
+            >
               <FaTrash />
             </button>
           </td>
@@ -400,9 +183,7 @@ useEffect(() => {
 
         {hasChildren &&
           isExpanded &&
-          menu.children.map((child) =>
-            renderMenuRow(child, level + 1, true)
-          )}
+          menu.children.map((child) => renderMenuRow(child, level + 1, true))}
       </React.Fragment>
     );
   };
@@ -417,26 +198,8 @@ useEffect(() => {
         <div className="min-h-screen bg-gray-100 p-8">
           <div className="bg-white rounded-2xl shadow-lg max-w-5xl mx-auto p-8">
             <h2 className="text-2xl font-bold text-accent mb-6">
-             Access Control Management
+              Access Control Management
             </h2>
-
-             { /* <div className="mb-6 flex items-center gap-4">
-              <label
-                htmlFor="roleSelect"
-                className="font-semibold text-gray-700"
-              >
-                Role Access:
-              </label>
-              <select
-                id="roleSelect"
-                value={currentUserRole}
-                onChange={(e) => setCurrentUserRole(e.target.value)}
-                className="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-              </select>
-            </div> */ }
 
             <table className="w-full border border-gray-300 rounded-xl overflow-hidden">
               <thead className="bg-gray-200">
@@ -444,7 +207,6 @@ useEffect(() => {
                   <th className="p-3 text-left">Menu Name</th>
                   <th className="p-3 text-center">Read</th>
                   <th className="p-3 text-center">Write</th>
-                  {/* <th className="p-3 text-center">View</th> */}
                   <th className="p-3 text-center">All</th>
                   <th className="p-3 text-center">Actions</th>
                 </tr>
@@ -454,7 +216,7 @@ useEffect(() => {
                   menuList.map((menu) => renderMenuRow(menu))
                 ) : (
                   <tr>
-                    <td colSpan={6} className="p-5 text-center text-gray-500">
+                    <td colSpan={5} className="p-5 text-center text-gray-500">
                       No menus found.
                     </td>
                   </tr>
@@ -462,13 +224,7 @@ useEffect(() => {
               </tbody>
             </table>
 
-          <div className="flex justify-end gap-4 mt-6">
-               { /* <button
-                onClick={() => navigate("/menu_creation")}
-                className="bg-accent text-white px-5 py-2 rounded-xl hover:bg-secondary"
-              >
-                Add Menu
-              </button> */} 
+            <div className="flex justify-end gap-4 mt-6">
               <button
                 onClick={handleSavePermissions}
                 className="bg-accent text-white px-5 py-2 rounded-xl hover:bg-secondary"

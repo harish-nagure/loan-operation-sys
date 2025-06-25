@@ -93,7 +93,7 @@ const LoginPage = ({ onLogin }) => {
         onLogin(data?.role?.toLowerCase());
         const isAdmin = data?.role?.toLowerCase() === 'admin';
         
-        navigate(isAdmin ? '/admindashboard' : '/userdashboard');
+        navigate('/dashboard');
       } catch (err) {
 
         console.error("Login error:", err.message);
