@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
+import { saveLoanType } from "../api_service";
+import { fetchLoanTypes } from "../api_service"; 
 
-const defaultLoanOptions = [
+
+
+{ /* const defaultLoanOptions = [
   { label: "Personal Loan", value: "personal", description: "Loan for personal use" },
   { label: "Business Loan", value: "business", description: "Loan for business purposes" },
   { label: "Home Loan", value: "home", description: "Loan for buying a home" },
   { label: "Auto Loan", value: "auto", description: "Loan for purchasing a vehicle" },
-];
+]; */ }
 
 const LoanTypeSelectionPage = ({ onContinue }) => {
+ 
   
+  const location = useLocation(); 
+  const { canRead = false, canWrite = false } = location.state || {};
   const [loanOptions, setLoanOptions] = useState([]);
   const [loanType, setLoanType] = useState("");
   const [userType, setUserType] = useState("");
@@ -21,54 +28,104 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedUserType = sessionStorage.getItem("role")?.toLowerCase();
-    const savedLoans = JSON.parse(sessionStorage.getItem("loanTypes"));
 
-    console.log("Stored User Type:", storedUserType);
+useEffect(() => {
+  const storedUserType = sessionStorage.getItem("role")?.toLowerCase();
 
-    if (!storedUserType) {
-      navigate("/login");
-    } else {
-      setUserType(storedUserType);
-      if (savedLoans) {
-        setLoanOptions(savedLoans);
+  if (!storedUserType) {
+    navigate("/login");
+    return;
+  }
+
+  setUserType(storedUserType);
+
+  const getLoanTypes = async () => {
+    try {
+      const result = await fetchLoanTypes();
+
+      if (result.success) {
+        setLoanOptions(
+          result.data.map((item) => ({
+            label: item.loanType.replace(/_/g, " ").replace(/\d+$/, "").toUpperCase(), // e.g., "personal_loan_001" → "PERSONAL LOAN"
+            value: item.loanType,
+            description: item.description,
+          }))
+        );
       } else {
-        setLoanOptions(defaultLoanOptions);
+        console.error("❌ API failed. Falling back to default loan options.");
+        //setLoanOptions(defaultLoanOptions);
       }
+    } catch (error) {
+      console.error("❌ Unexpected error fetching loan types:", error);
+      //setLoanOptions(defaultLoanOptions);
     }
-  }, [navigate]);
+  };
 
-  const handleContinue = () => {
-    if (!loanType) return;
-    sessionStorage.setItem("selectedLoanType", loanType);
+  getLoanTypes();
+}, [navigate]);
+
+
+  const handleContinue = async () => {
+    if (!canWrite) {
+      alert("❌ You don't have permission to continue.");
+      return;
+    }
+  if (!loanType) return;
+
+  const selectedLoan = loanOptions.find((loan) => loan.value === loanType);
+
+  if (!selectedLoan) {
+    alert("Selected loan type not found.");
+    return;
+  }
+
+  // ✅ Save to backend using API
+  const result = await saveLoanType(selectedLoan.value, selectedLoan.description);
+
+  if (result.success) {
+    sessionStorage.setItem("selectedLoanType",selectedLoan.value);
+
     if (onContinue) {
-      onContinue(loanType);
+      onContinue(selectedLoan.value);
     } else {
-      // console.log("Selected Loan Type:", userType, loanType);
       navigate(userType === "admin" ? "/selection_steps_page" : "/forms_page");
     }
+  } else {
+    alert("❌ Failed to save loan type: " + result.message);
+  }
+};
+
+
+
+const handleAddLoanType = () => {
+  if (!newLoanLabel.trim()) return;
+
+  const value = newLoanLabel.toLowerCase().replace(/\s+/g, "_");
+  const newLoan = {
+    label: newLoanLabel.trim(),
+    value,
+    description: newLoanDescription.trim(),
   };
 
-  const handleAddLoanType = () => {
-    if (!newLoanLabel.trim()) return;
-    const value = newLoanLabel.toLowerCase().replace(/\s+/g, "_");
-    const newLoan = {
-      label: newLoanLabel.trim(),
-      value,
-      description: newLoanDescription.trim(),
-    };
-    const updatedLoans = [...loanOptions, newLoan];
-    setLoanOptions(updatedLoans);
-    sessionStorage.setItem("loanTypes", JSON.stringify(updatedLoans));
-    setNewLoanLabel("");
-    setNewLoanDescription("");
-    setShowModal(false);
-  };
+  const updatedLoans = [...loanOptions, newLoan];
+  setLoanOptions(updatedLoans);
+  sessionStorage.setItem("loanTypes", JSON.stringify(updatedLoans));
+  setNewLoanLabel("");
+  setNewLoanDescription("");
+  setShowModal(false);
+  alert("✅ Loan type added locally. Now click Continue to save it to the backend.");
+};
+
 
   return (
-    <>
-        <div className="pr-8 py-8">
+    <div className="flex min-h-screen pr-6 py-8">
+     
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* <DashboardHead /> */}
+
+        <div className="p-6">
           <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
               Select Loan Type
@@ -120,7 +177,7 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
             </button>
           </div>
         </div>
-      {/* </div> */}
+      </div>
 
       {/* Modal */}
       {showModal && (
@@ -159,8 +216,10 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
 export default LoanTypeSelectionPage;
+
+

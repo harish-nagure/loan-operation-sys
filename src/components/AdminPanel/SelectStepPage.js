@@ -2,6 +2,9 @@ import React, { useState, useEffect, use } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
+import { saveWorkflow } from "../api_service";
+import { fetchWorkflowByLoanType } from "../api_service";
+
 
 const steps = [
   "Link Bank Account",
@@ -16,12 +19,35 @@ const SelectStepsPage = () => {
   const navigate = useNavigate();
  const userType = sessionStorage.getItem("role")?.toLowerCase();
   const loanType = sessionStorage.getItem("selectedLoanType");
+  
+  
   useEffect(() => {
     const userType = sessionStorage.getItem("role")?.toLowerCase();
     if (userType !== "admin") {
       navigate("/forms_page");
     }
   }, [navigate]);
+
+useEffect(() => {
+  const fetchExistingWorkflow = async () => {
+    const loanType = sessionStorage.getItem("selectedLoanType"); 
+    console.log("🔍 loanType before fetch:", loanType);
+
+    if (!loanType) return;
+
+    const result = await fetchWorkflowByLoanType(loanType);
+
+    if (result.status === 200 && result.data?.steps?.length > 0) {
+      setSelected(result.data.steps); // 🟢 Prefill steps in UI
+    } else {
+      console.log("ℹ️ No existing workflow found or failed to fetch.");
+    }
+  };
+
+  fetchExistingWorkflow();
+}, []);
+
+
 
   const addStep = (step) => {
     // Allow duplicates
@@ -32,29 +58,32 @@ const SelectStepsPage = () => {
     setSelected([]);
   };
 
-  const handleSubmit = () => {
-   
+const handleSubmit = async () => {
+  if (!loanType || selected.length === 0) {
+    alert("Please select loan type and at least one step.");
+    return;
+  }
 
-    if (userType === "admin") {
+  try {
+    const result = await saveWorkflow(loanType, selected);
+
+    if (result.status === 200) {
+      alert("Workflow created successfully ✅");
       sessionStorage.setItem("adminSelectedSteps", JSON.stringify(selected));
       sessionStorage.setItem("selectedSteps", JSON.stringify(selected));
-      alert("Permission is saved Successfully");
     } else {
-      sessionStorage.setItem("selectedSteps", JSON.stringify(selected));
-      navigate("/forms_page");
+      alert(`❌ Failed to save workflow: ${result.message}`);
     }
-  };
+  } catch (error) {
+    alert("❌ Error while saving workflow");
+  }
+};
+
 
   return (
-    // <div className="lg:flex md:block font-inter bg-[#f5fcfd] min-h-screen">
-    //   <div className="h-screen hidden lg:block fixed z-20">
-    //     <DashboardSidebar />
-    //   </div>
-    //   <main className="flex-1 lg:ml-72">
-    //     <DashboardHead />
 
-        <div className="pr-8 py-8 flex items-center justify-center">
-          <div className="bg-white shadow-2xl rounded-3xl w-full max-w-5xl p-10 md:p-14">
+        <div className="pr-6 py-6 flex items-center justify-center">
+          <div className="bg-white shadow-2xl rounded-3xl w-full max-w-5xl p-10 md:p-10">
             <h1 className="text-2xl font-bold text-[#029aaa] mb-8 text-center">
               {loanType.charAt(0).toUpperCase() + loanType.slice(1)} Loan -&gt; Approval Process Flow Setup
             </h1>
@@ -117,8 +146,7 @@ const SelectStepsPage = () => {
             </div>
           </div>
         </div>
-    //   </main>
-    // </div>
+      
   );
 };
 

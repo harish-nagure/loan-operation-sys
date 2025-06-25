@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { CheckCircle,Check } from "lucide-react";
+import {fetchWorkflowByLoanType} from "../api_service";
 
 const FormsPage = () => {
   const navigate = useNavigate();
@@ -13,16 +14,28 @@ const FormsPage = () => {
     return stored ? JSON.parse(stored) : [];
   });
 
-  useEffect(() => {
-    const storedSteps = sessionStorage.getItem("selectedSteps");
-    if (storedSteps) {
-      const parsed = JSON.parse(storedSteps);
-      setSteps(parsed);
-      setActive(parsed[0]);
-    } else {
-      alert("Details are not stored");
+useEffect(() => {
+  const fetchStepsFromAPI = async () => {
+    const loanType = sessionStorage.getItem("selectedLoanType"); // this should be the full ID like "personal_loan_001"
+
+    if (!loanType) {
+      alert("Loan type not selected.");
+      navigate("/selection_step_page"); // redirect user if loanType not found
+      return;
     }
-  }, []);
+
+    const result = await fetchWorkflowByLoanType(loanType);
+
+    if (result.status === 200 && Array.isArray(result.data?.steps)) {
+      setSteps(result.data.steps);
+      setActive(result.data.steps[0]);
+    } else {
+      alert("No workflow steps found for this loan type.");
+    }
+  };
+
+  fetchStepsFromAPI();
+}, []);
 
   const markAsSubmitted = (step) => {
     const updated = [...new Set([...submittedSteps, step])];

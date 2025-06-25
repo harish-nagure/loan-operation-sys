@@ -499,3 +499,185 @@ export const getMenusWithPermissions = async (roleId) => {
 
   return data;
 };
+
+
+
+//WORKFLOW
+
+
+
+
+export const fetchLoanTypes = async () => {
+ 
+  //const apiUrl="http://152.67.189.231:8842/api/auth/loan-types";
+
+   const token = sessionStorage.getItem("token")
+  // console.log("🔐 Fetching loan types with token:", token);
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/loan-types`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+
+    // Check for 403 or other auth issues before parsing JSON
+    if (response.status === 403) {
+      console.error("❌ Forbidden: You are not authorized to access loan types.");
+      return { success: false, data: [], message: "Unauthorized access (403)" };
+    }
+
+    if (!response.ok) {
+      const text = await response.text(); // Try plain text if not JSON
+      console.error("❌ API returned error:", response.status, text);
+      return { success: false, data: [], message: text || "API error" };
+    }
+
+    const result = await response.json();
+    console.log("Result",result);
+
+    const fullResponse = {
+      status: result.status || response.status,
+      message: result.message || "Something went wrong",
+      data: result.data || [],
+    };
+
+    console.log("📦 API Response (Loan Types):", fullResponse);
+
+    return { success: true, ...fullResponse };
+  } catch (error) {
+    console.error("❌ Network error while fetching loan types", error);
+    return { success: false, data: [], message: "Network error" };
+  }
+};
+// api_service.js
+export const saveLoanType = async (loanType, description) => {
+  //const apiUrl = "http://152.67.189.231:8842/api/auth/loan-type/save";
+
+  const payload = {
+    loanType,
+    description,
+  };
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/loan-type/save`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+
+    const fullResponse = {
+      status: result.status || response.status,
+      message: result.message || "Something went wrong",
+      data: result.data || null,
+    };
+
+    if (response.ok && result.status === 200) {
+      console.log("✅ Response:", fullResponse); // Show full structured response
+      return { success: true, ...fullResponse };
+    } else {
+      console.error("❌ Response:", fullResponse);
+      return { success: false, ...fullResponse };
+    }
+  } catch (error) {
+    const errorResponse = {
+      status: 0,
+      message: "Network error",
+      data: null,
+    };
+    console.error("❌ Response:", errorResponse, error);
+    return { success: false, ...errorResponse };
+  }
+};
+
+export const saveWorkflow = async (loanType, steps) => {
+  
+
+  const payload = {
+    loanType,
+    steps,
+  };
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/workflow-save`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+    console.log("Save Workflow for Loan Type:",result);
+
+    return {
+      status: response.status,
+      message: result.message || "Unknown response",
+      data: result.data ?? null,
+    };
+  } catch (error) {
+    console.error("API Error (saveWorkflow):", error);
+    return {
+      status: 500,
+      message: "Network or server error",
+      data: null,
+    };
+  }
+};
+
+
+export const fetchWorkflowByLoanType = async (loanType) => {
+  const token = sessionStorage.getItem("token");
+
+  if (!token || !loanType) {
+    return {
+      status: 400,
+      message: "Missing token or loan type",
+      data: null,
+    };
+  }
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/workflow-get/${loanType}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+
+
+    const text = await response.text();
+    const result = text ? JSON.parse(text) : {};
+
+
+   
+
+    console.log("📦 Workflow Fetch Result:", result);
+
+    return {
+      status: response.status,
+      message: result.message || "No response message",
+      data: result.data || null,
+    };
+  } catch (error) {
+    console.error("❌ API Error (fetchWorkflowByLoanType):", error);
+    return {
+      status: 500,
+      message: "Network or server error",
+      data: null,
+    };
+  }
+};
+
+

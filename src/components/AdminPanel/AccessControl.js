@@ -17,12 +17,13 @@ const AccessControl = () => {
     const getMenus = async () => {
       try {
         // const data = await fetchAllMenus();
-          const data = await getMenusWithPermissions(roleId);
+        const data = await getMenusWithPermissions(roleId);
         console.log("Menus with permissions:", data);
 
         const enrichMenus = (menus) =>
           menus.map((menu) => ({
             id: menu.menuId,
+            icon: menu.icon,
             name: menu.menuName,
             read: menu.canRead || false,
             write: menu.canWrite || false,
