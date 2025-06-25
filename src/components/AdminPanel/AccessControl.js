@@ -189,13 +189,8 @@ const AccessControl = () => {
   };
 
   return (
-    <div className="lg:flex md:block font-inter">
-      <div className="h-screen hidden lg:block fixed z-20">
-        <DashboardSidebar />
-      </div>
-      <main className="flex-1 lg:ml-72">
-        <DashboardHead />
-        <div className="min-h-screen bg-gray-100 p-8">
+    
+        <div className="min-h-screen bg-gray-100 pr-8 py-8 m-0">
           <div className="bg-white rounded-2xl shadow-lg max-w-5xl mx-auto p-8">
             <h2 className="text-2xl font-bold text-accent mb-6">
               Access Control Management
@@ -234,8 +229,6 @@ const AccessControl = () => {
             </div>
           </div>
         </div>
-      </main>
-    </div>
   );
 };
 

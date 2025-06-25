@@ -171,15 +171,8 @@ const FormHeader = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <DashboardSidebar />
 
-      <div className="flex-1">
-        <DashboardHead />
-
-
-       {/* ✅ USER TYPE RADIO SECTION */}
-            <div className="p-4">
+            <div className="pr-8 py-8">
         <div className="bg-white rounded-lg shadow-md  py-8  px-12 mb-4">
               <label className="block text-gray-700 font-semibold mb-2">
                 Please select user type
@@ -288,8 +281,7 @@ const FormHeader = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    
   );
 };
 

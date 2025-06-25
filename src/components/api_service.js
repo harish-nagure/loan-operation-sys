@@ -320,8 +320,12 @@ export async function getUserById(userId) {
     throw new Error(errorData?.message || 'Failed to fetch user');
   }
 
-  const data_json = await response.json();
-  return data_json;
+    try {
+    return await response.json(); 
+  } catch {
+    return {};
+  }
+  
 }
 
 

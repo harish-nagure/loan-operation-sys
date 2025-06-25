@@ -39,14 +39,14 @@ const OrganizationForm = () => {
   return (
 
 
-     <div className="lg:flex md:block font-inter">
-      <div className="h-screen hidden lg:block fixed z-20">
-        <DashboardSidebar />
-      </div>
-      <main className="flex-1 lg:ml-72">
-        <DashboardHead />
+    //  <div className="lg:flex md:block font-inter">
+    //   <div className="h-screen hidden lg:block fixed z-20">
+    //     <DashboardSidebar />
+    //   </div>
+    //   <main className="flex-1 lg:ml-72">
+    //     <DashboardHead />
 
-    <div className="flex items-center justify-center bg-gray-100 p-6">
+    <div className="flex items-center justify-center bg-gray-100 pr-8 py-12">
       <div className="bg-white p-6 rounded-xl shadow-md max-w-xl w-full">
         <h2 className="text-2xl font-semibold mb-6 text-accent">🏢 Organization Details</h2>
         
@@ -111,8 +111,8 @@ const OrganizationForm = () => {
         </form>
       </div>
     </div>
-        </main> 
-        </div>
+        // </main> 
+        // </div>
   );
 };
 

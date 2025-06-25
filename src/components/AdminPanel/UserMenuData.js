@@ -1,8 +1,7 @@
 import React, { useState,useEffect } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 
-import DashboardSidebar from "./DashboardSidebar";
-import DashboardHead from "./DashboardHead";
 import UserMenuForm from "./UserMenuForm";
 
 import { getAllUsers,addUserApi, getRoles } from "../api_service"; // Adjust the import path as needed
@@ -10,6 +9,10 @@ import { getAllUsers,addUserApi, getRoles } from "../api_service"; // Adjust the
 // import { fetchRoles } from "../api_service";
 
 const UserMenuData = () => {
+  
+  
+  const location = useLocation(); 
+  const { canRead = false, canWrite = false } = location.state || {};
 
 
 
@@ -59,9 +62,7 @@ const UserMenuData = () => {
         
       }, []);
 
-  const handleEdit = (user) => {
-    setEditingUser(user);
-  };
+  
 
   useEffect(() => {
  const fetchRoles = async () => {
@@ -77,14 +78,28 @@ const UserMenuData = () => {
         fetchRoles();
 }, []);
 
-
+  const handleEdit = (user) => {
+    if (!canWrite) {
+      alert("You don't have permission to edit users.");
+      return;
+    }
+    setEditingUser(user);
+  };
   const handleDelete = (userId) => {
+    if (!canWrite) {
+      alert("You don't have permission to delete users.");
+      return;
+    }
     if (window.confirm("Are you sure you want to delete this user?")) {
       setUserData(userData.filter(user => user.id !== userId));
     }
   };
 
   const handleAddUser = () => {
+    if (!canWrite) {
+      alert("You don't have permission to add users.");
+      return;
+    }
     setEditingUser({});
   };
 
@@ -102,6 +117,10 @@ const UserMenuData = () => {
   // };
 
   const handleFormSubmit = async (formUser) => {
+    if (!canWrite) {
+      alert("You don't have permission to submit the form.");
+      return;
+    }
   try {
     if (formUser.id) {
       // Edit mode (local update for now)
@@ -141,14 +160,8 @@ const UserMenuData = () => {
 };
 
   return (
-    <div className="lg:flex md:block font-inter">
-      <div className="h-screen hidden lg:block fixed z-20">
-        <DashboardSidebar />
-      </div>
-      <main className="flex-1 lg:ml-72">
-        <DashboardHead />
-
-        <div className="p-6">
+    
+        <div className="pr-8 py-8">
           {editingUser ? (
             <UserMenuForm
               initialData={editingUser}
@@ -228,8 +241,7 @@ const UserMenuData = () => {
             </div>
           )}
         </div>
-      </main>
-    </div>
+       
   );
 };
 

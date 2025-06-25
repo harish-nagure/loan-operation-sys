@@ -32,7 +32,7 @@ const DashboardHead = () => {
             </div>
 
             {/* Header */}
-            <div className="w-full h-14 bg-none px-4 flex items-center justify-between">
+            <div className="w-full h-14 bg-transparent   px-4 flex items-center justify-between">
                 {/* Mobile Sidebar Toggle */}
                 <div className="lg:hidden">
                     <TiThMenu

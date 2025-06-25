@@ -3,12 +3,16 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import DashboardSidebar from './DashboardSidebar';
 import DashboardHead from './DashboardHead';
 import AdminUserForm from './AdminUserForm';
+import { useLocation } from 'react-router-dom';
 
 
 import { createRole,getRoles,updateRole, deleteRole, getAllUsers } from '../api_service'; 
 
 const AdminUserPanel = () => {
 
+  
+  const location = useLocation(); 
+  const { canRead = false, canWrite = false } = location.state || {};
 
   const [adminList, setAdminList] = useState([]);
 
@@ -42,6 +46,11 @@ const AdminUserPanel = () => {
 
 
   const handleFormSubmit = async () => {
+
+    if (!canWrite) {
+      alert("You don't have permission to submit the form.");
+      return;
+    }
     const errors = [];
 
     if (!formData.roleName.trim()) errors.push("Role Name is required.");
@@ -55,6 +64,7 @@ const AdminUserPanel = () => {
     try {
 
       if (editId) {
+        
         const updatedRole = await updateRole(editId, formData);
         setAdminList(prev =>
           prev.map(admin => (admin.id === editId ? { ...updatedRole } : admin))
@@ -81,12 +91,21 @@ const AdminUserPanel = () => {
   };
 
   const handleEdit = (admin) => {
+    if (!canWrite) {
+      alert("You don't have permission to edit users.");
+      return;
+    }
     setFormData(admin);
     setEditId(admin.id);
     setFormVisible(true);
   };
 
 const handleDelete = async (id) => {
+
+  if (!canWrite) {
+      alert("You don't have permission to delete users.");
+      return;
+    }
   if (window.confirm('Are you sure to delete this role?')) {
     try {
       await deleteRole(id);
@@ -101,17 +120,22 @@ const handleDelete = async (id) => {
 
 
   return (
-    <div className="lg:flex md:block font-inter">
-      <div className="h-screen hidden lg:block fixed z-20">
-        <DashboardSidebar />
-      </div>
-      <main className="flex-1 lg:ml-72">
-        <DashboardHead />
-        <div className="p-6 ">
+    // <div className="lg:flex md:block font-inter">
+    //   <div className="h-screen hidden lg:block fixed z-20">
+    //     <DashboardSidebar />
+    //   </div>
+    //   <main className="flex-1 lg:ml-72">
+    //     <DashboardHead />
+        <div className="pr-8 py-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-700">Users Roles</h2>
             <button
+              disabled={!canWrite}
               onClick={() => {
+                if (!canWrite) {
+                  alert("You don't have permission to add users.");
+                  return;
+                }
                 resetForm();
                 setFormVisible(true);
               }}
@@ -188,8 +212,8 @@ const handleDelete = async (id) => {
             </div>
           )}
         </div>
-      </main>
-    </div>
+    //   </main>
+    // </div>
   );
 };
 

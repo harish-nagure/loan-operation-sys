@@ -54,15 +54,15 @@ const FormsPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f5fcfd] text-gray-800">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md z-10">
-        <DashboardSidebar />
-      </div>
+    // <div className="flex min-h-screen bg-[#f5fcfd] text-gray-800">
+    //   {/* Sidebar */}
+    //   <div className="w-64 bg-white shadow-md z-10">
+    //     <DashboardSidebar />
+    //   </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHead />
+    //   {/* Main Content */}
+    //   <div className="flex-1 flex flex-col overflow-hidden">
+    //     <DashboardHead />
 
         <div className="flex-1 px-10 py-8 overflow-y-auto">
           {/* Step Tracker */}
@@ -120,8 +120,8 @@ const FormsPage = () => {
             {renderForm(active)}
           </div>
         </div>
-      </div>
-    </div>
+    //   </div>
+    // </div>
   );
 };
 

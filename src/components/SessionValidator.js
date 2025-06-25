@@ -26,7 +26,8 @@ const SessionValidator = ({ children }) => {
   const logout = (message) => {
     if (message) alert(message);
     sessionStorage.clear();
-    navigate('/login');
+    navigate('/login' , { replace: true });
+    window.location.reload(); 
   };
 
   const resetInactivityTimer = () => {

@@ -102,12 +102,12 @@ const MenuForm = () => {
 
 
 
-    <div className="lg:flex md:block font-inter">
-      <div className="h-screen hidden lg:block fixed z-20">
-        <DashboardSidebar />
-      </div>
-      <main className="flex-1 lg:ml-72">
-        <DashboardHead />
+    // <div className="lg:flex md:block font-inter">
+    //   <div className="h-screen hidden lg:block fixed z-20">
+    //     <DashboardSidebar />
+    //   </div>
+    //   <main className="flex-1 lg:ml-72">
+    //     <DashboardHead />
 
     <div className="mt-16 flex items-center justify-center bg-gray-100">
       <div className="bg-white rounded-3xl shadow-lg max-w-2xl w-full p-8">
@@ -204,8 +204,8 @@ const MenuForm = () => {
       </div>
     </div>
 
-    </main>
-  </div>
+  //   </main>
+  // </div>
   );
 };
 

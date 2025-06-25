@@ -11,6 +11,7 @@ const defaultLoanOptions = [
 ];
 
 const LoanTypeSelectionPage = ({ onContinue }) => {
+  
   const [loanOptions, setLoanOptions] = useState([]);
   const [loanType, setLoanType] = useState("");
   const [userType, setUserType] = useState("");
@@ -66,17 +67,8 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f5fcfd]">
-      {/* Sidebar */}
-      <div className="w-64">
-        <DashboardSidebar />
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <DashboardHead />
-
-        <div className="p-6">
+    <>
+        <div className="pr-8 py-8">
           <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
               Select Loan Type
@@ -128,7 +120,7 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
             </button>
           </div>
         </div>
-      </div>
+      {/* </div> */}
 
       {/* Modal */}
       {showModal && (
@@ -167,7 +159,7 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

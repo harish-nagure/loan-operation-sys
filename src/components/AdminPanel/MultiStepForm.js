@@ -136,13 +136,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <DashboardSidebar />
-
-      <div className="flex-1 p-4">
-        <DashboardHead />
-
-        {/* 🔘 User Type Selection */}
+        <div className="pr-8 py-6">
         <div className="bg-white rounded-lg shadow-md  py-8  px-12 mb-4">
           <p className="text-gray-700 font-medium mb-2">Please select user type</p>
           <div className="flex gap-6">
@@ -224,8 +218,7 @@ useEffect(() => {
             )}
           </div>
         </div>
-      </div>
-    </div>
+   </div>
   );
 };
 

@@ -20,7 +20,7 @@ const getIconByName = (iconName) => {
   return allIcons[iconName] || MdIcons.MdOutlineAnalytics;
 };
 
-const SidebarItem = ({ icon: Icon, label, path, canWrite, children = [] }) => {
+const SidebarItem = ({ icon: Icon, label, path, canRead, canWrite, children = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -30,11 +30,12 @@ const SidebarItem = ({ icon: Icon, label, path, canWrite, children = [] }) => {
   const isChildActive = hasChildren && children.some(child => location.pathname === child.path);
 
   const handleClick = () => {
-    if (!canWrite) return;
     if (hasChildren) {
       setOpen(!open);
-    } else {
-      navigate(path[0]);
+    } else if (canRead || canWrite) {
+      navigate(path[0], {
+        state: { canRead, canWrite },
+      });
     }
   };
 
@@ -42,14 +43,12 @@ const SidebarItem = ({ icon: Icon, label, path, canWrite, children = [] }) => {
     <>
       <li
         className={`flex items-center justify-between px-6 py-3 rounded-l-full cursor-pointer ${
-          canWrite
-            ? isActive || isChildActive || open
-              ? "bg-accent text-white font-semibold shadow-lg"
-              : "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
-            : "text-gray-400 cursor-not-allowed"
+          isActive || isChildActive || open
+            ? "bg-accent text-white font-semibold shadow-lg"
+            : "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
         }`}
         onClick={handleClick}
-        title={!canWrite ? "Read-only" : `${label}`}
+        title={label}
       >
         <div className="flex items-center gap-3">
           <Icon className="text-lg" />
@@ -70,12 +69,15 @@ const SidebarItem = ({ icon: Icon, label, path, canWrite, children = [] }) => {
               className={`cursor-pointer px-3 py-2 rounded-md transition-colors duration-150 ${
                 location.pathname === child.path
                   ? "bg-blue-100 text-accent font-medium"
-                  : child.canWrite
-                  ? "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
-                  : "text-gray-400 cursor-not-allowed"
+                  : "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
               }`}
-              onClick={() => child.canWrite && navigate(child.path)}
-              title={!child.canWrite ? "Read-only" : ""}
+              onClick={() =>
+                (child.canRead || child.canWrite) &&
+                navigate(child.path, {
+                  state: { canRead: child.canRead, canWrite: child.canWrite },
+                })
+              }
+              title={child.label}
             >
               {child.label}
             </li>
@@ -96,7 +98,9 @@ const DashboardSidebar = () => {
         const role = sessionStorage.getItem("role");
         const roles = await getRoles();
 
-        const matchedRole = roles.data.find(r => r.roleName?.toLowerCase() === role?.toLowerCase());
+        const matchedRole = roles.data.find(
+          r => r.roleName?.toLowerCase() === role?.toLowerCase()
+        );
         if (!matchedRole) {
           console.error("Role not found in fetched roles.");
           return;
@@ -104,19 +108,13 @@ const DashboardSidebar = () => {
 
         const roleId = matchedRole.id;
         const data = await getMenusWithPermissions(roleId);
-        console.log(data);
+
         const filterMenus = (menus) =>
           menus
-            .filter((menu) => menu.canRead || menu.canWrite)
-            .map((menu) => ({
+            .filter(menu => menu.canRead || menu.canWrite)
+            .map(menu => ({
               ...menu,
-              subMenus: (menu.subMenus || [])
-                .filter((sub) => sub.canRead || sub.canWrite)
-                .map((sub) => ({
-                  ...sub,
-                  canWrite: sub.canWrite,
-                })),
-              canWrite: menu.canWrite,
+              subMenus: (menu.subMenus || []).filter(sub => sub.canRead || sub.canWrite),
             }));
 
         setMenuItems(filterMenus(data));
@@ -153,17 +151,19 @@ const DashboardSidebar = () => {
 
       <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar direction-rtl">
         <div className="direction-ltr">
-          {menuItems.map((item) => (
+          {menuItems.map(item => (
             <SidebarItem
               key={item.menuId}
               icon={getIconByName(item.icon)}
               label={item.menuName}
               path={[item.url]}
+              canRead={item.canRead}
               canWrite={item.canWrite}
               children={
-                item.subMenus?.map((sub) => ({
+                item.subMenus?.map(sub => ({
                   label: sub.menuName,
                   path: sub.url,
+                  canRead: sub.canRead,
                   canWrite: sub.canWrite,
                 })) || []
               }

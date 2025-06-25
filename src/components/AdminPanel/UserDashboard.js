@@ -21,16 +21,10 @@ const UserDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white border-r shadow">
-        <DashboardSidebar />
-      </div>
+      
+      <div className="flex-1 pr-8 py-8">
 
-      {/* Main Content */}
-      <div className="flex-1 p-10">
-        <DashboardHead />
-
-        <h1 className="text-2xl font-bold text-gray-800 mb-4 ml-4">Loan and Application</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 ml-4">Loan and Application</h1>
 
         <div className="bg-white rounded-xl shadow border border-[#e0f3f4] p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">

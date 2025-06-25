@@ -101,15 +101,15 @@ const LoanSystemConfig = () => {
 
   return (
 
-  <div className="lg:flex md:block font-inter">
-  <div className="h-screen hidden lg:block fixed z-20">
-    <DashboardSidebar />
-  </div>
-    <main className="flex-1 lg:ml-72">
-      <DashboardHead />
+  // <div className="lg:flex md:block font-inter">
+  // <div className="h-screen hidden lg:block fixed z-20">
+  //   <DashboardSidebar />
+  // </div>
+  //   <main className="flex-1 lg:ml-72">
+  //     <DashboardHead />
 
 
-    <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-start">
+    <div className="min-h-screen bg-gray-100 pr-8 py-6 flex flex-col items-start">
       <h1 className="text-3xl font-bold text-black-600 mb-6">
         System Configuration
       </h1>
@@ -289,8 +289,8 @@ const LoanSystemConfig = () => {
         </div>
       </div>
     </div>
-    </main>
-  </div>
+  //   </main>
+  // </div>
   );
 };
 

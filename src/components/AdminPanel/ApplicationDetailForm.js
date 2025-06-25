@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import { submitApplicationDetails } from "../api_service";
 
@@ -16,6 +17,8 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
   const [homeowner, setHomeowner] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [authorizeCredit, setAuthorizeCredit] = useState(false);
+  const location = useLocation();
+  const { canRead = false, canWrite = false } = location.state || {};
 
 
 
@@ -102,9 +105,13 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
   //   }
   // };
 
-
+    // alert(canWrite)
     const handleSubmit = async (e) => {
       e.preventDefault();
+      if (!canWrite) {
+        alert("You don't have permission to submit the form.");
+        return;
+      }
       if (validate()) {
         try {
           
@@ -144,6 +151,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="date"
             id="dob"
             name="dob"
+            disabled={!canWrite}
             value={detail.dob || ""}
             onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
@@ -164,6 +172,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="text"
             id="monthlyIncome"
             name="monthlyIncome"
+            disabled={!canWrite}
             placeholder="Enter amount"
             value={detail.monthlyIncome|| ""}
             onChange={handleDetailChange}
@@ -194,6 +203,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="text"
             id="ssn"
             name="ssn"
+            disabled={!canWrite}
             placeholder="Social Security Number"
             value={detail.ssn || ""}
             onChange={handleDetailChange}
@@ -216,6 +226,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="text"
             id="confirmSsn"
             name="confirmSsn"
+            disabled={!canWrite}
             placeholder="Confirm Social Security Number"
             value={detail.confirmSsn|| ""}
             onChange={handleDetailChange}
@@ -238,6 +249,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="text"
             id="amountNeeded"
             name="amountNeeded"
+            disabled={!canWrite}
             placeholder="Amount needed"
             value={detail.amountNeeded|| ""}
             onChange={handleDetailChange}
@@ -258,6 +270,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="text"
             id="homeAddress"
             name="homeAddress"
+            disabled={!canWrite}
             placeholder="Street address"
             value={detail.homeAddress || ""}
             onChange={handleDetailChange}
@@ -281,6 +294,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="text"
             id="homeAddress2"
             name="homeAddress2"
+            disabled={!canWrite}
             placeholder="Apt, suite, etc. (optional)"
             value={detail.homeAddress2 || ""}
               onChange={handleDetailChange}
@@ -298,6 +312,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="text"
             id="zipCode"
             name="zipCode"
+            disabled={!canWrite}
             placeholder="Zip code"
             value={detail.zipCode|| ""}
             onChange={handleDetailChange}
@@ -320,6 +335,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="text"
             id="city"
             name="city"
+            disabled={!canWrite}
             placeholder="City"
             value={detail.city||""}
             onChange={handleDetailChange}
@@ -340,6 +356,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             id="state"
             name="state"
             value={detail.state}
+            disabled={!canWrite}
             onChange={handleDetailChange}
             className={`w-full border-b py-2 focus:outline-none ${
               errors.state ? "border-red-500" : "border-gray-400 focus:border-blue-600"
@@ -364,6 +381,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="radio"
             name="homeowner"
             value="yes"
+            disabled={!canWrite}
             checked={detail.homeowner === "yes"}
             onChange={handleDetailChange}
             className="cursor-pointer accent-blue-600"
@@ -375,6 +393,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
             type="radio"
             name="homeowner"
             value="no"
+            disabled={!canWrite}
             checked={detail.homeowner === "no"}
             onChange={handleDetailChange}
             className="cursor-pointer accent-blue-600"

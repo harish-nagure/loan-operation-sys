@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation  } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 
 const AdminDashboard = () => {
+  
+  const location = useLocation(); 
+  const { canRead = false, canWrite = false } = location.state || {};
   const navigate = useNavigate();
 
   const getApplications = () => {
@@ -23,6 +26,7 @@ const AdminDashboard = () => {
   }, []);
 
   const handleStatusClick = (status) => {
+    if (canWrite) return;
     if (status === "Application Submitted") {
       navigate("/submitted_application");
     }
@@ -30,15 +34,15 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
+      {/* Sidebar
       <div className="w-64 bg-white border-r shadow">
         <DashboardSidebar />
       </div>
 
-      {/* Main Content */}
+  
       <div className="flex-1 p-6 sm:p-10 overflow-x-auto">
-        <DashboardHead />
-
+        <DashboardHead /> */}
+        
         <div className="mt-6">
           <h1 className="text-3xl font-bold text-gray-800 mb-6">Loan Application</h1>
 
@@ -67,6 +71,7 @@ const AdminDashboard = () => {
                     label={status}
                     value={applications.filter(app => app.status === status).length}
                     onClick={handleStatusClick}
+                    disabled={!canWrite}
                   />
                 ))}
               </div>
@@ -74,7 +79,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 
@@ -88,10 +93,15 @@ const Card = ({ title, icon, value, color }) => (
   </div>
 );
 
-const StatusBox = ({ label, value, onClick }) => (
+const StatusBox = ({ label, value, onClick, disabled }) => (
   <div
-    onClick={() => onClick(label)}
-    className="bg-white rounded-lg p-4 border border-blue-200 cursor-pointer hover:shadow-md transition"
+    // onClick={() => onClick(label)}
+    
+    onClick={!disabled ? () => onClick(label) : undefined}
+    // className="bg-white rounded-lg p-4 border border-blue-200 cursor-pointer hover:shadow-md transition"
+    className={`bg-white rounded-lg p-4 border border-blue-200 ${
+      !disabled ? "cursor-pointer hover:shadow-md" : "cursor-not-allowed opacity-60"
+    } transition`}
   >
     <div className="flex justify-between items-center text-sm font-medium text-gray-700">
       <span>{label}</span>

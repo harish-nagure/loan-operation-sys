@@ -46,14 +46,14 @@ const SelectStepsPage = () => {
   };
 
   return (
-    <div className="lg:flex md:block font-inter bg-[#f5fcfd] min-h-screen">
-      <div className="h-screen hidden lg:block fixed z-20">
-        <DashboardSidebar />
-      </div>
-      <main className="flex-1 lg:ml-72">
-        <DashboardHead />
+    // <div className="lg:flex md:block font-inter bg-[#f5fcfd] min-h-screen">
+    //   <div className="h-screen hidden lg:block fixed z-20">
+    //     <DashboardSidebar />
+    //   </div>
+    //   <main className="flex-1 lg:ml-72">
+    //     <DashboardHead />
 
-        <div className="p-6 flex items-center justify-center">
+        <div className="pr-8 py-8 flex items-center justify-center">
           <div className="bg-white shadow-2xl rounded-3xl w-full max-w-5xl p-10 md:p-14">
             <h1 className="text-2xl font-bold text-[#029aaa] mb-8 text-center">
               {loanType.charAt(0).toUpperCase() + loanType.slice(1)} Loan -&gt; Approval Process Flow Setup
@@ -117,8 +117,8 @@ const SelectStepsPage = () => {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+    //   </main>
+    // </div>
   );
 };
 
