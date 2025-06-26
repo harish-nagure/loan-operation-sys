@@ -25,8 +25,8 @@ const SidebarItem = ({ icon: Icon, label, path, canRead, canWrite, children = []
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  const isActive = path.includes(location.pathname);
   const hasChildren = children.length > 0;
+  const isActive = path.some(p => location.pathname.startsWith(p));
   const isChildActive = hasChildren && children.some(child => location.pathname === child.path);
 
   const handleClick = () => {
@@ -96,11 +96,14 @@ const DashboardSidebar = () => {
     const loadMenus = async () => {
       try {
         const role = sessionStorage.getItem("role");
-        const roles = await getRoles();
+        const user = sessionStorage.getItem("username");
+        setUsername(user || "");
 
+        const roles = await getRoles();
         const matchedRole = roles.data.find(
           r => r.roleName?.toLowerCase() === role?.toLowerCase()
         );
+
         if (!matchedRole) {
           console.error("Role not found in fetched roles.");
           return;
@@ -108,7 +111,7 @@ const DashboardSidebar = () => {
 
         const roleId = matchedRole.id;
         const data = await getMenusWithPermissions(roleId);
-
+        console.log(data)
         const filterMenus = (menus) =>
           menus
             .filter(menu => menu.canRead || menu.canWrite)
@@ -156,7 +159,12 @@ const DashboardSidebar = () => {
               key={item.menuId}
               icon={getIconByName(item.icon)}
               label={item.menuName}
-              path={[item.url]}
+              path={[
+                item.url,
+                ...(item.subMenus?.map(sub =>
+                  "/" + sub.url.split("/")[-1]
+                ) || [])
+              ]}
               canRead={item.canRead}
               canWrite={item.canWrite}
               children={

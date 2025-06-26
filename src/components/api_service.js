@@ -34,12 +34,13 @@ export async function VerifyOTP({ email, otp }) {
     body: JSON.stringify({ email, otp }),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Login failed');
-  }
+  
 
   const data_json = await response.json();
+  if (!response.ok) {
+    // const errorData = await response.json();
+    throw new Error(data_json.message || 'Login failed');
+  }
   const data = data_json?.data;
   console.log('OTP verification response:', data);
   console.log('Login response data:', data);
@@ -47,6 +48,7 @@ export async function VerifyOTP({ email, otp }) {
     sessionStorage.setItem('isLoggedIn', 'true');
     sessionStorage.setItem('username', data.userId);
     sessionStorage.setItem('role', data.role);
+    sessionStorage.setItem('roleId',data.roleId);
     sessionStorage.setItem('token', data.token);
     sessionStorage.setItem('refreshToken', data.refreshToken);
     sessionStorage.setItem('loginTime', new Date().getTime());

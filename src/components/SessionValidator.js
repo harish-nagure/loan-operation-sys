@@ -24,10 +24,12 @@ const SessionValidator = ({ children }) => {
   const sessionTimeoutMs = sessionTimeoutMinutes * 60 * 1000;
 
   const logout = (message) => {
-    if (message) alert(message);
     sessionStorage.clear();
-    navigate('/login' , { replace: true });
-    window.location.reload(); 
+    
+    // if (message) alert(message);
+   
+    navigate('/login' , { replace: true } );
+       window.location.reload(); 
   };
 
   const resetInactivityTimer = () => {
@@ -61,6 +63,7 @@ const SessionValidator = ({ children }) => {
 
     if (!token || !refreshToken || !loginTimeStr) {
       logout('Session invalid or missing. Please login again.');
+      navigate("/login");
       return;
     }
 

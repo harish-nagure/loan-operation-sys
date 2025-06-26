@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { submitApplicationDetails } from "../api_service";
 
 const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
+  const navigate = useNavigate();
   const [dob, setDob] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [ssn, setSsn] = useState("");
@@ -132,6 +133,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           console.log("Request Data:", requestData);
           const response = await submitApplicationDetails(requestData);
           alert("Application submitted successfully!");
+          navigate("/workflow/custom");
           console.log("API Response:", response);
         } catch (error) {
           alert("Failed to submit application: " + error.message);

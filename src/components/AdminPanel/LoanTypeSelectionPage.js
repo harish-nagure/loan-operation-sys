@@ -19,6 +19,7 @@ const LoanTypeSelectionPage = ({ onContinue }) => {
   
   const location = useLocation(); 
   const { canRead = false, canWrite = false } = location.state || {};
+  console.log(location.state+"Hiii")
   const [loanOptions, setLoanOptions] = useState([]);
   const [loanType, setLoanType] = useState("");
   const [userType, setUserType] = useState("");
@@ -67,7 +68,8 @@ useEffect(() => {
 
   const handleContinue = async () => {
     if (!canWrite) {
-      alert("❌ You don't have permission to continue.");
+
+      alert("❌ You don't have permission to continue."+canWrite);
       return;
     }
   if (!loanType) return;
@@ -88,7 +90,7 @@ useEffect(() => {
     if (onContinue) {
       onContinue(selectedLoan.value);
     } else {
-      navigate(userType === "admin" ? "/selection_steps_page" : "/forms_page");
+      navigate(userType === "admin" ? "/selection_setup" : "/forms_steps");
     }
   } else {
     alert("❌ Failed to save loan type: " + result.message);

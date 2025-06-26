@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -13,23 +13,14 @@ import SessionValidator from "./components/SessionValidator";
 import DashboardSidebar from "./components/AdminPanel/DashboardSidebar";
 import DashboardHead from "./components/AdminPanel/DashboardHead";
 
-// Dashboard
+// Pages
 import AdminDashboard from "./components/AdminPanel/AdminDashboard";
-import UserDashboard from "./components/AdminPanel/UserDashboard";
 
-//Pages
 import UserMenuData from "./components/AdminPanel/UserMenuData";
-
-
 import AdminUserPanel from "./components/AdminPanel/AdminUserData";
-
 import AccessControlSetup from "./components/AdminPanel/AccessControlSetup";
-import AccessControl from "./components/AdminPanel/AccessControl";
-
 import OrganizationForm from "./components/AdminPanel/OrganizationForm";
-
 import LoanSystemConfig from "./components/AdminPanel/LoanSystemConfig";
-
 import MultiStepForm from "./components/AdminPanel/MultiStepForm";
 import LoanTypeSelectionPage from "./components/AdminPanel/LoanTypeSelectionPage";
 import SelectStepsPage from "./components/AdminPanel/SelectStepPage";
@@ -48,34 +39,36 @@ const fieldKeys = [
   "authorizeCredit", "applicationId", "loanType", "loanAmount", "term",
   "interestRate", "startDate"
 ];
-
 const initialSettings = Object.fromEntries(fieldKeys.map(key => [key, true]));
 
-// Map paths to their respective components
+// Route map
+const routeComponentMap = {
+  "/dashboard": <AdminDashboard />,
 
-// const routeComponentMap = {
-//   "/dashboard": roleId === 1 ? <AdminDashboard /> : <UserMenuData/>,
-//   "/user": <UserMenuData />,
-//   "/roles": <AdminUserPanel />,
-//   "/access-control": <AccessControlSetup />,
-//   "/organization": <OrganizationForm />,
-//   "/system-config": <LoanSystemConfig />,
-//   "/application-form": <MultiStepForm />,
-//   "/cr": <FormHeader />,
-//   "/workflow/custom": <LoanTypeSelectionPage />,
-//   "/selection_steps_page": <SelectStepsPage />,
-//   "/forms_page": <FormsPage />,
-//   "/submitted_application": <SubmittedApplication />,
-//   "/form_field_settings": <FormFieldSettings />
-// };
+  "/user": <UserMenuData />,
+  
+  "/roles": <AdminUserPanel />,
+  
+  "/access-control": <AccessControlSetup />,
+  
+  "/organization": <OrganizationForm />,
+  "/system-config": <LoanSystemConfig />,
+  
+  "/application-form": <MultiStepForm />,
+  "/form_header": <FormHeader />,
+  "/workflow/custom": <LoanTypeSelectionPage />,
+  "/selection_steps_page": <SelectStepsPage />,
+  "/forms_steps": <FormsPage />,
+  "/submitted_application": <SubmittedApplication />,
+  "/form_field_settings": <FormFieldSettings />
+};
 
-// Protected route wrapper based on menu permissions
+// This is now a **function**, not a component
 function createProtectedRoute({ path, element, menus, fieldSettings, setFieldSettings }) {
   const allMenus = [...menus, ...menus.flatMap(m => m.subMenus || [])];
   const matched = allMenus.find(menu => menu.url === path);
 
   if (matched?.canRead || matched?.canAll) {
-  // if (true) {
     return (
       <Route
         key={path}
@@ -89,83 +82,26 @@ function createProtectedRoute({ path, element, menus, fieldSettings, setFieldSet
     );
   }
 
-  // Fallback route if no permission
   return (
     <Route
       key={path}
       path={path}
       element={
         <SessionValidator>
-        <Navigate to="/dashboard" replace />
+        <AdminDashboard />
         </SessionValidator>
       }
     />
   );
 }
 
-// Main application logic
 function AppWrapper() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("token"));
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fieldSettings, setFieldSettings] = useState(initialSettings);
-  const navigate = useNavigate(); // For optional redirect
-
-  // Load menu permissions based on roleId
-  const roleId = sessionStorage.getItem("roleId");
-  // alert(roleId)
-  const routeComponentMap = {
-  "/dashboard": roleId == 1 ? <AdminDashboard /> : <UserDashboard/>,
-  "/user": <UserMenuData />,
-  "/roles": <AdminUserPanel />,
-  "/access-control": <AccessControlSetup />,
-
-  "/access_control/:roleId": <AccessControl />,
-  
-  "/organization": <OrganizationForm />,
-
-  "/system-config": <LoanSystemConfig />,
-
-  "/application-form": <MultiStepForm />,
-
-  "/corporate_form": <FormHeader />,
-  
-  "/workflow/custom": <LoanTypeSelectionPage />,
-
-  "/selection_setup": <SelectStepsPage />,
-
-  "/forms_steps": <FormsPage />,
-
-  "/submitted_application": <SubmittedApplication />,
-  
-  "/form_field_settings": <FormFieldSettings />
-  };
-
-
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   const roleId = sessionStorage.getItem("roleId");
-  //   if (!roleId) {
-  //     setMenus([]);
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   getMenusWithPermissions(roleId)
-  //     .then(setMenus)
-  //     .catch(err => {
-  //       console.error("Error loading menus:", err);
-  //       setMenus([]);
-  //     })
-  //     .finally(() => setLoading(false));
-  // }, [isAuthenticated]);
 
   useEffect(() => {
-  const fetchMenus = async () => {
     if (!isAuthenticated) {
       setLoading(false);
       return;
@@ -178,45 +114,28 @@ function AppWrapper() {
       return;
     }
 
-    try {
-      const result = await getMenusWithPermissions(roleId);
-      setMenus(result);
-    } catch (error) {
-      console.error("❌ Error fetching menus:", error);
-      setMenus([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    getMenusWithPermissions(roleId)
+      .then(setMenus)
+      .catch(err => {
+        console.error("Error loading menus:", err);
+        setMenus([]);
+      })
+      .finally(() => setLoading(false));
+  }, [isAuthenticated]);
 
-  fetchMenus();
-}, [isAuthenticated]);
-
-
-  // Called after OTP or login success
   function handleLoginSuccess(data) {
     if (!data?.token || !data?.roleId) {
       console.error("Login failed: Missing token or roleId", data);
       return;
     }
 
-    // sessionStorage.setItem("token", data.token);
-    // sessionStorage.setItem("roleId", data.roleId);
-    // sessionStorage.setItem("username", data.username || "");
-    // sessionStorage.setItem("refreshToken", data.refreshToken || "");
-    // sessionStorage.setItem("isLoggedIn", "true");
-    // sessionStorage.setItem("loginTime", Date.now().toString());
-
+    sessionStorage.setItem("token", data.token);
+    sessionStorage.setItem("roleId", data.roleId);
     setIsAuthenticated(true);
-    navigate("/dashboard"); // Redirect user after login
   }
 
   if (loading) {
-    return (
-    <div className="absolute inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
-      <div className="w-16 h-16 border-4 border-white border-t-[#029aaa] rounded-full animate-spin"></div>
-    </div>
-    );
+    return <div className="text-center mt-20 text-gray-500">Loading...</div>;
   }
 
   return (
@@ -230,7 +149,7 @@ function AppWrapper() {
           </div>
           <div className="flex-1 lg:ml-80 mt-2">
             <DashboardHead />
-            <main>
+            <main className="overflow">
               <Routes>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 {Object.entries(routeComponentMap).map(([path, component]) =>
@@ -260,7 +179,6 @@ function AppWrapper() {
   );
 }
 
-// Export app with routing
 export default function App() {
   return (
     <Router>

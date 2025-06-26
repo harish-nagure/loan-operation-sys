@@ -88,17 +88,23 @@ const LoginPage = ({ onLogin }) => {
 
         const data = await VerifyOTP({ email, otp: OTP });
         
-        console.log('Login successful:', { username, role: data?.role });
+        console.log('Login successful:', { username, data });
         
-        onLogin(data?.role?.toLowerCase());
-        const isAdmin = data?.role?.toLowerCase() === 'admin';
+        onLogin({
+          token: data.token,
+          roleId: data.roleId,
+          username: data.userId,
+          refreshToken: data.refreshToken
+        });
+        // const isAdmin = data?.role?.toLowerCase() === 'admin';
         
         navigate('/dashboard');
       } catch (err) {
 
         console.error("Login error:", err.message);
-        onLogin(null);
         setErrors({  OTP: 'Invalid OTP' });
+        onLogin(null);
+        
       }finally {
       setLoading(false);
     }

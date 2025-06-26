@@ -23,7 +23,7 @@ const MultiStepForm = ({ fieldSettings = {} }) => {
 
   useEffect(() => {
     if (selectedFormType === "corporate") {
-      navigate("/form_header");
+      navigate("/corporate_form");
     }
   }, [selectedFormType, navigate]);
 

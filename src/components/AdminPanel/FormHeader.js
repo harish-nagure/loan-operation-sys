@@ -17,7 +17,7 @@ const FormHeader = () => {
     const value = e.target.value;
     setUserType(value);
     if (value === "corporate") {
-      navigate("/form_header"); 
+      navigate("/corporate_form"); 
     } else {
       navigate("/application-form")
     }

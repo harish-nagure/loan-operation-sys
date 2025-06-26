@@ -24,7 +24,7 @@ const SelectStepsPage = () => {
   useEffect(() => {
     const userType = sessionStorage.getItem("role")?.toLowerCase();
     if (userType !== "admin") {
-      navigate("/forms_page");
+      navigate("/forms_step");
     }
   }, [navigate]);
 

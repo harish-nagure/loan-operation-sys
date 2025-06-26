@@ -5,7 +5,7 @@ import DashboardHead from "./DashboardHead";
 import { CheckCircle,Check } from "lucide-react";
 import {fetchWorkflowByLoanType} from "../api_service";
 
-const FormsPage = () => {
+const   FormsPage = () => {
   const navigate = useNavigate();
   const [steps, setSteps] = useState([]);
   const [active, setActive] = useState("");
@@ -20,7 +20,7 @@ useEffect(() => {
 
     if (!loanType) {
       alert("Loan type not selected.");
-      navigate("/selection_step_page"); // redirect user if loanType not found
+      navigate("/selection_setup"); // redirect user if loanType not found
       return;
     }
 
