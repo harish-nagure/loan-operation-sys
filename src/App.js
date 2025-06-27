@@ -74,8 +74,8 @@ function createProtectedRoute({ path, element, menus, fieldSettings, setFieldSet
   const allMenus = [...menus, ...menus.flatMap(m => m.subMenus || [])];
   const matched = allMenus.find(menu => menu.url === path);
 
-  if (matched?.canRead || matched?.canAll) {
-  // if (true) {
+  // if (matched?.canRead || matched?.canAll) {
+  if (true) {
     return (
       <Route
         key={path}

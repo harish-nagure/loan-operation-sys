@@ -26,36 +26,43 @@ const SidebarItem = ({ icon: Icon, label, path, canRead, canWrite, children = []
   const [open, setOpen] = useState(false);
 
   const hasChildren = children.length > 0;
-  const isActive = path.some(p => location.pathname.startsWith(p));
+  const isActive = path.includes(location.pathname);
   const isChildActive = hasChildren && children.some(child => location.pathname === child.path);
 
-  const handleClick = () => {
-    if (hasChildren) {
-      setOpen(!open);
-    } else if (canRead || canWrite) {
+  const handleNavigate = () => {
+    if (canRead || canWrite) {
       navigate(path[0], {
         state: { canRead, canWrite },
       });
     }
   };
 
+  const toggleSubMenu = (e) => {
+    e.stopPropagation();
+    setOpen(!open);
+  };
+
   return (
     <>
       <li
-        className={`flex items-center justify-between px-6 py-3 rounded-l-full cursor-pointer ${
+        className={`flex items-center justify-between px-6 py-3 rounded-l-full cursor-pointer transition ${
           isActive || isChildActive || open
             ? "bg-accent text-white font-semibold shadow-lg"
             : "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
         }`}
-        onClick={handleClick}
+        onClick={handleNavigate}
         title={label}
       >
         <div className="flex items-center gap-3">
           <Icon className="text-lg" />
           <span>{label}</span>
         </div>
+
         {hasChildren && (
-          <span className={`${isActive || isChildActive ? "text-white" : "text-accent"}`}>
+          <span
+            onClick={toggleSubMenu}
+            className={`text-sm ${isActive || isChildActive ? "text-white" : "text-accent"} cursor-pointer`}
+          >
             {open ? "▲" : "▼"}
           </span>
         )}
@@ -121,6 +128,7 @@ const DashboardSidebar = () => {
             }));
 
         setMenuItems(filterMenus(data));
+
       } catch (err) {
         console.error("Failed to fetch menus with permissions", err);
       }
@@ -152,32 +160,29 @@ const DashboardSidebar = () => {
         </div>
       </div>
 
-      <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar direction-rtl">
-        <div className="direction-ltr">
-          {menuItems.map(item => (
-            <SidebarItem
-              key={item.menuId}
-              icon={getIconByName(item.icon)}
-              label={item.menuName}
-              path={[
-                item.url,
-                ...(item.subMenus?.map(sub =>
-                  "/" + sub.url.split("/")[-1]
-                ) || [])
-              ]}
-              canRead={item.canRead}
-              canWrite={item.canWrite}
-              children={
-                item.subMenus?.map(sub => ({
-                  label: sub.menuName,
-                  path: sub.url,
-                  canRead: sub.canRead,
-                  canWrite: sub.canWrite,
-                })) || []
-              }
-            />
-          ))}
-        </div>
+      <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar direction-ltr">
+        {menuItems.map(item => (
+          <SidebarItem
+            key={item.menuId}
+            icon={getIconByName(item.icon)}
+            label={item.menuName}
+            path={[
+              item.url,
+              ...(item.subMenus?.map(sub => sub.url) || [])
+            ]}
+            canRead={item.canRead}
+            canWrite={item.canWrite}
+            children={
+              item.subMenus?.map(sub => ({
+                label: sub.menuName,
+                path: sub.url,
+                icon: sub.icon,
+                canRead: sub.canRead,
+                canWrite: sub.canWrite,
+              })) || []
+            }
+          />
+        ))}
       </ul>
     </aside>
   );

@@ -377,7 +377,6 @@ export async function submitApplicationDetails(data) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        
         'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
       },
       body: JSON.stringify(data),

@@ -22,7 +22,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
   const { canRead = false, canWrite = false } = location.state || {};
 
 
-
+  console.log(canWrite,canRead)
   const [errors, setErrors] = useState({});
 
   const states = [
@@ -133,7 +133,8 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
           console.log("Request Data:", requestData);
           const response = await submitApplicationDetails(requestData);
           alert("Application submitted successfully!");
-          navigate("/workflow/custom");
+          navigate("/workflow/custom", { state: { canWrite, canRead } });
+
           console.log("API Response:", response);
         } catch (error) {
           alert("Failed to submit application: " + error.message);
@@ -147,7 +148,7 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
         {fieldSettings.dob !== false && (
         <div className="flex-1">
           <label htmlFor="dob" className="block mb-1 font-medium">
-            Date of Birth
+            Date of Birth 
           </label>
           <input
             type="date"

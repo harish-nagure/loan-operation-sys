@@ -68,10 +68,10 @@ useEffect(() => {
 
   const handleContinue = async () => {
     if (!canWrite) {
-
       alert("❌ You don't have permission to continue."+canWrite);
       return;
     }
+
   if (!loanType) return;
 
   const selectedLoan = loanOptions.find((loan) => loan.value === loanType);
@@ -90,7 +90,9 @@ useEffect(() => {
     if (onContinue) {
       onContinue(selectedLoan.value);
     } else {
-      navigate(userType === "admin" ? "/selection_setup" : "/forms_steps");
+      navigate(userType === "admin" ? "/selection_setup" : "/forms_steps", {
+        state: { canWrite, canRead },
+      });
     }
   } else {
     alert("❌ Failed to save loan type: " + result.message);
