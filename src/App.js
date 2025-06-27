@@ -74,8 +74,8 @@ function createProtectedRoute({ path, element, menus, fieldSettings, setFieldSet
   const allMenus = [...menus, ...menus.flatMap(m => m.subMenus || [])];
   const matched = allMenus.find(menu => menu.url === path);
 
-  // if (matched?.canRead || matched?.canAll) {
-  if (true) {
+  if (matched?.canRead || matched?.canAll) {
+  // if (true) {
     return (
       <Route
         key={path}
@@ -115,7 +115,7 @@ function AppWrapper() {
   const roleId = sessionStorage.getItem("roleId");
   // alert(roleId)
   const routeComponentMap = {
-  "/dashboard": roleId == 1 ? <AdminDashboard /> : <UserDashboard/>,
+  "/dashboard": roleId == 1 ? <AdminDashboard /> : <UserDashboard/>, 
   "/user": <UserMenuData />,
   "/roles": <AdminUserPanel />,
   "/access-control": <AccessControlSetup />,
@@ -199,14 +199,6 @@ function AppWrapper() {
       console.error("Login failed: Missing token or roleId", data);
       return;
     }
-
-    // sessionStorage.setItem("token", data.token);
-    // sessionStorage.setItem("roleId", data.roleId);
-    // sessionStorage.setItem("username", data.username || "");
-    // sessionStorage.setItem("refreshToken", data.refreshToken || "");
-    // sessionStorage.setItem("isLoggedIn", "true");
-    // sessionStorage.setItem("loginTime", Date.now().toString());
-
     setIsAuthenticated(true);
     navigate("/dashboard"); // Redirect user after login
   }

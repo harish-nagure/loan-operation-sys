@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { getMenusWithPermissions, getRoles } from "../api_service";
+import { useNavigate } from "react-router-dom";
+import { getMenusWithPermissions } from "../api_service";
 import { IoSearch } from "react-icons/io5";
 
-// All icons
 import * as MdIcons from "react-icons/md";
 import * as PiIcons from "react-icons/pi";
 import * as HiIcons from "react-icons/hi2";
@@ -20,33 +19,38 @@ const getIconByName = (iconName) => {
   return allIcons[iconName] || MdIcons.MdOutlineAnalytics;
 };
 
-const SidebarItem = ({ icon: Icon, label, path, canRead, canWrite, children = [] }) => {
+const SidebarItem = ({
+  icon: Icon,
+  label,
+  path,
+  canRead,
+  canWrite,
+  isOpen,
+  isSelected,
+  onToggle,
+  onSelect,
+  children = [],
+}) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [open, setOpen] = useState(false);
-
   const hasChildren = children.length > 0;
-  const isActive = path.includes(location.pathname);
-  const isChildActive = hasChildren && children.some(child => location.pathname === child.path);
 
   const handleNavigate = () => {
-    if (canRead || canWrite) {
-      navigate(path[0], {
-        state: { canRead, canWrite },
-      });
+    if (!hasChildren && (canRead || canWrite)) {
+      navigate(path[0], { state: { canRead, canWrite } });
     }
-  };
-
-  const toggleSubMenu = (e) => {
-    e.stopPropagation();
-    setOpen(!open);
+    if (hasChildren){
+      onToggle();
+    }else{
+      onToggle(0);
+    }
+    onSelect();
   };
 
   return (
     <>
       <li
         className={`flex items-center justify-between px-6 py-3 rounded-l-full cursor-pointer transition ${
-          isActive || isChildActive || open
+          isSelected || isOpen
             ? "bg-accent text-white font-semibold shadow-lg"
             : "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
         }`}
@@ -57,31 +61,32 @@ const SidebarItem = ({ icon: Icon, label, path, canRead, canWrite, children = []
           <Icon className="text-lg" />
           <span>{label}</span>
         </div>
-
         {hasChildren && (
           <span
-            onClick={toggleSubMenu}
-            className={`text-sm ${isActive || isChildActive ? "text-white" : "text-accent"} cursor-pointer`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
+            className={`text-sm ${isSelected ? "text-white" : "text-accent"} cursor-pointer`}
           >
-            {open ? "▲" : "▼"}
+            {isOpen ? "▲" : "▼"}
           </span>
         )}
       </li>
 
-      {open && hasChildren && (
+      {isOpen && hasChildren && (
         <ul className="ml-10 mt-1 space-y-1 text-sm text-gray-700">
           {children.map((child, index) => (
             <li
               key={index}
-              className={`cursor-pointer px-3 py-2 rounded-md transition-colors duration-150 ${
-                location.pathname === child.path
-                  ? "bg-blue-100 text-accent font-medium"
-                  : "text-gray-600 font-medium hover:bg-blue-50 hover:text-accent"
-              }`}
+              className="cursor-pointer px-3 py-2 rounded-md text-gray-600 font-medium hover:bg-blue-50 hover:text-accent transition-colors"
               onClick={() =>
                 (child.canRead || child.canWrite) &&
                 navigate(child.path, {
-                  state: { canRead: child.canRead, canWrite: child.canWrite },
+                  state: {
+                    canRead: child.canRead,
+                    canWrite: child.canWrite,
+                  },
                 })
               }
               title={child.label}
@@ -98,44 +103,64 @@ const SidebarItem = ({ icon: Icon, label, path, canRead, canWrite, children = []
 const DashboardSidebar = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [username, setUsername] = useState("");
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const [selectedMenuId, setSelectedMenuId] = useState(1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadMenus = async () => {
       try {
-        const role = sessionStorage.getItem("role");
+        const roleId = sessionStorage.getItem("roleId");
         const user = sessionStorage.getItem("username");
         setUsername(user || "");
 
-        const roles = await getRoles();
-        const matchedRole = roles.data.find(
-          r => r.roleName?.toLowerCase() === role?.toLowerCase()
-        );
-
-        if (!matchedRole) {
-          console.error("Role not found in fetched roles.");
-          return;
-        }
-
-        const roleId = matchedRole.id;
         const data = await getMenusWithPermissions(roleId);
-        console.log(data)
+
         const filterMenus = (menus) =>
           menus
-            .filter(menu => menu.canRead || menu.canWrite)
-            .map(menu => ({
+            .filter(
+              (menu) =>
+                (menu.canRead || menu.canWrite) &&
+                menu.type?.toLowerCase() !== "sub_form"
+            )
+            .map((menu) => ({
               ...menu,
-              subMenus: (menu.subMenus || []).filter(sub => sub.canRead || sub.canWrite),
+              subMenus: filterMenus(menu.subMenus || []),
             }));
 
-        setMenuItems(filterMenus(data));
+        const filtered = filterMenus(data);
+        setMenuItems(filtered);
+
+        // Restore from localStorage
+        const savedOpenId = Number(sessionStorage.getItem("openMenuId"));
+        const savedSelectedId = Number(sessionStorage.getItem("selectedMenuId"));
+
+        const menuIds = filtered.map((m) => m.menuId);
+        if (savedOpenId && menuIds.includes(savedOpenId)) {
+          setOpenMenuId(savedOpenId);
+        }
+        if (savedSelectedId && menuIds.includes(savedSelectedId)) {
+          setSelectedMenuId(savedSelectedId);
+        }
+
+        // Optional: Auto navigate to selected menu
+          // const selectedMenu = filtered.find((m) => m.menuId === savedSelectedId);
+          // if (selectedMenu && selectedMenu.url) {
+          //   navigate(selectedMenu.url, {
+          //     state: {
+          //       canRead: selectedMenu.canRead,
+          //       canWrite: selectedMenu.canWrite,
+          //     },
+          //   });
+          // }
 
       } catch (err) {
-        console.error("Failed to fetch menus with permissions", err);
+        console.error("Failed to fetch menus", err);
       }
     };
 
     loadMenus();
-  }, []);
+  }, [navigate]);
 
   return (
     <aside className="w-72 bg-white h-screen flex flex-col">
@@ -161,28 +186,41 @@ const DashboardSidebar = () => {
       </div>
 
       <ul className="space-y-1 pl-5 overflow-y-auto h-full custom-scrollbar direction-ltr">
-        {menuItems.map(item => (
-          <SidebarItem
-            key={item.menuId}
-            icon={getIconByName(item.icon)}
-            label={item.menuName}
-            path={[
-              item.url,
-              ...(item.subMenus?.map(sub => sub.url) || [])
-            ]}
-            canRead={item.canRead}
-            canWrite={item.canWrite}
-            children={
-              item.subMenus?.map(sub => ({
-                label: sub.menuName,
-                path: sub.url,
-                icon: sub.icon,
-                canRead: sub.canRead,
-                canWrite: sub.canWrite,
-              })) || []
-            }
-          />
-        ))}
+        {menuItems.map((item) => {
+          const subUrls = item.subMenus?.map((sub) => sub.url) || [];
+          const allPaths = [item.url, ...subUrls];
+
+          return (
+            <SidebarItem
+              key={item.menuId}
+              icon={getIconByName(item.icon)}
+              label={item.menuName}
+              path={allPaths}
+              canRead={item.canRead}
+              canWrite={item.canWrite}
+              isOpen={openMenuId === item.menuId}
+              isSelected={selectedMenuId === item.menuId}
+              onToggle={() => {
+                const newOpenId = openMenuId === item.menuId ? null : item.menuId;
+                setOpenMenuId(newOpenId);
+                sessionStorage.setItem("openMenuId", String(newOpenId || ""));
+              }}
+              onSelect={() => {
+                setSelectedMenuId(item.menuId);
+                sessionStorage.setItem("selectedMenuId", String(item.menuId));
+              }}
+              children={
+                item.subMenus?.map((sub) => ({
+                  label: sub.menuName,
+                  path: sub.url,
+                  icon: sub.icon,
+                  canRead: sub.canRead,
+                  canWrite: sub.canWrite,
+                })) || []
+              }
+            />
+          );
+        })}
       </ul>
     </aside>
   );
