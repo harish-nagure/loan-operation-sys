@@ -7,7 +7,7 @@ import DashboardHead from "./DashboardHead";
 import DashboardSidebar from "./DashboardSidebar";
 import { getUserById } from "../api_service";
 
-const MultiStepForm = ({ fieldSettings = {} }) => {
+const MultiStepForm = ({ fieldSettings = {}, canRead = false, canWrite = false }) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({});
@@ -206,6 +206,8 @@ useEffect(() => {
                 onContinue={() => setStep(2)}
                 fieldSettings={fieldSettings}
                 dynamicFields={dynamicFields}
+                canRead={canRead}
+                canWrite={canWrite}
               />
             ) : (
               <ApplicationDetailForm
@@ -214,6 +216,8 @@ useEffect(() => {
                 onBack={() => setStep(1)}
                 onContinue={() => alert("Form Submitted!")}
                 fieldSettings={fieldSettings}
+                canRead={canRead}
+                canWrite={canWrite}
               />
             )}
           </div>

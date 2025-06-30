@@ -3,10 +3,10 @@ import smartphone from "../../Image/smartphone.png";
 
 // import PropTypes from "prop-types";
 
-const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
+const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings, canRead = false, canWrite = false }) => {
   const [errors, setErrors] = useState({});
   const [dynamicFields, setDynamicFields] = useState([]);
-
+  console.log(canRead,canWrite+"Helooo basic")
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("dynamicFields")) || {};
     setDynamicFields(saved.basicInfo || []);
@@ -80,7 +80,7 @@ const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
               name="firstName"
               value={form.firstName}
               onChange={handleChange}
-              disabled={!!form.firstName}
+              disabled={!canWrite}
               className="w-full border-b border-gray-400 focus:outline-none focus:border-[#30c9d6] py-2"
             />
             {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
@@ -98,7 +98,7 @@ const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
               name="lastName"
               value={form.lastName}
               onChange={handleChange}
-              disabled={!!form.lastName}
+              disabled={!canWrite}
               className="w-full border-b border-gray-400 focus:outline-none focus:border-[#30c9d6] py-2"
             />
             {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
@@ -117,7 +117,7 @@ const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
             name="mobile"
             value={form.mobile}
             onChange={handleChange}
-            disabled={!!form.mobile}
+            disabled={!canWrite}
             className="border-b border-gray-400 focus:outline-none focus:border-[#30c9d6] py-2"
             style={{ maxWidth: "280px" }}
           />
@@ -137,7 +137,7 @@ const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
               name="email"
               value={form.email}
               onChange={handleChange}
-              disabled={!!form.email}
+              disabled={!canWrite}
               className="w-full border-b border-gray-400 focus:outline-none focus:border-[#30c9d6] py-2"
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
@@ -155,7 +155,7 @@ const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
               name="confirmEmail"
               value={form.confirmEmail}
               onChange={handleChange}
-              disabled={!!form.email}
+              disabled={!canWrite}
               className="w-full border-b border-gray-400 focus:outline-none focus:border-[#30c9d6] py-2"
             />
             {errors.confirmEmail && <p className="text-red-500 text-sm">{errors.confirmEmail}</p>}
@@ -184,6 +184,7 @@ const BasicInfoForm = ({ form, handleChange, onContinue, fieldSettings }) => {
               name={field}
               value={form[field] || ""}
               onChange={handleChange}
+              disabled={!canWrite}
               className="border-b border-gray-400 focus:outline-none focus:border-[#30c9d6] py-2"
             />
             {errors[field] && <p className="text-red-500 text-sm">{errors[field]}</p>}

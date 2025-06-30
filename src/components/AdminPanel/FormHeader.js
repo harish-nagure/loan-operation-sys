@@ -8,7 +8,7 @@ import { FaUser, FaBuilding, FaUsers, FaFileSignature } from "react-icons/fa";
 import DashboardHead from "./DashboardHead";
 import DashboardSidebar from "./DashboardSidebar";
 
-const FormHeader = () => {
+const FormHeader = ({ canRead = false, canWrite = false }) => {
   const [step, setStep] = useState(1);
   const [userType, setUserType] = useState("corporate");
   const navigate = useNavigate();
@@ -248,6 +248,8 @@ const FormHeader = () => {
                     if (validateBasicInfo()) setStep(2);
                     else alert("Please fill all Basic Info fields correctly.");
                   }}
+                  canRead={canRead}
+                  canWrite={canWrite}
                 />
               )}
               {step === 2 && (
@@ -259,6 +261,8 @@ const FormHeader = () => {
                     if (validateCompanyInfo()) setStep(3);
                     else alert("SSN/ITIN must be exactly 9 digits and all fields filled.");
                   }}
+                  canRead={canRead}
+                  canWrite={canWrite}
                 />
               )}
               {step === 3 && (
@@ -270,12 +274,16 @@ const FormHeader = () => {
                     if (validateOwnerInfo()) setStep(4);
                     else alert("Please fill all Owner Info fields correctly.");
                   }}
+                  canRead={canRead}
+                  canWrite={canWrite}
                 />
               )}
               {step === 4 && (
                 <CollateralInfoForm
                   onBack={() => setStep(3)}
                   onContinue={() => alert("Form Submitted!")}
+                  canRead={canRead}
+                  canWrite={canWrite}
                 />
               )}
             </div>

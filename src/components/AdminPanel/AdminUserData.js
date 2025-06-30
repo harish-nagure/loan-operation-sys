@@ -8,11 +8,7 @@ import { useLocation } from 'react-router-dom';
 
 import { createRole,getRoles,updateRole, deleteRole, getAllUsers } from '../api_service'; 
 
-const AdminUserPanel = () => {
-
-  
-  const location = useLocation(); 
-  const { canRead = false, canWrite = false } = location.state || {};
+const AdminUserPanel = ({ canRead = false, canWrite = false }) => {
 
   const [adminList, setAdminList] = useState([]);
 

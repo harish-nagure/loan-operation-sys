@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { submitApplicationDetails } from "../api_service";
 
-const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
+const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead = false, canWrite = false }) => {
   const navigate = useNavigate();
   const [dob, setDob] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
@@ -18,8 +18,6 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings}) => {
   const [homeowner, setHomeowner] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [authorizeCredit, setAuthorizeCredit] = useState(false);
-  const location = useLocation();
-  const { canRead = false, canWrite = false } = location.state || {};
 
 
   console.log(canWrite,canRead)

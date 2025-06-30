@@ -3,10 +3,8 @@ import { useNavigate,useLocation  } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ canRead = false, canWrite = false }) => {
   
-  const location = useLocation(); 
-  const { canRead = false, canWrite = false } = location.state || {};
   const navigate = useNavigate();
 
   const getApplications = () => {
