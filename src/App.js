@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,19 +23,13 @@ import DashboardHead from "./components/AdminPanel/DashboardHead";
 import AdminDashboard from "./components/AdminPanel/AdminDashboard";
 import UserDashboard from "./components/AdminPanel/UserDashboard";
 
-//Pages
+// Pages
 import UserMenuData from "./components/AdminPanel/UserMenuData";
-
-
 import AdminUserPanel from "./components/AdminPanel/AdminUserData";
-
 import AccessControlSetup from "./components/AdminPanel/AccessControlSetup";
 import AccessControl from "./components/AdminPanel/AccessControl";
-
 import OrganizationForm from "./components/AdminPanel/OrganizationForm";
-
 import LoanSystemConfig from "./components/AdminPanel/LoanSystemConfig";
-
 import MultiStepForm from "./components/AdminPanel/MultiStepForm";
 import LoanTypeSelectionPage from "./components/AdminPanel/LoanTypeSelectionPage";
 import SelectStepsPage from "./components/AdminPanel/SelectStepPage";
@@ -51,163 +51,139 @@ const fieldKeys = [
 
 const initialSettings = Object.fromEntries(fieldKeys.map(key => [key, true]));
 
-// Map paths to their respective components
+// Recursively flatten all menus and submenus
+const flattenMenus = (menus = []) => {
+  const result = [];
 
-// const routeComponentMap = {
-//   "/dashboard": roleId === 1 ? <AdminDashboard /> : <UserMenuData/>,
-//   "/user": <UserMenuData />,
-//   "/roles": <AdminUserPanel />,
-//   "/access-control": <AccessControlSetup />,
-//   "/organization": <OrganizationForm />,
-//   "/system-config": <LoanSystemConfig />,
-//   "/application-form": <MultiStepForm />,
-//   "/cr": <FormHeader />,
-//   "/workflow/custom": <LoanTypeSelectionPage />,
-//   "/selection_steps_page": <SelectStepsPage />,
-//   "/forms_page": <FormsPage />,
-//   "/submitted_application": <SubmittedApplication />,
-//   "/form_field_settings": <FormFieldSettings />
-// };
+  const helper = (items) => {
+    for (const item of items) {
+      result.push(item);
+      if (Array.isArray(item.subMenus)) {
+        helper(item.subMenus);
+      }
+    }
+  };
 
-// Protected route wrapper based on menu permissions
+  helper(menus);
+  return result;
+};
+
+// Create protected route
 function createProtectedRoute({ path, element, menus, fieldSettings, setFieldSettings }) {
-  const allMenus = [...menus, ...menus.flatMap(m => m.subMenus || [])];
+  const allMenus = flattenMenus(menus);
   const matched = allMenus.find(menu => menu.url === path);
 
+  // console.log("📍 Matching path:", path);
+  // console.log("✅ All menu URLs:", allMenus.map(m => m.url));
+  console.log("🔒 Access Check:", matched?.url, matched?.canRead, matched?.canWrite);
+   const canRead = matched?.canRead || matched?.canAll || false;
+  const canWrite = matched?.canWrite || matched?.canAll || false;
+  console.log(canWrite,canRead)
+
   if (matched?.canRead || matched?.canAll) {
-  // if (true) {
     return (
       <Route
         key={path}
         path={path}
         element={
+          // <SessionValidator>
+          //   {React.cloneElement(element, { fieldSettings, setFieldSettings })}
+          // </SessionValidator>
           <SessionValidator>
-            {React.cloneElement(element, { fieldSettings, setFieldSettings })}
+            {React.cloneElement(element, {
+              fieldSettings,
+              setFieldSettings,
+              canRead,
+              canWrite,
+            })}
           </SessionValidator>
         }
       />
     );
   }
 
-  // Fallback route if no permission
   return (
     <Route
       key={path}
       path={path}
       element={
         <SessionValidator>
-        <Navigate to="/dashboard" replace />
+          <Navigate to="/dashboard" replace />
         </SessionValidator>
       }
     />
   );
 }
 
-// Main application logic
+// Main app wrapper
 function AppWrapper() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("token"));
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fieldSettings, setFieldSettings] = useState(initialSettings);
-  const navigate = useNavigate(); // For optional redirect
+  const navigate = useNavigate();
 
-  // Load menu permissions based on roleId
   const roleId = sessionStorage.getItem("roleId");
-  // alert(roleId)
+
   const routeComponentMap = {
-  "/dashboard": roleId == 1 ? <AdminDashboard /> : <UserDashboard/>, 
-  "/user": <UserMenuData />,
-  "/roles": <AdminUserPanel />,
-  "/access-control": <AccessControlSetup />,
-
-  "/access_control/:roleId": <AccessControl />,
-  
-  "/organization": <OrganizationForm />,
-
-  "/system-config": <LoanSystemConfig />,
-
-  "/application-form": <MultiStepForm />,
-
-  "/corporate_form": <FormHeader />,
-  
-  "/workflow/custom": <LoanTypeSelectionPage />,
-
-  "/selection_setup": <SelectStepsPage />,
-
-  "/forms_steps": <FormsPage />,
-
-  "/submitted_application": <SubmittedApplication />,
-  
-  "/form_field_settings": <FormFieldSettings />
+    "/dashboard": roleId == 1 ? <AdminDashboard /> : <UserDashboard />,
+    "/user": <UserMenuData />,
+    "/roles": <AdminUserPanel />,
+    "/access-control": <AccessControlSetup />,
+    "/access_control/:roleId": <AccessControl />,
+    "/organization": <OrganizationForm />,
+    "/system-config": <LoanSystemConfig />,
+    "/application-form": <MultiStepForm />,
+    "/corporate_form": <FormHeader />,
+    "/workflow/custom": <LoanTypeSelectionPage />,
+    "/selection_setup": <SelectStepsPage />,
+    "/form_steps": <FormsPage />,
+    "/submitted_application": <SubmittedApplication />,
+    "/form_field_settings": <FormFieldSettings />
   };
-
-
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   const roleId = sessionStorage.getItem("roleId");
-  //   if (!roleId) {
-  //     setMenus([]);
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   getMenusWithPermissions(roleId)
-  //     .then(setMenus)
-  //     .catch(err => {
-  //       console.error("Error loading menus:", err);
-  //       setMenus([]);
-  //     })
-  //     .finally(() => setLoading(false));
-  // }, [isAuthenticated]);
 
   useEffect(() => {
-  const fetchMenus = async () => {
-    if (!isAuthenticated) {
-      setLoading(false);
-      return;
-    }
+    const fetchMenus = async () => {
+      if (!isAuthenticated) {
+        setLoading(false);
+        return;
+      }
 
-    const roleId = sessionStorage.getItem("roleId");
-    if (!roleId) {
-      setMenus([]);
-      setLoading(false);
-      return;
-    }
+      if (!roleId) {
+        setMenus([]);
+        setLoading(false);
+        return;
+      }
 
-    try {
-      const result = await getMenusWithPermissions(roleId);
-      setMenus(result);
-    } catch (error) {
-      console.error("❌ Error fetching menus:", error);
-      setMenus([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const result = await getMenusWithPermissions(roleId);
+        console.log("✅ Menus fetched:", result);
+        setMenus(result);
+      } catch (err) {
+        console.error("❌ Error loading menus:", err);
+        setMenus([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchMenus();
-}, [isAuthenticated]);
+    fetchMenus();
+  }, [isAuthenticated]);
 
-
-  // Called after OTP or login success
   function handleLoginSuccess(data) {
     if (!data?.token || !data?.roleId) {
       console.error("Login failed: Missing token or roleId", data);
       return;
     }
     setIsAuthenticated(true);
-    navigate("/dashboard"); // Redirect user after login
+    navigate("/dashboard");
   }
 
   if (loading) {
     return (
-    <div className="absolute inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
-      <div className="w-16 h-16 border-4 border-white border-t-[#029aaa] rounded-full animate-spin"></div>
-    </div>
+      <div className="absolute inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-white border-t-[#029aaa] rounded-full animate-spin"></div>
+      </div>
     );
   }
 
@@ -252,7 +228,6 @@ function AppWrapper() {
   );
 }
 
-// Export app with routing
 export default function App() {
   return (
     <Router>

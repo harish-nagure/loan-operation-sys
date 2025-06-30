@@ -4,7 +4,7 @@ import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { getRoles  } from "../api_service";
 
-const AccessControlSetup = () => {
+const AccessControlSetup = ({ canRead = false, canWrite = false }) => {
   const [roles, setRoles] = useState([]);
   const [currentUserRole, setCurrentUserRole] = useState("");
   const navigate = useNavigate();
@@ -34,6 +34,10 @@ const AccessControlSetup = () => {
 
 
   const handleContinue = () => {
+    if (!canWrite) {
+      alert("❌ You do not have permission to modify access control.");
+      return;
+    }
     navigate(`/access_control/${currentUserRole}`);
   };
 

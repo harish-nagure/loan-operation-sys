@@ -3,8 +3,11 @@ import React, { useState } from "react";
 
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
+import { useLocation } from "react-router-dom";
 
 const OrganizationForm = () => {
+  const location = useLocation();
+  const { canRead = false, canWrite = false } = location.state || {};
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -13,6 +16,7 @@ const OrganizationForm = () => {
   });
 
   const handleChange = (e) => {
+    
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -28,6 +32,10 @@ const OrganizationForm = () => {
   };
 
   const handleSubmit = (e) => {
+    if(!canWrite){
+      alert("You don't have permission to edit users.");
+      return;
+    }
     e.preventDefault();
 
     // You can handle form submission logic here (e.g., send to API)

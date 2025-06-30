@@ -7,7 +7,7 @@ import DashboardHead from "./DashboardHead";
 
 import { FaEdit, FaTrash } from "react-icons/fa";
 
-const AccessControl = () => {
+const AccessControl = ({ canRead = false, canWrite = false }) => {
   const { roleId } = useParams();
   const navigate = useNavigate();
   const [menuList, setMenuList] = useState([]);
@@ -122,6 +122,10 @@ const AccessControl = () => {
   };
 
   const editMenu = (menu) => {
+       if (!canWrite) {
+      alert("❌ You do not have permission to modify access control.");
+      return;
+    }
     navigate("/menu_creation");
   };
 
@@ -163,6 +167,7 @@ const AccessControl = () => {
                 checked={menu[perm]}
                 onChange={() => handlePermissionChange(menu.id, perm)}
                 className="scale-125 accent-accent"
+                disabled={!canWrite}
               />
             </td>
           ))}
@@ -224,6 +229,7 @@ const AccessControl = () => {
               <button
                 onClick={handleSavePermissions}
                 className="bg-accent text-white px-5 py-2 rounded-xl hover:bg-secondary"
+                disabled={!canWrite}
               >
                 Save Permissions
               </button>
