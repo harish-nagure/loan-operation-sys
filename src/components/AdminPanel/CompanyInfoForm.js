@@ -15,7 +15,7 @@ const industries = [
   "Real Estate", "Transportation", "Utilities", "Other"
 ];
 
-const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
+const CompanyInfoForm = ({ data, onChange, onBack, onContinue, canRead = false, canWrite = false }) => {
   const [form, setForm] = useState({
     dba: "",
     ssnItin: "",
@@ -82,6 +82,11 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if(!canWrite)
+    {
+      alert("You don't have permission to countine with the form.");
+      return
+    }
     if (validate()) {
       setSubmitError("");
       onContinue(form);
@@ -108,6 +113,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="dba"
             value={form.dba}
             onChange={handleChange}
+            disabled={!canWrite}
             className={inputClass("dba")}
           />
           {errors.dba && <p className="text-red-600 text-sm">{errors.dba}</p>}
@@ -119,6 +125,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="ssnItin"
             value={form.ssnItin}
             onChange={handleChange}
+            disabled={!canWrite}
             maxLength={9}
             placeholder="Enter 9-digit SSN/ITIN"
             className={inputClass("ssnItin")}
@@ -134,6 +141,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="businessAddress1"
             value={form.businessAddress1}
             onChange={handleChange}
+            disabled={!canWrite}
             className={inputClass("businessAddress1")}
           />
           {errors.businessAddress1 && (
@@ -147,6 +155,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="businessAddress2"
             value={form.businessAddress2}
             onChange={handleChange}
+            disabled={!canWrite}
             className={inputClass("businessAddress2")}
           />
         </div>
@@ -159,6 +168,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="zipCode"
             value={form.zipCode}
             onChange={handleChange}
+            disabled={!canWrite}
             className={inputClass("zipCode")}
           />
           {errors.zipCode && <p className="text-red-600 text-sm">{errors.zipCode}</p>}
@@ -169,6 +179,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="city"
             value={form.city}
             onChange={handleChange}
+            disabled={!canWrite}
             className={inputClass("city")}
           />
           {errors.city && <p className="text-red-600 text-sm">{errors.city}</p>}
@@ -182,6 +193,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="state"
             value={form.state}
             onChange={handleChange}
+            disabled={!canWrite}
             className={inputClass("state")}
           >
             <option value="">Select</option>
@@ -213,6 +225,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="timeInBusiness"
             value={form.timeInBusiness}
             onChange={handleChange}
+            disabled={!canWrite}
             className={inputClass("timeInBusiness")}
           />
           {errors.timeInBusiness && (
@@ -225,6 +238,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
             name="typeOfBusiness"
             value={form.typeOfBusiness}
             onChange={handleChange}
+            disabled={!canWrite}
             className={inputClass("typeOfBusiness")}
           >
             <option value="">Select</option>
@@ -281,6 +295,7 @@ const CompanyInfoForm = ({ data, onChange, onBack, onContinue }) => {
         </button>
         <button
           type="submit"
+          disabled={!canWrite}
           className="bg-[#30c9d6] text-white font-semibold px-6 py-2 rounded hover:bg-[#2bb7c3]"
         >
           Continue

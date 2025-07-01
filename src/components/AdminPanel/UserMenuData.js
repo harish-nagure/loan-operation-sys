@@ -8,13 +8,7 @@ import { getAllUsers,addUserApi, getRoles } from "../api_service"; // Adjust the
 
 // import { fetchRoles } from "../api_service";
 
-const UserMenuData = () => {
-  
-  
-  const location = useLocation(); 
-  const { canRead = false, canWrite = false } = location.state || {};
-
-
+const UserMenuData = ({canRead = false, canWrite = false}) => {
 
   const [roles, setRoles] = useState([]);
   const [userData, setUserData] = useState([])
@@ -57,9 +51,6 @@ const UserMenuData = () => {
         };
 
         fetchAllUsers();
-
-            
-        
       }, []);
 
   

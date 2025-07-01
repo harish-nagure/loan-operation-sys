@@ -319,7 +319,9 @@ export async function getUserById(userId) {
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData?.message || 'Failed to fetch user');
+    console.error(errorData?.message)
+    // 
+    // throw new Error(errorData?.message || 'Failed to fetch user');
   }
 
     try {

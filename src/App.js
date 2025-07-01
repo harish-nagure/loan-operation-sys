@@ -75,10 +75,11 @@ function createProtectedRoute({ path, element, menus, fieldSettings, setFieldSet
 
   // console.log("📍 Matching path:", path);
   // console.log("✅ All menu URLs:", allMenus.map(m => m.url));
-  console.log("🔒 Access Check:", matched?.url, matched?.canRead, matched?.canWrite);
+  // console.log("🔒 Access Check:", matched?.url, matched?.canRead, matched?.canWrite);
    const canRead = matched?.canRead || matched?.canAll || false;
   const canWrite = matched?.canWrite || matched?.canAll || false;
-  console.log(canWrite,canRead)
+  // console.log(canWrite,canRead)
+  // console.table(matched)
 
   if (matched?.canRead || matched?.canAll) {
     return (
@@ -108,7 +109,7 @@ function createProtectedRoute({ path, element, menus, fieldSettings, setFieldSet
       path={path}
       element={
         <SessionValidator>
-          <Navigate to="/dashboard" replace />
+          <Navigate to={"/"+sessionStorage.getItem("role")?.toLowerCase()+"-dashboard"} replace />
         </SessionValidator>
       }
     />
@@ -122,11 +123,15 @@ function AppWrapper() {
   const [loading, setLoading] = useState(true);
   const [fieldSettings, setFieldSettings] = useState(initialSettings);
   const navigate = useNavigate();
-
+  const role = sessionStorage.getItem("role");
+  const [dashboardPath, setDashboardPath] = useState(
+    role ? `/${role.toLowerCase()}-dashboard` : ""
+  );
   const roleId = sessionStorage.getItem("roleId");
 
   const routeComponentMap = {
-    "/dashboard": roleId == 1 ? <AdminDashboard /> : <UserDashboard />,
+    "/admin-dashboard": <AdminDashboard/>,
+    "/user-dashboard": <UserDashboard /> ,
     "/user": <UserMenuData />,
     "/roles": <AdminUserPanel />,
     "/access-control": <AccessControlSetup />,
@@ -176,7 +181,10 @@ function AppWrapper() {
       return;
     }
     setIsAuthenticated(true);
-    navigate("/dashboard");
+    const url = "/"+data?.role.toLowerCase()+"-dashboard";
+
+    setDashboardPath(url);
+    navigate(url);
   }
 
   if (loading) {
@@ -186,8 +194,9 @@ function AppWrapper() {
       </div>
     );
   }
-
+  
   return (
+    
     <div className="bg-gray-100 min-h-screen">
       <ToastContainer position="top-right" autoClose={3000} />
 
@@ -199,8 +208,10 @@ function AppWrapper() {
           <div className="flex-1 lg:ml-80 mt-2">
             <DashboardHead />
             <main>
+              
               <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+                <Route path="/" element={<Navigate to={dashboardPath} replace />} />
                 {Object.entries(routeComponentMap).map(([path, component]) =>
                   createProtectedRoute({
                     path,
@@ -210,7 +221,7 @@ function AppWrapper() {
                     setFieldSettings
                   })
                 )}
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                <Route path="*" element={<Navigate to={dashboardPath} replace />} />
               </Routes>
             </main>
           </div>

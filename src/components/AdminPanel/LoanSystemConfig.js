@@ -6,7 +6,7 @@ import DashboardHead from "./DashboardHead";
 
 
 
-const LoanSystemConfig = () => {
+const LoanSystemConfig = ({canRead = false, canWrite = false}) => {
   const [minRate, setMinRate] = useState('');
   const [maxRate, setMaxRate] = useState('');
   const [defaultRate, setDefaultRate] = useState('');
@@ -83,6 +83,11 @@ const LoanSystemConfig = () => {
   };
 
   const handleSave = () => {
+    if(!canWrite)
+    {
+      alert("You don't have permission to submit with the form.");
+      return
+    }
     if (validate()) {
       const config = {
         minRate,

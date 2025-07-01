@@ -69,12 +69,6 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel,roles=[] }) => {
     }
 
     setErrors(validationErrors);
-
-
-
-
-
-
     
     if (Object.keys(validationErrors).length === 0) {
       

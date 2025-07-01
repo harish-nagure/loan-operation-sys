@@ -94,11 +94,13 @@ const LoginPage = ({ onLogin }) => {
           token: data.token,
           roleId: data.roleId,
           username: data.userId,
-          refreshToken: data.refreshToken
+          refreshToken: data.refreshToken,
+          role: data.role
         });
-        // const isAdmin = data?.role?.toLowerCase() === 'admin';
-        
-        navigate('/dashboard');
+        console.table(data)
+        const url = "/"+data?.role.toLowerCase()+"-dashboard";
+        alert(url);
+        navigate(url);
       } catch (err) {
 
         console.error("Login error:", err.message);

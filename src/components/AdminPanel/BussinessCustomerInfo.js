@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
+const BussinessCustomerInfo = ({ form, handleChange, onContinue, canRead = false, canWrite = false }) => {
   const [errors, setErrors] = useState({});
-
+  // console.log(canRead,canWrite+"FORM")
   const validate = () => {
     const newErrors = {};
 
@@ -45,6 +45,11 @@ const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
 
   const handleContinueClick = (e) => {
     e.preventDefault(); 
+    if(!canWrite)
+    {
+      alert("You don't have permission to countine with the form.");
+      return
+    }
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -71,6 +76,7 @@ const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
             name="companyLegalName"
             value={form.companyLegalName || ""}
             onChange={handleChange}
+            disabled={!canWrite}
             className={`w-full border-b py-1 focus:outline-none ${
               errors.companyLegalName
                 ? "border-red-500"
@@ -92,6 +98,7 @@ const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
             name="amountRequested"
             value={form.amountRequested || ""}
             onChange={handleChange}
+            disabled={!canWrite}
             className={`w-full border-b py-1 focus:outline-none ${
               errors.amountRequested
                 ? "border-red-500"
@@ -113,6 +120,7 @@ const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
             name="firstName"
             value={form.firstName || ""}
             onChange={handleChange}
+            disabled={!canWrite}
             className={`w-full border-b py-1 focus:outline-none ${
               errors.firstName
                 ? "border-red-500"
@@ -134,6 +142,7 @@ const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
             name="lastName"
             value={form.lastName || ""}
             onChange={handleChange}
+            disabled={!canWrite}
             className={`w-full border-b py-1 focus:outline-none ${
               errors.lastName
                 ? "border-red-500"
@@ -155,6 +164,7 @@ const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
             name="email"
             value={form.email || ""}
             onChange={handleChange}
+            disabled={!canWrite}
             className={`w-full border-b py-1 focus:outline-none ${
               errors.email
                 ? "border-red-500"
@@ -176,6 +186,7 @@ const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
             name="mobile"
             value={form.mobile || ""}
             onChange={handleChange}
+            disabled={!canWrite}
             className={`w-full border-b py-1 focus:outline-none ${
               errors.mobile
                 ? "border-red-500"
@@ -190,6 +201,7 @@ const BussinessCustomerInfo = ({ form, handleChange, onContinue }) => {
 
       <div className="flex justify-end mt-8">
         <button
+          disabled={!canWrite}
           type="submit"
           className="bg-[#30c9d6] text-white font-semibold px-6 py-2 rounded hover:bg-[#2bb7c3]"
         >

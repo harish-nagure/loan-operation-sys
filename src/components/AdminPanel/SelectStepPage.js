@@ -14,7 +14,7 @@ const steps = [
   "Funded",
 ];
 
-const SelectStepsPage = () => {
+const SelectStepsPage = ({canRead = false, canWrite = false}) => {
   const [selected, setSelected] = useState([]);
   const navigate = useNavigate();
  const userType = sessionStorage.getItem("role")?.toLowerCase();
@@ -55,10 +55,20 @@ useEffect(() => {
   };
 
   const clearSteps = () => {
+    if(!canWrite)
+  {
+    alert("You don't have permission to Clear.");
+    return
+  }
     setSelected([]);
   };
 
 const handleSubmit = async () => {
+  if(!canWrite)
+  {
+    alert("You don't have permission to Save.");
+    return
+  }
   if (!loanType || selected.length === 0) {
     alert("Please select loan type and at least one step.");
     return;

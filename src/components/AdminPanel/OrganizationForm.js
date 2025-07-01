@@ -5,9 +5,7 @@ import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { useLocation } from "react-router-dom";
 
-const OrganizationForm = () => {
-  const location = useLocation();
-  const { canRead = false, canWrite = false } = location.state || {};
+const OrganizationForm = ({canRead = false, canWrite = false}) => {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -69,6 +67,7 @@ const OrganizationForm = () => {
               value={formData.name}
               onChange={handleChange}
               required
+              disabled={!canWrite}
               placeholder="e.g., Infinity Corp"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
             />
@@ -83,6 +82,7 @@ const OrganizationForm = () => {
               value={formData.address}
               onChange={handleChange}
               required
+              disabled={!canWrite}
               placeholder="Street, City, ZIP"
               className="w-full px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-accent"
               rows="3"
@@ -97,6 +97,7 @@ const OrganizationForm = () => {
               type="file"
               accept="image/*"
               onChange={handleFileChange}
+              disabled={!canWrite}
               className="w-full text-gray-600"
             />
           </div>

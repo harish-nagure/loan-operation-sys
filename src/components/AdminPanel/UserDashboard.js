@@ -2,7 +2,7 @@ import React from "react";
 import DashboardHead from "./DashboardHead";
 import DashboardSidebar from "./DashboardSidebar";
 
-const UserDashboard = () => {
+const UserDashboard = ({canRead = false, canWrite = false}) => {
   const username = sessionStorage.getItem("username") || "User";
   const loanAmount = "$15,000";
   const approvalId = "APL-9843";
