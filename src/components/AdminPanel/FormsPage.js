@@ -1,18 +1,22 @@
 import React, { useEffect, useState,useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { CheckCircle,Check } from "lucide-react";
-import {fetchWorkflowByLoanType} from "../api_service";
+import {addAccountLinked, fetchWorkflowByLoanType} from "../api_service";
 
 const   FormsPage = () => {
   const navigate = useNavigate();
+  
   const [steps, setSteps] = useState([]);
   const [active, setActive] = useState("");
   const [submittedSteps, setSubmittedSteps] = useState(() => {
     const stored = sessionStorage.getItem("submittedSteps");
     return stored ? JSON.parse(stored) : [];
   });
+  const location = useLocation();
+  const applicationNumber = location.state?.applicationNumber;
+  alert(applicationNumber);
 
 useEffect(() => {
   const fetchStepsFromAPI = async () => {
@@ -148,6 +152,8 @@ useEffect(() => {
 
 export default FormsPage;
 
+
+
 const LinkBankForm = ({ onSubmitSuccess }) => {
   const [form, setForm] = useState({
     holderName: "",
@@ -185,9 +191,11 @@ const LinkBankForm = ({ onSubmitSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+
+    const response = await addAccountLinked();
 
     sessionStorage.setItem("linkedBankDetails", JSON.stringify(form));
     alert("Bank Linked Successfully!");

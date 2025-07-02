@@ -319,10 +319,15 @@ export async function getUserById(userId) {
 
   if (!response.ok) {
     const errorData = await response.json();
-    console.error(errorData?.message)
-    return;
+    throw new Error(errorData?.message || 'Failed to fetch user');
   }
-  return await response.json(); 
+
+    try {
+    return await response.json(); 
+  } catch {
+    return {};
+  }
+  
 }
 
 
@@ -392,7 +397,7 @@ export async function submitApplicationDetails(data) {
 
 
 
-export  async function fetchAllMenus(){
+export const fetchAllMenus = async () => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/all-menus`, {
     method: "GET",
     headers: {
@@ -478,7 +483,7 @@ export const savePermissionsApi = async (permissions) => {
 
  
 
-export  async function getMenusWithPermissions(roleId) {
+export const getMenusWithPermissions = async (roleId) => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/getMenusWithPermissions/${roleId}`, {
     method: "GET",
     headers: {
@@ -503,7 +508,7 @@ export  async function getMenusWithPermissions(roleId) {
 
 
 
-export  async function fetchLoanTypes(){
+export const fetchLoanTypes = async () => {
  
   //const apiUrl="http://152.67.189.231:8842/api/auth/loan-types";
 
@@ -676,8 +681,6 @@ export const fetchWorkflowByLoanType = async (loanType) => {
   }
 };
 
-//22
-
 
 export const saveApplicationDetails = async (requestData) => {
   try {
@@ -728,25 +731,3 @@ export const getAllApplicationDetails = async () => {
   }
 };
 
-
-export async function getApplicationCount(){
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/getapplicationCount`,{
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${sessionStorage.getItem('token')}`
-    },
-  });
-
-  if(!response.ok){
-    const errorData = await response.json();
-    console.error(errorData.message);
-  }
-  
-  const data_json = await response.json();
-  return data_json;
-}
-
-export async function addAccountLinked(){
-  
-}

@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useNavigate,useLocation  } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
+import { AwardIcon } from "lucide-react";
+import { getApplicationCount } from "../api_service";
 
 const AdminDashboard = ({ canRead = false, canWrite = false }) => {
   
   const navigate = useNavigate();
+  const [count,setCount] = useState(0);
 
   const getApplications = () => {
     const sessionUserList = JSON.parse(sessionStorage.getItem("userList")) || [];
 
     return sessionUserList.map((id, index) => ({
       id: id,
-      name: `User ${index + 1}`,
+      name: `User ${index}`,
       status: "Application Submitted"
     }));
   };
@@ -20,11 +23,20 @@ const AdminDashboard = ({ canRead = false, canWrite = false }) => {
   const [applications, setApplications] = useState([]);
 
   useEffect(() => {
+
     setApplications(getApplications());
+
+    const fetchData = async () => {
+      const count = await getApplicationCount();
+      console.log(count.data);
+      setCount(count.data);
+
+    };
+    fetchData();
   }, []);
 
   const handleStatusClick = (status) => {
-    if (canWrite) return;
+    if (!canWrite) return;
     if (status === "Application Submitted") {
       navigate("/submitted_application");
     }
@@ -67,7 +79,7 @@ const AdminDashboard = ({ canRead = false, canWrite = false }) => {
                   <StatusBox
                     key={status}
                     label={status}
-                    value={applications.filter(app => app.status === status).length}
+                    value={count}
                     onClick={handleStatusClick}
                     disabled={!canWrite}
                   />

@@ -87,9 +87,6 @@ function createProtectedRoute({ path, element, menus, fieldSettings, setFieldSet
         key={path}
         path={path}
         element={
-          // <SessionValidator>
-          //   {React.cloneElement(element, { fieldSettings, setFieldSettings })}
-          // </SessionValidator>
           <SessionValidator>
             {React.cloneElement(element, {
               fieldSettings,
@@ -162,8 +159,16 @@ function AppWrapper() {
 
       try {
         const result = await getMenusWithPermissions(roleId);
-        console.log("✅ Menus fetched:", result);
+        // console.log("✅ Menus fetched:", result);
         setMenus(result);
+
+        const dashboardMenus = flattenMenus(result).filter(menu =>
+          menu.menuName?.toLowerCase().includes("dashboard") &&
+          (menu.canRead || menu.canAll) &&
+          (menu.canWrite || menu.canAll)
+        );
+      
+      setDashboardPath(dashboardMenus[0].url);
       } catch (err) {
         console.error("❌ Error loading menus:", err);
         setMenus([]);
@@ -181,10 +186,7 @@ function AppWrapper() {
       return;
     }
     setIsAuthenticated(true);
-    const url = "/"+data?.role.toLowerCase()+"-dashboard";
-
-    setDashboardPath(url);
-    navigate(url);
+    navigate(dashboardPath);
   }
 
   if (loading) {

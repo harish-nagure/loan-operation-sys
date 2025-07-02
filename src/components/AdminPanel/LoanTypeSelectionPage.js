@@ -14,11 +14,14 @@ import { fetchLoanTypes } from "../api_service";
   { label: "Auto Loan", value: "auto", description: "Loan for purchasing a vehicle" },
 ]; */ }
 
-const LoanTypeSelectionPage = ({ onContinue, canRead = false, canWrite = false }) => {
+const   LoanTypeSelectionPage = ({ onContinue, canRead = false, canWrite = false }) => {
  
-  
-  // const location = useLocation(); 
+
   console.log(canRead+" "+canWrite+"Hiii")
+  const location = useLocation();
+  const applicationNumber = location.state?.applicationNumber;
+  // alert(applicationNumber);
+
 
   const [loanOptions, setLoanOptions] = useState([]);
   const [loanType, setLoanType] = useState("");
@@ -91,8 +94,16 @@ useEffect(() => {
     if (onContinue) {
       onContinue(selectedLoan.value);
     } else {
-      
-      navigate(userType === "admin" ? "/selection_setup" : "/form_steps");
+      if (userType === "admin") {
+        navigate("/selection_setup");
+      } else {
+        if (applicationNumber != null) {
+          navigate("/form_steps", { state: { applicationNumber } });
+        } else {
+          alert("❌ Application number is missing!");
+        }
+      }
+
     }
   } else {
     alert("❌ Failed to save loan type: " + result.message);

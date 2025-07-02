@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { submitApplicationDetails } from "../api_service";
+import { saveApplicationDetails } from "../api_service";
+import { getAllApplicationDetails } from "../api_service";
+
 
 const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead = false, canWrite = false }) => {
   const navigate = useNavigate();
@@ -18,10 +21,26 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
   const [homeowner, setHomeowner] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [authorizeCredit, setAuthorizeCredit] = useState(false);
+  const [applications, setApplications] = useState([]); 
 
 
   console.log(canWrite,canRead)
   const [errors, setErrors] = useState({});
+
+   useEffect(() => {
+    // fetch applications on mount
+    const fetchApplications = async () => {
+      try {
+        const response = await getAllApplicationDetails();
+        console.log("Fetched applications:", response);
+        setApplications(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch applications:", error);
+      }
+    };
+
+    fetchApplications();
+  }, []);
 
   const states = [
     "",
@@ -105,40 +124,52 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
   // };
 
     // alert(canWrite)
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      if (!canWrite) {
-        alert("You don't have permission to submit the form.");
-        return;
-      }
-      if (validate()) {
-        try {
-          
-          const requestData = {
-            userId: sessionStorage.getItem("username"),
-            dateOfBirth: detail.dob,
-            monthlyGrossIncome: parseFloat(detail.monthlyIncome),
-            ssn: detail.ssn,
-            confirmSsn: detail.confirmSsn,
-            howMuchDoYouNeed: parseFloat(detail.amountNeeded),
-            homeAddress: detail.homeAddress,
-            homeAddress2: detail.homeAddress2,
-            zipCode: parseInt(detail.zipCode),
-            city: detail.city,
-            state: detail.state,
-            isHomeOwner: detail.homeowner === "yes",
-          };
-          console.log("Request Data:", requestData);
-          const response = await submitApplicationDetails(requestData);
-          alert("Application submitted successfully!");
-          navigate("/workflow/custom", { state: { canWrite, canRead } });
+   const handleSubmit = async (e) => {
+  e.preventDefault();
 
-          console.log("API Response:", response);
-        } catch (error) {
-          alert("Failed to submit application: " + error.message);
-        }
-      }
-    };
+  if (!canWrite) {
+    alert("You don't have permission to submit the form.");
+    return;
+  }
+
+  if (validate()) {
+    try {
+      const requestData = {
+        userId: sessionStorage.getItem("username"),    // Example: "101"
+        dateOfBirth: detail.dob,
+        monthlyGrossIncome: parseFloat(detail.monthlyIncome),
+        ssn: detail.ssn,
+        confirmSsn: detail.confirmSsn,
+        howMuchDoYouNeed: parseFloat(detail.amountNeeded),
+        homeAddress: detail.homeAddress,
+        homeAddress2: detail.homeAddress2,
+        zipCode: parseInt(detail.zipCode),
+        city: detail.city,
+        state: detail.state,
+        isHomeOwner: detail.homeowner === "yes",
+        createdBy: "admin",               // <-- static or from session
+        lonetype: "Personal",             // <-- static or dynamic if you need
+      };
+
+      console.log("Submitting data:", requestData);
+
+      const response = await saveApplicationDetails(requestData);
+
+      console.log("Response:", response);
+      alert("Application submitted successfully!",response);
+      console.table(response.data);
+      console.log(response?.data?.applicationNumber)
+      // Optionally navigate
+      // navigate("/workflow/custom");
+      navigate("/workflow/custom", { state: { applicationNumber: response?.data?.applicationNumber } });
+
+    } catch (error) {
+      console.error("Submission failed:", error);
+      alert("Failed to submit application: " + error.message);
+    }
+  }
+};
+
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-full">

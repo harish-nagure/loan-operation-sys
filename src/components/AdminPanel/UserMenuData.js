@@ -8,7 +8,13 @@ import { getAllUsers,addUserApi, getRoles } from "../api_service"; // Adjust the
 
 // import { fetchRoles } from "../api_service";
 
-const UserMenuData = ({canRead = false, canWrite = false}) => {
+const UserMenuData = () => {
+  
+  
+  const location = useLocation(); 
+  const { canRead = false, canWrite = false } = location.state || {};
+
+
 
   const [roles, setRoles] = useState([]);
   const [userData, setUserData] = useState([])
@@ -51,6 +57,9 @@ const UserMenuData = ({canRead = false, canWrite = false}) => {
         };
 
         fetchAllUsers();
+
+            
+        
       }, []);
 
   
@@ -132,7 +141,7 @@ const UserMenuData = ({canRead = false, canWrite = false}) => {
         firstName: formUser.firstname,
         lastName: formUser.lastname,
         roleId: matchedRole.id,
-        createdBy: "admin",
+        createdBy: matchedRole.roleName,
         phone: formUser.phone,
       };
 
