@@ -23,14 +23,17 @@ const AdminDashboard = ({ canRead = false, canWrite = false }) => {
   const [applications, setApplications] = useState([]);
 
   useEffect(() => {
-
     setApplications(getApplications());
 
     const fetchData = async () => {
-      const count = await getApplicationCount();
-      console.log(count.data);
-      setCount(count.data);
-
+      try {
+        const response = await getApplicationCount();
+        console.log(response.data); // Should log: 7
+        setCount(response.data);    // Sets count to 7
+      } catch (err) {
+        console.error("Failed to fetch application count", err);
+        setCount(0);
+      }
     };
     fetchData();
   }, []);
@@ -44,14 +47,7 @@ const AdminDashboard = ({ canRead = false, canWrite = false }) => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar
-      <div className="w-64 bg-white border-r shadow">
-        <DashboardSidebar />
-      </div>
-
-  
-      <div className="flex-1 p-6 sm:p-10 overflow-x-auto">
-        <DashboardHead /> */}
+      
         
         <div className="mt-6">
           <h1 className="text-3xl font-bold text-gray-800 mb-6">Loan Application</h1>
@@ -79,7 +75,7 @@ const AdminDashboard = ({ canRead = false, canWrite = false }) => {
                   <StatusBox
                     key={status}
                     label={status}
-                    value={count}
+                    value={status === "Application Submitted"? count : 0 }
                     onClick={handleStatusClick}
                     disabled={!canWrite}
                   />

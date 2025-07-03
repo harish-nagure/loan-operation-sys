@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate,useLocation } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
-import { saveLoanType } from "../api_service";
+import { saveLoanType, updateLoanType, getAllApplicationDetails } from "../api_service";
 import { fetchLoanTypes } from "../api_service"; 
 
 
@@ -18,8 +18,6 @@ const   LoanTypeSelectionPage = ({ onContinue, canRead = false, canWrite = false
  
 
   console.log(canRead+" "+canWrite+"Hiii")
-  const location = useLocation();
-  const applicationNumber = location.state?.applicationNumber;
   // alert(applicationNumber);
 
 
@@ -97,8 +95,24 @@ useEffect(() => {
       if (userType === "admin") {
         navigate("/selection_setup");
       } else {
+        // navigate("/form_steps");
+        const applicationNumber = sessionStorage.getItem("applicationNumber")
+
+
+        const response = await getAllApplicationDetails()
+        console.table(response)
+        // alert(applicationNumber +" "+ selectedLoan.value.replace(/_/g, " ").replace(/\d+$/, "").toUpperCase())
+
+        const data = await updateLoanType(applicationNumber,{lonetype:selectedLoan?.value.replace(/_/g, " ").replace(/\d+$/, "").toUpperCase()})
+        if(data == null){
+          alert("Promblem in submit");
+          return;
+        }
+        alert(data.message)
+        
+        
         if (applicationNumber != null) {
-          navigate("/form_steps", { state: { applicationNumber } });
+          navigate("/form_steps");
         } else {
           alert("❌ Application number is missing!");
         }

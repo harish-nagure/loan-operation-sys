@@ -12,7 +12,7 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel,roles=[] }) => {
     role: "",
     email: "",
     phone: "",
-    userState: false,
+    active: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -25,7 +25,7 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel,roles=[] }) => {
         email: initialData.email || "",
         phone: initialData.phone || "",
         role: initialData.role?.roleName.toLowerCase() || "",
-        userState: initialData.active || false,
+        active: initialData.active || false,
       });
     }
 
@@ -79,9 +79,9 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel,roles=[] }) => {
         email: formData.email,
         role: formData.role,
         phone: formData.phone,
-        isActive: formData.userState,
+        active: formData.active,
       };
-      
+      // console.log(payload)
       onSubmit(payload);
     }
   };
@@ -181,14 +181,14 @@ const UserMenuForm = ({ initialData = null, onSubmit, onCancel,roles=[] }) => {
 
               <div className="flex items-center ">
                 <input
-                  id="userState"
-                  name="userState"
+                  id="active"
+                  name="active"
                   type="checkbox"
-                  checked={formData.userState}
+                  checked={formData.active}
                   onChange={handleChange}
                   className="h-4 w-4 text-accent accent-accent focus:ring-accent border-gray-300 rounded"
                 />
-                <label htmlFor="userState" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="active" className="ml-2 block text-sm text-gray-700">
                   Active User
                 </label>
               </div>

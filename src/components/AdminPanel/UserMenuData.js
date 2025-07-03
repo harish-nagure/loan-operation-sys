@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import UserMenuForm from "./UserMenuForm";
 
-import { getAllUsers,addUserApi, getRoles } from "../api_service"; // Adjust the import path as needed
+import { getAllUsers,addUserApi, getRoles, deleteUserDeatils,updateUserDeatils   } from "../api_service"; // Adjust the import path as needed
 
 // import { fetchRoles } from "../api_service";
 
@@ -48,9 +48,10 @@ const UserMenuData = () => {
             const data_json = await getAllUsers();
             const users = data_json?.data;
             console.log("Fetched users:", users);
-            // const sortedUsers = users.sort((a, b) => a.id - b.id);
+            const sortedUsers = users.sort((a, b) => a.id - b.id);
             setUserData(users);
-            console.log("User data set successfully:", users.isActive);
+            console.log(users)
+            console.log("User data set successfully:");
           } catch (error) {
             console.error("Error fetching users:", error.message);
           }
@@ -64,8 +65,8 @@ const UserMenuData = () => {
 
   
 
-  useEffect(() => {
- const fetchRoles = async () => {
+    useEffect(() => {
+      const fetchRoles = async () => {
         try {
             const response = await getRoles();
             console.log(response);
@@ -75,24 +76,29 @@ const UserMenuData = () => {
           }
         };
 
-        fetchRoles();
-}, []);
+      fetchRoles();
+    }, []);
 
-  const handleEdit = (user) => {
+  const handleEdit = async (user) => {
     if (!canWrite) {
       alert("You don't have permission to edit users.");
       return;
     }
     setEditingUser(user);
   };
-  const handleDelete = (userId) => {
+
+  const handleDelete = async (userId) => {
     if (!canWrite) {
       alert("You don't have permission to delete users.");
       return;
     }
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUserData(userData.filter(user => user.id !== userId));
+      setUserData(userData.filter(user => user.userId !== userId));
     }
+
+    const response = await deleteUserDeatils(userId);
+    alert(response?.message);
+
   };
 
   const handleAddUser = () => {
@@ -115,20 +121,15 @@ const UserMenuData = () => {
   //   }
   //   setEditingUser(null); 
   // };
-
   const handleFormSubmit = async (formUser) => {
     if (!canWrite) {
       alert("You don't have permission to submit the form.");
       return;
     }
-  try {
-    if (formUser.id) {
-      // Edit mode (local update for now)
-      setUserData(userData.map(user => (user.id === formUser.id ? formUser : user)));
-    } else {
 
+    try {
       const matchedRole = roles.find(
-      (r)=> r.roleName?.toLowerCase() === formUser.role?.toLowerCase()
+        (r) => r.roleName?.toLowerCase() === formUser.role?.toLowerCase()
       );
 
       if (!matchedRole) {
@@ -143,21 +144,77 @@ const UserMenuData = () => {
         roleId: matchedRole.id,
         createdBy: matchedRole.roleName,
         phone: formUser.phone,
+        active: formUser.active, // default to true
       };
 
-      console.log(roles,UserInfo);
-      const response = await addUserApi(UserInfo);
-      alert("User created: " + response.data.userId);
+      console.table(UserInfo)
 
+      if (formUser.userId) {
+        // Edit mode
+        const response = await updateUserDeatils(formUser.userId, UserInfo);
+        alert(response?.message || "User updated");
+      } else {
+        // Add mode
+        const response = await addUserApi(UserInfo);
+        alert("User created: " + response?.data?.userId);
+      }
+
+      // Refresh user list
       const data_json = await getAllUsers();
       const users = data_json?.data;
       setUserData(users);
+      setEditingUser(null);
+    } catch (error) {
+      alert("Failed to submit form: " + error.message);
     }
-    setEditingUser(null);
-  } catch (error) {
-    alert("Failed to submit form: " + error.message);
-  }
-};
+  };
+
+//   const handleFormSubmit = async (formUser) => {
+//     if (!canWrite) {
+//       alert("You don't have permission to submit the form.");
+//       return;
+//     }
+//   try {
+
+//     const matchedRole = roles.find(
+//       (r)=> r.roleName?.toLowerCase() === formUser.role?.toLowerCase()
+//       );
+
+//       if (!matchedRole) {
+//         alert("Invalid role selected");
+//         return;
+//       }
+
+//       const UserInfo = {
+//         email: formUser.email,
+//         firstName: formUser.firstname,
+//         lastName: formUser.lastname,
+//         roleId: matchedRole.id,
+//         createdBy: matchedRole.roleName,
+//         phone: formUser.phone,
+//       };  
+
+      
+//       console.log(roles,UserInfo);
+//     if (formUser.id) {
+//       const userId = formUser.userId;
+//       const response = await updateUserDeatils(userId,UserInfo)
+//       alert(response);
+//       setUserData(userData.map(user => (user.id === formUser.id ? formUser : user)));
+//     } else {
+//       console.log(roles,UserInfo);
+//       const response = await addUserApi(UserInfo);
+//       alert("User created: " + response.data.userId);
+      
+//     }
+//     const data_json = await getAllUsers();
+//     const users = data_json?.data;
+//     setUserData(users);
+//     setEditingUser(null);
+//   } catch (error) {
+//     alert("Failed to submit form: " + error.message);
+//   }
+// };
 
   return (
     
@@ -226,7 +283,7 @@ const UserMenuData = () => {
                             <FaEdit />
                           </button>
                           <button
-                            onClick={() => handleDelete(user.id)}
+                            onClick={() => handleDelete(user.userId)}
                             className="text-red-600 hover:text-red-800"
                             title="Delete User"
                           >

@@ -234,32 +234,32 @@ export async function deleteRole(id){
 
 // function to create a new user in the system.
 
-export async function createUser({ firstname, lastname, email, phone, role, isActive }) {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-    },
-    body: JSON.stringify({
-      firstName: firstname,
-      lastName: lastname,
-      email,
-      phone,
-      active: isActive,
-      rcreationUser: 'system', // or pass dynamically
-      role: { roleName: role } // assumes backend maps roleName to roleId
-    }),
-  });
+// export async function createUser({ firstname, lastname, email, phone, role, isActive }) {
+//   const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       // Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+//     },
+//     body: JSON.stringify({
+//       firstName: firstname,
+//       lastName: lastname,
+//       email,
+//       phone,
+//       active: isActive,
+//       rcreationUser: 'system', // or pass dynamically
+//       role: { roleName: role } // assumes backend maps roleName to roleId
+//     }),
+//   });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to create user');
-  }
+//   if (!response.ok) {
+//     const error = await response.json();
+//     throw new Error(error.message || 'Failed to create user');
+//   }
 
-  const data = await response.json();
-  return data;
-}
+//   const data = await response.json();
+//   return data;
+// }
 
 
 
@@ -292,17 +292,72 @@ export async function addUserApi(UserInfo) {
     body: JSON.stringify(UserInfo),
   });
 
+  const data = await response.json();
+
   if (!response.ok){
-    const errorData = await response.json();
-    throw new Error(errorData?.message || 'Failed to add user');
+    // const errorData = await response.json();
+    throw new Error(data?.message || 'Failed to add user');
 
   }
 
-  const data = await response.json();
   return data;
 }
 
 
+
+
+// /delete-userdeatils/USR001
+
+export async function deleteUserDeatils(userId) {
+  try{
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/delete-userdeatils/${userId}`,{
+      method:"DELETE",
+      headers:{
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+      } 
+    })
+
+    const data_json = await response.json();
+
+      if(!response.ok){
+        console.error(data_json.message);
+      }
+      
+    return data_json;
+
+  }catch(error){
+    console.log(error);
+    return;
+  }
+  
+}
+// update_userdeatils/{userId}
+
+export async function updateUserDeatils(userId,userData) {
+  try{
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/update_userdeatils/${userId}`,{
+      method:"PUT",
+      headers:{
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(userData),
+    })
+
+    const data_json = await response.json();
+
+      if(!response.ok){
+        console.error(data_json.message);
+      }
+      
+    return data_json;
+
+  }catch(error){
+    console.log(error);
+    return;
+  }
+}
 
 // Fetch User by ID
 // Purpose: Retrieves a user by their userId.
@@ -317,12 +372,14 @@ export async function getUserById(userId) {
     }
   );
 
+  const data = await response.json();
   if (!response.ok) {
-    const errorData = await response.json();
-    console.error(errorData?.message)
+    // const errorData = await response.json();
+    console.error(data?.message)
     return;
   }
-  return await response.json(); 
+
+  return data;
 }
 
 
@@ -738,15 +795,91 @@ export async function getApplicationCount(){
     },
   });
 
-  if(!response.ok){
-    const errorData = await response.json();
-    console.error(errorData.message);
-  }
   
   const data_json = await response.json();
+
+  if(!response.ok){
+    console.error(data_json.message);
+  }
+  
   return data_json;
 }
 
-export async function addAccountLinked(){
+export async function addAccountLinked(requestData){
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/addOrUpdate_applicationBankdetails`,{
+    method: "POST",
+    headers:{
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`
+    },
+    body: JSON.stringify(requestData),
+  });
+
+  
+  const data_json = await response.json();
+
+  if(!response.ok){
+    console.error(data_json.message);
+  }
+  
+  return data_json;
+  
+}
+
+
+  export async function updateLoanType(applicationNumber,lonetype){
+    console.log(applicationNumber,lonetype)
+  try{      
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/update_lonetype/${applicationNumber}`,{
+        method: "PUT",
+        headers:{
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify( lonetype ),
+      });
+      console.log("Sending token:", sessionStorage.getItem("token"));
+
+      
+      const data_json = await response.json();
+
+      if(!response.ok){
+        console.error(data_json.message);
+      }
+      
+      return data_json;
+  }catch(error){
+    console.log(error.message);
+    return;
+  }
+}
+
+
+
+export async function addDocumentVerified(requestData) {
+  console.log(requestData);
+  try{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/addOrUpdate_Application_documentDeatils`,{
+      method: "POST",
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify(requestData),
+    });
+
+    
+    const data_json = await response.json();
+
+    if(!response.ok){
+      console.error(data_json.message);
+    }
+    
+    return data_json;
+    
+  }catch(error){
+    console.log(error.message)
+    return;
+  }
   
 }

@@ -3,7 +3,7 @@ import { useNavigate,useLocation } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { CheckCircle,Check } from "lucide-react";
-import {addAccountLinked, fetchWorkflowByLoanType} from "../api_service";
+import {addAccountLinked, fetchWorkflowByLoanType, addDocumentVerified} from "../api_service";
 
 const   FormsPage = () => {
   const navigate = useNavigate();
@@ -14,9 +14,7 @@ const   FormsPage = () => {
     const stored = sessionStorage.getItem("submittedSteps");
     return stored ? JSON.parse(stored) : [];
   });
-  const location = useLocation();
-  const applicationNumber = location.state?.applicationNumber;
-  alert(applicationNumber);
+  
 
 useEffect(() => {
   const fetchStepsFromAPI = async () => {
@@ -41,10 +39,20 @@ useEffect(() => {
   fetchStepsFromAPI();
 }, []);
 
+  const goToNextStep = (currentStep) => {
+    const index = steps.indexOf(currentStep);
+    if (index !== -1 && index < steps.length - 1) {
+      setActive(steps[index + 1]);
+    } else {
+      alert("🎉 All steps completed!");
+    }
+  };
+
   const markAsSubmitted = (step) => {
     const updated = [...new Set([...submittedSteps, step])];
     setSubmittedSteps(updated);
     sessionStorage.setItem("submittedSteps", JSON.stringify(updated));
+    goToNextStep(step);
   };
 
   const isSubmitted = (step) => submittedSteps.includes(step);
@@ -71,15 +79,6 @@ useEffect(() => {
   };
 
   return (
-    // <div className="flex min-h-screen bg-[#f5fcfd] text-gray-800">
-    //   {/* Sidebar */}
-    //   <div className="w-64 bg-white shadow-md z-10">
-    //     <DashboardSidebar />
-    //   </div>
-
-    //   {/* Main Content */}
-    //   <div className="flex-1 flex flex-col overflow-hidden">
-    //     <DashboardHead />
 
         <div className="flex-1 px-10 py-8 overflow-y-auto">
           {/* Step Tracker */}
@@ -194,11 +193,35 @@ const LinkBankForm = ({ onSubmitSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+  
+   
 
-    const response = await addAccountLinked();
+    const applicationNumber = sessionStorage.getItem("applicationNumber");
+    if (applicationNumber == null) {
+      alert("❌ Application number is missing!");
+      return;
+    }
 
-    sessionStorage.setItem("linkedBankDetails", JSON.stringify(form));
-    alert("Bank Linked Successfully!");
+    const requestData = {
+    accountHolderName: form.holderName,
+    bankName: form.bankName,
+    accountNumber: form.accountNumber,
+    ifscCode: form.ifsc,
+    accountType: form.accountType,
+    isAuthorized: form.consent,
+    applicationDetail: {
+      applicationNumber: applicationNumber
+    },
+  };
+
+    console.table(requestData)
+
+    const response = await addAccountLinked(requestData );
+
+    console.table(response)
+
+    alert(response?.message);
+
     onSubmitSuccess();
   };
 
@@ -380,14 +403,60 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
+//     {
+//     "documentType": "PAN",
+//     "documentNumber": "hfsfsfjasfsjka",
+//     "issueDate": "2000-01-01",
+//     "expiryDate": "2000-02-01",
+//     "issuingAuthority": "jfdsjdfjmv",
+//     "consent": true
+//     }
+
+    // {
+    // "applicationNumber": "APP123456",
+    // "user": {
+    // "userId": "USR001"
+    // },
+    // "documentNumber": "1234-5678-9012",
+    // "issueDate": "2022-01-01",
+    // "expiryDate": "2032-01-01",
+    // "issuingAuthority": "UIDAI",
+    // "filePath": "/uploads/documents/aadhar_card_usr001.pdf",
+    // "consentGiven": true
+    // }
+
+    const userId = sessionStorage.getItem("username");
+    const applicationNumber = sessionStorage.getItem("applicationNumber");
+    if (applicationNumber == null) {
+      alert("❌ Application number is missing!");
+      return;
+    }else if (userId == null){
+      alert("❌ User ID is missing!");
+      return;
+    }
+    const requestData = {
+      applicationNumber: applicationNumber,
+      user:{
+        userId: userId
+      },
+      documentNumber: form.documentNumber,
+      issueDate: form.issueDate,
+      expiryDate: form.expiryDate,
+      issuingAuthority: form.issuingAuthority,
+      filePath: form.filePath,
+      consentGiven: form.consent,
+      
+    };
+    console.log(requestData)
     const { documentFiles, ...formData } = form;
     sessionStorage.setItem("documentVerification", JSON.stringify(formData));
-
-    alert(`Document Verified: ${form.documentNumber}`);
+    console.log(formData);
+    const response = await addDocumentVerified(requestData);
+    alert(response?.message);
     onSubmitSuccess();
   };
 

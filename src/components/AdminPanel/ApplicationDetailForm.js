@@ -27,20 +27,32 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
   console.log(canWrite,canRead)
   const [errors, setErrors] = useState({});
 
-   useEffect(() => {
-    // fetch applications on mount
-    const fetchApplications = async () => {
-      try {
-        const response = await getAllApplicationDetails();
-        console.log("Fetched applications:", response);
-        setApplications(response.data || []);
-      } catch (error) {
-        console.error("Failed to fetch applications:", error);
-      }
-    };
+  useEffect(() => {
+  const fetchApplications = async () => {
+    try {
+      const response = await getAllApplicationDetails();
+      console.log("Fetched applications:", response);
+      setApplications(response.data || []);
 
-    fetchApplications();
-  }, []);
+      // ✅ Store applicationNumber
+      if (response.data && Array.isArray(response.data)) {
+        const firstApp = response.data.find(
+          (app) => app.applicationDetails && app.applicationDetails.applicationNumber
+        );
+        if (firstApp && firstApp.applicationDetails.applicationNumber) {
+          const appNumber = firstApp.applicationDetails.applicationNumber;
+          console.log("Storing applicationNumber in sessionStorage:", appNumber);
+          sessionStorage.setItem("applicationNumber", appNumber);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch applications:", error);
+    }
+  };
+
+  fetchApplications();
+}, []);
+
 
   const states = [
     "",
@@ -147,8 +159,8 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
         city: detail.city,
         state: detail.state,
         isHomeOwner: detail.homeowner === "yes",
-        createdBy: "admin",               // <-- static or from session
-        lonetype: "Personal",             // <-- static or dynamic if you need
+        createdBy: sessionStorage.getItem("role").toLowerCase(),
+                
       };
 
       console.log("Submitting data:", requestData);
@@ -156,13 +168,13 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
       const response = await saveApplicationDetails(requestData);
 
       console.log("Response:", response);
-      alert("Application submitted successfully!",response);
-      console.table(response.data);
-      console.log(response?.data?.applicationNumber)
-      // Optionally navigate
-      // navigate("/workflow/custom");
-      navigate("/workflow/custom", { state: { applicationNumber: response?.data?.applicationNumber } });
+      sessionStorage.setItem("applicationNumber",response?.data?.applicationNumber)
 
+      alert("Application submitted successfully!",response?.data?.applicationNumber);
+
+      // Optionally navigate
+      navigate("/workflow/custom");
+     
     } catch (error) {
       console.error("Submission failed:", error);
       alert("Failed to submit application: " + error.message);
