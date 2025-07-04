@@ -122,9 +122,11 @@ const handleDelete = async (id) => {
     //   </div>
     //   <main className="flex-1 lg:ml-72">
     //     <DashboardHead />
+
         <div className="pr-8 py-8">
+        <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-700">Users Roles</h2>
+            <h2 className="text-2xl font-bold text-accent">Users Roles</h2>
             <button
               disabled={!canWrite}
               onClick={() => {
@@ -155,6 +157,7 @@ const handleDelete = async (id) => {
           </div>
 
           {!formVisible && (
+            
             <div className="bg-white rounded-lg shadow overflow-x-auto">
               <table className="min-w-full text-sm text-left">
                 <thead className="bg-gray-100 border-b text-gray-700">
@@ -207,6 +210,7 @@ const handleDelete = async (id) => {
               </table>
             </div>
           )}
+        </div>
         </div>
     //   </main>
     // </div>

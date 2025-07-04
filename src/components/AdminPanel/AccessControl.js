@@ -147,9 +147,9 @@ const AccessControl = ({ canRead = false, canWrite = false }) => {
               onClick={() => hasChildren && toggleExpand(menu.id)}
             >
               {hasChildren ? (
-                <span className="mr-2 text-accent">{isExpanded ? "▼" : "▶"}</span>
+                <span className="mr-2 text-accent text-sm">{isExpanded ? "▼" : "▶"}</span>
               ) : (
-                <span className="inline-block w-4 mr-2" />
+                <span className="inline-block w-4 mr-3" />
               )}
               {isChild && (
                 <span className="text-gray-400 mr-1 select-none">└──</span>
@@ -171,7 +171,7 @@ const AccessControl = ({ canRead = false, canWrite = false }) => {
               />
             </td>
           ))}
-          <td className="flex justify-center gap-2 py-2">
+          <td className="py-2 px-4 text-center space-x-3">
             <button
               onClick={() => editMenu(menu)}
               className="text-blue-500 hover:underline text-sm"
@@ -195,9 +195,8 @@ const AccessControl = ({ canRead = false, canWrite = false }) => {
   };
 
   return (
-    
-        <div className="min-h-screen bg-gray-100 pr-8 py-8 m-0">
-          <div className="bg-white rounded-2xl shadow-lg max-w-5xl mx-auto p-8">
+    <div className="pr-8 py-8">
+        <div className="bg-white p-10 rounded-lg shadow">
             <h2 className="text-2xl font-bold text-accent mb-6">
               Access Control Management
             </h2>
@@ -233,8 +232,8 @@ const AccessControl = ({ canRead = false, canWrite = false }) => {
               >
                 Save Permissions
               </button>
-            </div>
-          </div>
+            </div> 
+        </div>
         </div>
   );
 };

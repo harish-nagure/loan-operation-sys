@@ -883,3 +883,40 @@ export async function addDocumentVerified(requestData) {
   }
   
 }
+
+
+export const getApplicationDetailsByNumber = async (applicationNumber) => {
+  try {
+    const response = await fetch(`http://152.67.189.231:8842/api/auth/getApplicationDetails/${applicationNumber}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json",
+         Authorization: `Bearer ${sessionStorage.getItem('token')}`
+       },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch application details");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("❌ Error fetching details by application number:", error);
+    return null;
+  }
+};
+ 
+ 
+ 
+export const deleteApplicationByNumber = async (applicationNumber) => {
+  try {
+    const response = await fetch(`http://152.67.189.231:8842/api/auth/delete_application_by_number/${applicationNumber}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("❌ Error deleting application:", error);
+    return null;
+  }
+};

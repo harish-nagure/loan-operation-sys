@@ -218,7 +218,7 @@ const UserMenuData = () => {
 
   return (
     
-        <div className="pr-8 py-8">
+        <div className="pr-8 pt-6 pb-4">
           {editingUser ? (
             <UserMenuForm
               initialData={editingUser}
@@ -229,7 +229,7 @@ const UserMenuData = () => {
           ) : (
             <div className="bg-white p-6 rounded-lg shadow">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">User Summary</h2>
+                <h2 className="text-2xl font-bold text-accent">User Summary</h2>
                 <button
                   onClick={handleAddUser}
                   className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded hover:bg-secondary transition"
@@ -238,7 +238,7 @@ const UserMenuData = () => {
                 </button>
               </div>
 
-              <div className="overflow-auto max-h-[550px] scrollbar-thin">
+              <div className="overflow-auto max-h-[550px] custom-scrollbar  ">
                 <table className="min-w-full text-sm text-left">
                   <thead className="sticky top-0 bg-gray-100 border-b">
                     <tr>

@@ -342,6 +342,300 @@ const LinkBankForm = ({ onSubmitSuccess }) => {
   );
 };
 
+
+// const DocumentVerificationForm = ({ onSubmitSuccess }) => {
+//   const [form, setForm] = useState({
+//     documentType: "",
+//     documentNumber: "",
+//     issueDate: "",
+//     expiryDate: "",
+//     issuingAuthority: "",
+//     consent: false,
+//     documentFiles: [],
+//   });
+
+//   const [errors, setErrors] = useState({});
+//   const [newFile, setNewFile] = useState(null);
+
+//   const handleChange = (e) => {
+//     const { name, value, type, checked } = e.target;
+//     setForm((prev) => ({
+//       ...prev,
+//       [name]: type === "checkbox" ? checked : value,
+//     }));
+//   };
+
+//   const handleFileChange = (e) => {
+//     const file = e.target.files[0];
+//     setNewFile(file);
+//   };
+
+//   const handleAddFile = () => {
+//     if (!newFile) return;
+//     setForm((prev) => ({
+//       ...prev,
+//       documentFiles: [...prev.documentFiles, newFile],
+//     }));
+//     setNewFile(null);
+//   };
+
+//   const handleDeleteFile = (index) => {
+//     setForm((prev) => {
+//       const updatedFiles = [...prev.documentFiles];
+//       updatedFiles.splice(index, 1);
+//       return {
+//         ...prev,
+//         documentFiles: updatedFiles,
+//       };
+//     });
+//   };
+
+//   const validate = () => {
+//     const newErrors = {};
+//     if (!form.documentType) newErrors.documentType = "Required";
+//     if (!form.documentNumber) newErrors.documentNumber = "Required";
+//     if (!form.issueDate) newErrors.issueDate = "Required";
+//     if (!form.expiryDate) newErrors.expiryDate = "Required";
+//     if (!form.issuingAuthority) newErrors.issuingAuthority = "Required";
+//     if (form.documentFiles.length === 0)
+//       newErrors.documentFile = "At least one document is required";
+//     if (!form.consent) newErrors.consent = "Consent required";
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!validate()) return;
+
+//     const userId = sessionStorage.getItem("username");
+//     const applicationNumber = sessionStorage.getItem("applicationNumber");
+
+//     if (!applicationNumber) {
+//       alert("❌ Application number is missing!");
+//       return;
+//     }
+//     if (!userId) {
+//       alert("❌ User ID is missing!");
+//       return;
+//     }
+
+//     const requestData = {
+//       applicationNumber,
+//       user: { userId },
+//       documentNumber: form.documentNumber,
+//       issueDate: form.issueDate,
+//       expiryDate: form.expiryDate,
+//       issuingAuthority: form.issuingAuthority,
+//       filePath: "N/A",
+//       consentGiven: form.consent,
+//     };
+
+//     const { documentFiles, ...formData } = form;
+//     sessionStorage.setItem("documentVerification", JSON.stringify(formData));
+//     console.log("RequestData:", requestData);
+
+//     const response = await addDocumentVerified(requestData);
+//     alert(response?.message);
+//     onSubmitSuccess();
+//   };
+
+//   return (
+//     <div className="min-h-screen px-4 py-10">
+//       <h3 className="text-3xl font-bold text-center text-blue-700 mb-10">
+//         📄 Document Verification
+//       </h3>
+
+//       <form
+//         onSubmit={handleSubmit}
+//         className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 bg-white rounded-2xl p-8"
+//       >
+//         {/* Left: Form Section */}
+//         <div className="space-y-6">
+//           {/* Form Fields */}
+//           {[
+//             {
+//               label: "Document Type",
+//               element: (
+//                 <select
+//                   name="documentType"
+//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                   value={form.documentType}
+//                   onChange={handleChange}
+//                 >
+//                   <option value="">Select Type</option>
+//                   <option value="Aadhaar">Aadhaar</option>
+//                   <option value="PAN">PAN</option>
+//                   <option value="Passport">Passport</option>
+//                   <option value="Driving License">Driving License</option>
+//                 </select>
+//               ),
+//               error: errors.documentType,
+//             },
+//             {
+//               label: "Document Number",
+//               element: (
+//                 <input
+//                   name="documentNumber"
+//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                   value={form.documentNumber}
+//                   onChange={handleChange}
+//                 />
+//               ),
+//               error: errors.documentNumber,
+//             },
+//             {
+//               label: "Issue Date",
+//               element: (
+//                 <input
+//                   type="date"
+//                   name="issueDate"
+//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                   value={form.issueDate}
+//                   onChange={handleChange}
+//                 />
+//               ),
+//               error: errors.issueDate,
+//             },
+//             {
+//               label: "Expiry Date",
+//               element: (
+//                 <input
+//                   type="date"
+//                   name="expiryDate"
+//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                   value={form.expiryDate}
+//                   onChange={handleChange}
+//                 />
+//               ),
+//               error: errors.expiryDate,
+//             },
+//             {
+//               label: "Issuing Authority",
+//               element: (
+//                 <input
+//                   name="issuingAuthority"
+//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                   value={form.issuingAuthority}
+//                   onChange={handleChange}
+//                 />
+//               ),
+//               error: errors.issuingAuthority,
+//             },
+//           ].map((field, idx) => (
+//             <div key={idx}>
+//               <label className="block mb-1 text-sm font-medium text-gray-700">
+//                 {field.label}
+//               </label>
+//               {field.element}
+//               {field.error && (
+//                 <p className="text-red-500 text-sm mt-1">{field.error}</p>
+//               )}
+//             </div>
+//           ))}
+
+//           {/* Consent */}
+//           <div className="flex items-center gap-2">
+//             <input
+//               type="checkbox"
+//               name="consent"
+//               checked={form.consent}
+//               onChange={handleChange}
+//               className="w-4 h-4"
+//             />
+//             <label className="text-sm">I consent to document verification</label>
+//           </div>
+//           {errors.consent && (
+//             <p className="text-red-500 text-sm">{errors.consent}</p>
+//           )}
+
+//           {/* Submit Button */}
+//           <div>
+//             <button
+//               type="submit"
+//               className="w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white px-8 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform"
+//             >
+//               🚀 Submit
+//             </button>
+//           </div>
+//         </div>
+
+//         {/* Right: File Upload + Preview */}
+//         <div className="space-y-6">
+//           <div className="bg-blue-50 p-6 rounded-xl shadow-inner">
+//             <label className="block mb-2 text-sm font-semibold text-blue-800">
+//               Upload Document (PDF, Image)
+//             </label>
+//             <div className="flex items-center gap-4">
+//               <input
+//                 type="file"
+//                 accept=".pdf,.jpg,.jpeg,.png"
+//                 className="flex-1 border rounded-lg px-3 py-2"
+//                 onChange={handleFileChange}
+//               />
+//               <button
+//                 type="button"
+//                 onClick={handleAddFile}
+//                 className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+//               >
+//                 ➕ Add
+//               </button>
+//             </div>
+//             {errors.documentFile && (
+//               <p className="text-red-500 text-sm mt-2">{errors.documentFile}</p>
+//             )}
+//           </div>
+
+//           <ul className="space-y-3 max-h-[300px] overflow-auto pr-2">
+//             {form.documentFiles.map((file, idx) => (
+//               <li
+//                 key={idx}
+//                 className="flex justify-between items-center bg-white border rounded-lg p-3 shadow-sm"
+//               >
+//                 <div className="flex flex-col gap-1 max-w-[60%]">
+//                   <span className="text-sm font-medium text-gray-800 truncate">{file.name}</span>
+//                   {file.type.startsWith("image/") ? (
+//                     <img
+//                       src={URL.createObjectURL(file)}
+//                       alt="Preview"
+//                       className="w-24 h-24 object-cover border rounded"
+//                     />
+//                   ) : file.type === "application/pdf" ? (
+//                     <iframe
+//                       src={URL.createObjectURL(file)}
+//                       title="PDF Preview"
+//                       className="w-24 h-24 border rounded"
+//                     />
+//                   ) : (
+//                     <span className="text-xs text-gray-500">No preview</span>
+//                   )}
+//                 </div>
+//                 <div className="flex flex-col gap-1 items-end">
+//                   <a
+//                     href={URL.createObjectURL(file)}
+//                     target="_blank"
+//                     rel="noopener noreferrer"
+//                     className="text-blue-600 text-sm underline"
+//                   >
+//                     View
+//                   </a>
+//                   <button
+//                     type="button"
+//                     onClick={() => handleDeleteFile(idx)}
+//                     className="text-red-500 text-sm hover:underline"
+//                   >
+//                     Delete
+//                   </button>
+//                 </div>
+//               </li>
+//             ))}
+//           </ul>
+//         </div>
+//       </form>
+//     </div>
+//   );
+// };
+
 const DocumentVerificationForm = ({ onSubmitSuccess }) => {
   const [form, setForm] = useState({
     documentType: "",
@@ -382,10 +676,7 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
     setForm((prev) => {
       const updatedFiles = [...prev.documentFiles];
       updatedFiles.splice(index, 1);
-      return {
-        ...prev,
-        documentFiles: updatedFiles,
-      };
+      return { ...prev, documentFiles: updatedFiles };
     });
   };
 
@@ -407,54 +698,33 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
     e.preventDefault();
     if (!validate()) return;
 
-//     {
-//     "documentType": "PAN",
-//     "documentNumber": "hfsfsfjasfsjka",
-//     "issueDate": "2000-01-01",
-//     "expiryDate": "2000-02-01",
-//     "issuingAuthority": "jfdsjdfjmv",
-//     "consent": true
-//     }
-
-    // {
-    // "applicationNumber": "APP123456",
-    // "user": {
-    // "userId": "USR001"
-    // },
-    // "documentNumber": "1234-5678-9012",
-    // "issueDate": "2022-01-01",
-    // "expiryDate": "2032-01-01",
-    // "issuingAuthority": "UIDAI",
-    // "filePath": "/uploads/documents/aadhar_card_usr001.pdf",
-    // "consentGiven": true
-    // }
-
     const userId = sessionStorage.getItem("username");
     const applicationNumber = sessionStorage.getItem("applicationNumber");
-    if (applicationNumber == null) {
+
+    if (!applicationNumber) {
       alert("❌ Application number is missing!");
       return;
-    }else if (userId == null){
+    }
+    if (!userId) {
       alert("❌ User ID is missing!");
       return;
     }
+
+    const filePaths = form.documentFiles.map((file) => URL.createObjectURL(file));
+    console.log(filePaths);
     const requestData = {
-      applicationNumber: applicationNumber,
-      user:{
-        userId: userId
-      },
+      applicationNumber,
+      user: { userId },
       documentNumber: form.documentNumber,
       issueDate: form.issueDate,
       expiryDate: form.expiryDate,
       issuingAuthority: form.issuingAuthority,
-      filePath: form.filePath,
+      filePath: "N/A",
       consentGiven: form.consent,
-      
     };
-    console.log(requestData)
+
     const { documentFiles, ...formData } = form;
     sessionStorage.setItem("documentVerification", JSON.stringify(formData));
-    console.log(formData);
     const response = await addDocumentVerified(requestData);
     alert(response?.message);
     onSubmitSuccess();
@@ -462,173 +732,159 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
 
   return (
     <div className="min-h-screen bg-white px-6 py-10">
-      <form onSubmit={handleSubmit} className="max-w-6xl mx-auto">
-        <h3 className="text-2xl font-bold mb-10">Document Verification</h3>
+      
+        <h3 className="text-3xl font-bold mb-10">Document Verification</h3>
+      <form
+        onSubmit={handleSubmit}
+      className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10"
+      >
+        {/* Left: Form Section */}
+        <div>
+          
+          <div className="space-y-6">
+            {[
+              { label: "Document Type", name: "documentType", type: "select", options: ["Aadhaar", "PAN", "Passport", "Driving License"] },
+              { label: "Document Number", name: "documentNumber", type: "text" },
+              { label: "Issue Date", name: "issueDate", type: "date" },
+              { label: "Expiry Date", name: "expiryDate", type: "date" },
+              { label: "Issuing Authority", name: "issuingAuthority", type: "text" },
+            ].map((field, idx) => (
+              <div key={idx}>
+                <label className="block mb-1 text-sm font-medium">{field.label}</label>
+                {field.type === "select" ? (
+                  <select
+                    name={field.name}
+                    value={form[field.name]}
+                    onChange={handleChange}
+                    className="w-full border-b border-gray-400 focus:border-blue-600 outline-none py-1"
+                  >
+                    <option value="">Select</option>
+                    {field.options.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type={field.type}
+                    name={field.name}
+                    value={form[field.name]}
+                    onChange={handleChange}
+                    className="w-full border-b border-gray-400 focus:border-blue-600 outline-none py-1"
+                  />
+                )}
+                {errors[field.name] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>
+                )}
+              </div>
+            ))}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Document Type */}
-          <div>
-            <label className="block mb-1 text-sm font-medium">Document Type</label>
-            <select
-              name="documentType"
-              className="w-full border-b border-gray-400 focus:border-blue-600 outline-none py-1 bg-transparent"
-              value={form.documentType}
-              onChange={handleChange}
-            >
-              <option value="">Select Type</option>
-              <option value="Aadhaar">Aadhaar</option>
-              <option value="PAN">PAN</option>
-              <option value="Passport">Passport</option>
-              <option value="Driving License">Driving License</option>
-            </select>
-            {errors.documentType && (
-              <p className="text-red-500 text-sm mt-1">{errors.documentType}</p>
-            )}
+            {/* Consent */}
+            <div className="mt-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  name="consent"
+                  checked={form.consent}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <span className="text-sm">I consent to document verification</span>
+              </label>
+              {errors.consent && (
+                <p className="text-red-500 text-sm mt-1">{errors.consent}</p>
+              )}
+            </div>
+
+            <div className="mt-4">
+              <button
+                type="submit"
+                className="bg-[#029aaa] text-white px-6 py-2 rounded hover:bg-[#01c4d5] transition flex items-center gap-2"
+              >
+                Submit
+              </button>
+            </div>
           </div>
+        </div>
 
-          {/* Document Number */}
-          <div>
-            <label className="block mb-1 text-sm font-medium">Document Number</label>
-            <input
-              name="documentNumber"
-              className="w-full border-b border-gray-400 focus:border-blue-600 outline-none py-1"
-              value={form.documentNumber}
-              onChange={handleChange}
-            />
-            {errors.documentNumber && (
-              <p className="text-red-500 text-sm mt-1">{errors.documentNumber}</p>
-            )}
-          </div>
-
-          {/* Issue Date */}
-          <div>
-            <label className="block mb-1 text-sm font-medium">Issue Date</label>
-            <input
-              type="date"
-              name="issueDate"
-              className="w-full border-b border-gray-400 focus:border-blue-600 outline-none py-1"
-              value={form.issueDate}
-              onChange={handleChange}
-            />
-            {errors.issueDate && (
-              <p className="text-red-500 text-sm mt-1">{errors.issueDate}</p>
-            )}
-          </div>
-
-          {/* Expiry Date */}
-          <div>
-            <label className="block mb-1 text-sm font-medium">Expiry Date</label>
-            <input
-              type="date"
-              name="expiryDate"
-              className="w-full border-b border-gray-400 focus:border-blue-600 outline-none py-1"
-              value={form.expiryDate}
-              onChange={handleChange}
-            />
-            {errors.expiryDate && (
-              <p className="text-red-500 text-sm mt-1">{errors.expiryDate}</p>
-            )}
-          </div>
-
-          {/* Issuing Authority */}
-          <div>
-            <label className="block mb-1 text-sm font-medium">Issuing Authority</label>
-            <input
-              name="issuingAuthority"
-              className="w-full border-b border-gray-400 focus:border-blue-600 outline-none py-1"
-              value={form.issuingAuthority}
-              onChange={handleChange}
-            />
-            {errors.issuingAuthority && (
-              <p className="text-red-500 text-sm mt-1">{errors.issuingAuthority}</p>
-            )}
-          </div>
-
-          {/* File Upload Section */}
-          <div>
-            <label className="block mb-1 text-sm font-medium">Upload Document (PDF, Image)</label>
+        {/* Right: File Upload and Preview */}
+        <div className="space-y-4">  
+            <label className="block mb-2 text-sm font-semibold">
+              Upload Document (PDF, Image)
+            </label>
             <div className="flex items-center gap-4">
               <input
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
-                className="flex-1 border-b border-gray-400 focus:border-blue-600 outline-none py-1"
-                onChange={handleFileChange}
+                className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#029aaa]"              
+                disabled={form.documentFiles.length >= 1}
+                onChange={handleAddFile}
               />
               <button
                 type="button"
                 onClick={handleAddFile}
-               className="bg-[#029aaa] text-white px-6 py-2 rounded hover:bg-[#01c4d5] transition flex items-center gap-2"
+                className="bg-[#029aaa] text-white px-5 py-2 rounded-lg hover:bg-[#01c4d5] transition"
               >
-                Add
+                ➕ Add
               </button>
             </div>
             {errors.documentFile && (
-              <p className="text-red-500 text-sm mt-1">{errors.documentFile}</p>
+              <p className="text-red-500 text-sm mt-2">{errors.documentFile}</p>
             )}
 
-            {/* Show uploaded files */}
-            <ul className="mt-4 space-y-2">
-              {form.documentFiles.map((file, idx) => (
-                <li
-                  key={idx}
-                  className="flex justify-between items-center bg-gray-100 p-2 rounded"
-                >
-                  <span className="text-sm truncate max-w-[50%]">{file.name}</span>
-                  <div className="flex gap-3">
+
+          <ul className="space-y-4 h-[400px] overflow-auto custom-scrollbar border rounded-xl">
+            {form.documentFiles.map((file, idx) => (
+              <li
+                key={idx}
+                className="bg-white border m-3 border-gray-200 rounded-xl p-4 shadow"
+              >
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-sm font-medium text-gray-800 truncate">{file.name}</span>
+                  <div className="flex gap-4">
                     <a
                       href={URL.createObjectURL(file)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 text-sm underline"
+                      className="text-[#029aaa] text-sm underline"
                     >
                       View
                     </a>
                     <button
                       type="button"
                       onClick={() => handleDeleteFile(idx)}
-                      className="text-red-600 text-sm hover:underline"
+                      className="text-red-500 text-sm hover:underline"
                     >
                       Delete
                     </button>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                </div>
+
+                <div className="rounded-lg overflow-hidden border">
+                  {file.type.startsWith("image/") ? (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="w-full max-h-[300px] object-contain"
+                    />
+                  ) : file.type === "application/pdf" ? (
+                    <iframe
+                      src={URL.createObjectURL(file)}
+                      title="PDF Preview"
+                      className="w-full h-[600px]"
+                    />
+                  ) : (
+                    <div className="text-sm text-gray-500 italic">Preview not available</div>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Consent */}
-        <div className="mt-8">
-          <label className="inline-flex items-center">
-            <input
-              type="checkbox"
-              name="consent"
-              checked={form.consent}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <span className="text-sm">I consent to document verification</span>
-          </label>
-          {errors.consent && (
-            <p className="text-red-500 text-sm mt-1">{errors.consent}</p>
-          )}
-        </div>
-
-        {/* Submit */}
-        <div className="mt-8">
-          <button
-            type="submit"
-           className="bg-[#029aaa] text-white px-6 py-2 rounded hover:bg-[#01c4d5] transition flex items-center gap-2"
-          >
-            Submit
-          </button>
-        </div>
       </form>
     </div>
   );
 };
-
-
 
 
 const AcceptOfferForm = () => {
