@@ -3,6 +3,7 @@ import { useNavigate,useLocation } from "react-router-dom";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { CheckCircle,Check } from "lucide-react";
+import { FaFolderPlus } from "react-icons/fa6";
 import {addAccountLinked, fetchWorkflowByLoanType, addDocumentVerified} from "../api_service";
 
 const   FormsPage = () => {
@@ -672,6 +673,16 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
     setNewFile(null);
   };
 
+//   const handleAddFile = (e) => {
+//   const file = e.target.files[0];
+//   if (!file) return;
+
+//   setForm((prev) => ({
+//     ...prev,
+//     documentFiles: [file], // overwrite existing files
+//   }));
+// };
+
   const handleDeleteFile = (index) => {
     setForm((prev) => {
       const updatedFiles = [...prev.documentFiles];
@@ -696,6 +707,8 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const filePath = form.documentFile;
+    console.log(filePath);
     if (!validate()) return;
 
     const userId = sessionStorage.getItem("username");
@@ -710,8 +723,7 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
       return;
     }
 
-    const filePaths = form.documentFiles.map((file) => URL.createObjectURL(file));
-    console.log(filePaths);
+    
     const requestData = {
       applicationNumber,
       user: { userId },
@@ -719,15 +731,20 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
       issueDate: form.issueDate,
       expiryDate: form.expiryDate,
       issuingAuthority: form.issuingAuthority,
-      filePath: "N/A",
+      filePath: form.documentFiles,
       consentGiven: form.consent,
     };
 
     const { documentFiles, ...formData } = form;
     sessionStorage.setItem("documentVerification", JSON.stringify(formData));
     const response = await addDocumentVerified(requestData);
-    alert(response?.message);
-    onSubmitSuccess();
+    if (response.status == 500){
+      alert(response?.message);
+      return;
+    }else{
+      alert(response?.message);
+      onSubmitSuccess();
+    }
   };
 
   return (
@@ -817,14 +834,14 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#029aaa]"              
                 disabled={form.documentFiles.length >= 1}
-                onChange={handleAddFile}
+                onChange={handleFileChange}
               />
               <button
                 type="button"
                 onClick={handleAddFile}
                 className="bg-[#029aaa] text-white px-5 py-2 rounded-lg hover:bg-[#01c4d5] transition"
               >
-                ➕ Add
+                <FaFolderPlus /> Add
               </button>
             </div>
             {errors.documentFile && (
