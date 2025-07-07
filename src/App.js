@@ -128,6 +128,8 @@ function AppWrapper() {
 
   const routeComponentMap = {
     "/admin-dashboard": <AdminDashboard/>,
+    "/submitted_application": <SubmittedApplication />,
+    "/application-details/applicationNumber":<ApplicationDetailPage/>,
     "/user-dashboard": <UserDashboard /> ,
     "/user": <UserMenuData />,
     "/roles": <AdminUserPanel />,
@@ -140,8 +142,8 @@ function AppWrapper() {
     "/workflow/custom": <LoanTypeSelectionPage />,
     "/selection_setup": <SelectStepsPage />,
     "/form_steps": <FormsPage />,
-    "/submitted_application": <SubmittedApplication />,
     "/form_field_settings": <FormFieldSettings />
+    
   };
 
   useEffect(() => {

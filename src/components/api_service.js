@@ -805,6 +805,9 @@ export async function getApplicationCount(){
   return data_json;
 }
 
+
+
+
 export async function addAccountLinked(requestData){
   const response = await fetch(`${process.env.REACT_APP_API_URL}/addOrUpdate_applicationBankdetails`,{
     method: "POST",
@@ -826,11 +829,10 @@ export async function addAccountLinked(requestData){
   
 }
 
-
-  export async function updateLoanType(applicationNumber,lonetype){
+export async function updateLoanType(applicationNumber,lonetype){
     console.log(applicationNumber,lonetype)
   try{      
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/update_lonetype/${applicationNumber}`,{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/update_loantype/${applicationNumber}`,{
         method: "PUT",
         headers:{
           "Content-Type": "application/json",
@@ -853,8 +855,6 @@ export async function addAccountLinked(requestData){
     return;
   }
 }
-
-
 
 export async function addDocumentVerified(formData) {
   console.log(formData);
@@ -1023,11 +1023,12 @@ export const deleteApplicationByNumber = async (applicationNumber) => {
 };
 
 
+ 
 export const getLinkedBankAccount = async (applicationNumber) => {
   try {
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/get_only_one_linkedBankAccount/${applicationNumber}`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/get_linkedBankAccountsdetailsonly/${applicationNumber}`, {
       method: "GET",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
          Authorization: `Bearer ${sessionStorage.getItem('token')}`
        },
@@ -1038,12 +1039,69 @@ export const getLinkedBankAccount = async (applicationNumber) => {
     return null;
   }
 };
+ 
+
+// export const getDocumentVerification = async (applicationNumber) => {
+//   try {
+//     const res = await fetch(`${process.env.REACT_APP_API_URL}/get_only_one_document_detail/${applicationNumber}`, {
+//       headers: { 
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${sessionStorage.getItem('token')}`
+//       },
+//     });
+//     return await res.json();
+//   } catch (err) {
+//     console.error("Error fetching Document Verification:", err);
+//   }
+// };
+
+// export const getAcceptOffer = async (applicationNumber) => {
+//   try {
+//     const res = await fetch(`${process.env.REACT_APP_API_URL}/get_accept_offer_detailsonly/${applicationNumber}`, {
+//       headers: { 
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${sessionStorage.getItem('token')}`
+//       },
+//     });
+//     return await res.json();
+//   } catch (err) {
+//     console.error("Error fetching Accept Offer:", err);
+//   }
+// };
+
+// export const getReviewAgreement = async (applicationNumber) => {
+//   try {
+//     const res = await fetch(`${process.env.REACT_APP_API_URL}/get_reviewandagreement_by_application_only/${applicationNumber}`, {
+//       headers: { 
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${sessionStorage.getItem('token')}`
+//       },
+//     });
+//     return await res.json();
+//   } catch (err) {
+//     console.error("Error fetching Review Agreement:", err);
+//   }
+// };
+
+// export const getFunded = async (applicationNumber) => {
+//   try {
+//     const res = await fetch(`${process.env.REACT_APP_API_URL}/get_fund_details_by_applicationnoly/${applicationNumber}`, {
+//       headers: { 
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${sessionStorage.getItem('token')}`
+//       },
+//     });
+//     return await res.json();
+//   } catch (err) {
+//     console.error("Error fetching Funded data:", err);
+//   }
+// };
 
 
 export const getDocumentVerification = async (applicationNumber) => {
   try {
     const res = await fetch(`${process.env.REACT_APP_API_URL}/get_only_one_document_detail/${applicationNumber}`, {
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem('token')}`
       },
@@ -1053,11 +1111,11 @@ export const getDocumentVerification = async (applicationNumber) => {
     console.error("Error fetching Document Verification:", err);
   }
 };
-
+ 
 export const getAcceptOffer = async (applicationNumber) => {
   try {
     const res = await fetch(`${process.env.REACT_APP_API_URL}/get_accept_offer_detailsonly/${applicationNumber}`, {
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem('token')}`
       },
@@ -1067,11 +1125,11 @@ export const getAcceptOffer = async (applicationNumber) => {
     console.error("Error fetching Accept Offer:", err);
   }
 };
-
+ 
 export const getReviewAgreement = async (applicationNumber) => {
   try {
     const res = await fetch(`${process.env.REACT_APP_API_URL}/get_reviewandagreement_by_application_only/${applicationNumber}`, {
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem('token')}`
       },
@@ -1081,11 +1139,11 @@ export const getReviewAgreement = async (applicationNumber) => {
     console.error("Error fetching Review Agreement:", err);
   }
 };
-
+ 
 export const getFunded = async (applicationNumber) => {
   try {
     const res = await fetch(`${process.env.REACT_APP_API_URL}/get_fund_details_by_applicationnoly/${applicationNumber}`, {
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem('token')}`
       },
@@ -1095,3 +1153,122 @@ export const getFunded = async (applicationNumber) => {
     console.error("Error fetching Funded data:", err);
   }
 };
+ 
+ 
+ 
+export const deleteLinkedBankAccount = async (applicationNumber) => {
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/delete_Linked_applicationdetails/${applicationNumber}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      }
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error deleting linked bank account:", error);
+    return null;
+  }
+};
+ 
+ 
+export const deleteDocumentVerification = async (applicationNumber) => {
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/delete_application_documentdetails/${applicationNumber}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      }
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error deleting document verification:", error);
+    return null;
+  }
+};
+ 
+ 
+export const deleteAcceptOffer = async (applicationNumber) => {
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/delete_application_acceptoffer_details/${applicationNumber}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      }
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error deleting accept offer:", error);
+    return null;
+  }
+};
+ 
+ 
+export const deleteReviewAgreement = async (applicationNumber) => {
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/delete_Application_reviewandsignAgreementdetails/${applicationNumber}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      }
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error deleting review agreement:", error);
+    return null;
+  }
+};
+ 
+ 
+export const deleteFunded = async (applicationNumber) => {
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/delete_fundedInfo/${applicationNumber}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      }
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error deleting funded data:", error);
+    return null;
+  }
+};
+
+
+
+
+
+export async function getAllApplicationUserId(userId) {
+  try{
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/get_allApplicationDetails_by_user/${userId}`,{
+      method:"GET",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":`Bearer ${sessionStorage.getItem("token")}`
+      }
+    });
+    
+    const data_json = await response.json()
+    if(!response.ok){
+      console.error(data_json.message);
+    } 
+    
+    return data_json;
+
+  }catch(error){
+
+    console.error(error);
+    return null;
+  }
+  
+}
+
+
+
+
