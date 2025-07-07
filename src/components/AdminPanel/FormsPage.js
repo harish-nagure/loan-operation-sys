@@ -4,7 +4,7 @@ import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { CheckCircle,Check } from "lucide-react";
 import { FaFolderPlus } from "react-icons/fa6";
-import {addAccountLinked, fetchWorkflowByLoanType, addDocumentVerified} from "../api_service";
+import {addAccountLinked, fetchWorkflowByLoanType, addDocumentVerified, addOrUpdateAcceptOffer, addOrUpdateReviewAgreement, addOrUpdateFundedInfo} from "../api_service";
 
 const   FormsPage = () => {
   const navigate = useNavigate();
@@ -344,299 +344,6 @@ const LinkBankForm = ({ onSubmitSuccess }) => {
 };
 
 
-// const DocumentVerificationForm = ({ onSubmitSuccess }) => {
-//   const [form, setForm] = useState({
-//     documentType: "",
-//     documentNumber: "",
-//     issueDate: "",
-//     expiryDate: "",
-//     issuingAuthority: "",
-//     consent: false,
-//     documentFiles: [],
-//   });
-
-//   const [errors, setErrors] = useState({});
-//   const [newFile, setNewFile] = useState(null);
-
-//   const handleChange = (e) => {
-//     const { name, value, type, checked } = e.target;
-//     setForm((prev) => ({
-//       ...prev,
-//       [name]: type === "checkbox" ? checked : value,
-//     }));
-//   };
-
-//   const handleFileChange = (e) => {
-//     const file = e.target.files[0];
-//     setNewFile(file);
-//   };
-
-//   const handleAddFile = () => {
-//     if (!newFile) return;
-//     setForm((prev) => ({
-//       ...prev,
-//       documentFiles: [...prev.documentFiles, newFile],
-//     }));
-//     setNewFile(null);
-//   };
-
-//   const handleDeleteFile = (index) => {
-//     setForm((prev) => {
-//       const updatedFiles = [...prev.documentFiles];
-//       updatedFiles.splice(index, 1);
-//       return {
-//         ...prev,
-//         documentFiles: updatedFiles,
-//       };
-//     });
-//   };
-
-//   const validate = () => {
-//     const newErrors = {};
-//     if (!form.documentType) newErrors.documentType = "Required";
-//     if (!form.documentNumber) newErrors.documentNumber = "Required";
-//     if (!form.issueDate) newErrors.issueDate = "Required";
-//     if (!form.expiryDate) newErrors.expiryDate = "Required";
-//     if (!form.issuingAuthority) newErrors.issuingAuthority = "Required";
-//     if (form.documentFiles.length === 0)
-//       newErrors.documentFile = "At least one document is required";
-//     if (!form.consent) newErrors.consent = "Consent required";
-//     setErrors(newErrors);
-//     return Object.keys(newErrors).length === 0;
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     if (!validate()) return;
-
-//     const userId = sessionStorage.getItem("username");
-//     const applicationNumber = sessionStorage.getItem("applicationNumber");
-
-//     if (!applicationNumber) {
-//       alert("❌ Application number is missing!");
-//       return;
-//     }
-//     if (!userId) {
-//       alert("❌ User ID is missing!");
-//       return;
-//     }
-
-//     const requestData = {
-//       applicationNumber,
-//       user: { userId },
-//       documentNumber: form.documentNumber,
-//       issueDate: form.issueDate,
-//       expiryDate: form.expiryDate,
-//       issuingAuthority: form.issuingAuthority,
-//       filePath: "N/A",
-//       consentGiven: form.consent,
-//     };
-
-//     const { documentFiles, ...formData } = form;
-//     sessionStorage.setItem("documentVerification", JSON.stringify(formData));
-//     console.log("RequestData:", requestData);
-
-//     const response = await addDocumentVerified(requestData);
-//     alert(response?.message);
-//     onSubmitSuccess();
-//   };
-
-//   return (
-//     <div className="min-h-screen px-4 py-10">
-//       <h3 className="text-3xl font-bold text-center text-blue-700 mb-10">
-//         📄 Document Verification
-//       </h3>
-
-//       <form
-//         onSubmit={handleSubmit}
-//         className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 bg-white rounded-2xl p-8"
-//       >
-//         {/* Left: Form Section */}
-//         <div className="space-y-6">
-//           {/* Form Fields */}
-//           {[
-//             {
-//               label: "Document Type",
-//               element: (
-//                 <select
-//                   name="documentType"
-//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-//                   value={form.documentType}
-//                   onChange={handleChange}
-//                 >
-//                   <option value="">Select Type</option>
-//                   <option value="Aadhaar">Aadhaar</option>
-//                   <option value="PAN">PAN</option>
-//                   <option value="Passport">Passport</option>
-//                   <option value="Driving License">Driving License</option>
-//                 </select>
-//               ),
-//               error: errors.documentType,
-//             },
-//             {
-//               label: "Document Number",
-//               element: (
-//                 <input
-//                   name="documentNumber"
-//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-//                   value={form.documentNumber}
-//                   onChange={handleChange}
-//                 />
-//               ),
-//               error: errors.documentNumber,
-//             },
-//             {
-//               label: "Issue Date",
-//               element: (
-//                 <input
-//                   type="date"
-//                   name="issueDate"
-//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-//                   value={form.issueDate}
-//                   onChange={handleChange}
-//                 />
-//               ),
-//               error: errors.issueDate,
-//             },
-//             {
-//               label: "Expiry Date",
-//               element: (
-//                 <input
-//                   type="date"
-//                   name="expiryDate"
-//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-//                   value={form.expiryDate}
-//                   onChange={handleChange}
-//                 />
-//               ),
-//               error: errors.expiryDate,
-//             },
-//             {
-//               label: "Issuing Authority",
-//               element: (
-//                 <input
-//                   name="issuingAuthority"
-//                   className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-//                   value={form.issuingAuthority}
-//                   onChange={handleChange}
-//                 />
-//               ),
-//               error: errors.issuingAuthority,
-//             },
-//           ].map((field, idx) => (
-//             <div key={idx}>
-//               <label className="block mb-1 text-sm font-medium text-gray-700">
-//                 {field.label}
-//               </label>
-//               {field.element}
-//               {field.error && (
-//                 <p className="text-red-500 text-sm mt-1">{field.error}</p>
-//               )}
-//             </div>
-//           ))}
-
-//           {/* Consent */}
-//           <div className="flex items-center gap-2">
-//             <input
-//               type="checkbox"
-//               name="consent"
-//               checked={form.consent}
-//               onChange={handleChange}
-//               className="w-4 h-4"
-//             />
-//             <label className="text-sm">I consent to document verification</label>
-//           </div>
-//           {errors.consent && (
-//             <p className="text-red-500 text-sm">{errors.consent}</p>
-//           )}
-
-//           {/* Submit Button */}
-//           <div>
-//             <button
-//               type="submit"
-//               className="w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white px-8 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform"
-//             >
-//               🚀 Submit
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Right: File Upload + Preview */}
-//         <div className="space-y-6">
-//           <div className="bg-blue-50 p-6 rounded-xl shadow-inner">
-//             <label className="block mb-2 text-sm font-semibold text-blue-800">
-//               Upload Document (PDF, Image)
-//             </label>
-//             <div className="flex items-center gap-4">
-//               <input
-//                 type="file"
-//                 accept=".pdf,.jpg,.jpeg,.png"
-//                 className="flex-1 border rounded-lg px-3 py-2"
-//                 onChange={handleFileChange}
-//               />
-//               <button
-//                 type="button"
-//                 onClick={handleAddFile}
-//                 className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
-//               >
-//                 ➕ Add
-//               </button>
-//             </div>
-//             {errors.documentFile && (
-//               <p className="text-red-500 text-sm mt-2">{errors.documentFile}</p>
-//             )}
-//           </div>
-
-//           <ul className="space-y-3 max-h-[300px] overflow-auto pr-2">
-//             {form.documentFiles.map((file, idx) => (
-//               <li
-//                 key={idx}
-//                 className="flex justify-between items-center bg-white border rounded-lg p-3 shadow-sm"
-//               >
-//                 <div className="flex flex-col gap-1 max-w-[60%]">
-//                   <span className="text-sm font-medium text-gray-800 truncate">{file.name}</span>
-//                   {file.type.startsWith("image/") ? (
-//                     <img
-//                       src={URL.createObjectURL(file)}
-//                       alt="Preview"
-//                       className="w-24 h-24 object-cover border rounded"
-//                     />
-//                   ) : file.type === "application/pdf" ? (
-//                     <iframe
-//                       src={URL.createObjectURL(file)}
-//                       title="PDF Preview"
-//                       className="w-24 h-24 border rounded"
-//                     />
-//                   ) : (
-//                     <span className="text-xs text-gray-500">No preview</span>
-//                   )}
-//                 </div>
-//                 <div className="flex flex-col gap-1 items-end">
-//                   <a
-//                     href={URL.createObjectURL(file)}
-//                     target="_blank"
-//                     rel="noopener noreferrer"
-//                     className="text-blue-600 text-sm underline"
-//                   >
-//                     View
-//                   </a>
-//                   <button
-//                     type="button"
-//                     onClick={() => handleDeleteFile(idx)}
-//                     className="text-red-500 text-sm hover:underline"
-//                   >
-//                     Delete
-//                   </button>
-//                 </div>
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// };
-
 const DocumentVerificationForm = ({ onSubmitSuccess }) => {
   const [form, setForm] = useState({
     documentType: "",
@@ -734,9 +441,9 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
       filePath: form.documentFiles,
       consentGiven: form.consent,
     };
-
+    console.log(requestData)
     const { documentFiles, ...formData } = form;
-    sessionStorage.setItem("documentVerification", JSON.stringify(formData));
+    // sessionStorage.setItem("documentVerification", JSON.stringify(formData));
     const response = await addDocumentVerified(requestData);
     if (response.status == 500){
       alert(response?.message);
@@ -849,7 +556,7 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
             )}
 
 
-          <ul className="space-y-4 h-[400px] overflow-auto custom-scrollbar border rounded-xl">
+          <ul className="bg-[#029aaa]/20 space-y-4 h-[400px] overflow-auto custom-scrollbar border rounded-xl">
             {form.documentFiles.map((file, idx) => (
               <li
                 key={idx}
@@ -904,7 +611,7 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
 };
 
 
-const AcceptOfferForm = () => {
+const AcceptOfferForm = ({onSubmitSuccess}) => {
   const [loanAmount, setLoanAmount] = useState(100000);
   const [tenure, setTenure] = useState(12);
   const [interestRate, setInterestRate] = useState(12);
@@ -925,22 +632,68 @@ const AcceptOfferForm = () => {
     }
   }, [loanAmount, tenure, interestRate]);
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
     if (!consent) {
       alert("Please accept the terms and conditions.");
       return;
     }
 
-    const acceptedData = {
-      loanAmount,
-      tenure,
-      interestRate,
-      emi,
-      acceptedAt: new Date().toISOString(),
-    };
+//     {
+//     "applicationDetail": {
 
-    sessionStorage.setItem("acceptedLoanOffer", JSON.stringify(acceptedData));
-    alert("Loan offer accepted and saved!");
+// "applicationnumber": "APP123456"
+
+// },
+
+// "user": {
+
+// "userId": "USR001"
+
+// },
+
+// "loanAmount": 100000,
+
+// "tenureMonths": 12,
+
+// "interestRate": 10.5,
+
+// "estimatedEmi": 8792.00,
+
+// "consentGiven": true
+
+// }
+    const userId = sessionStorage.getItem("username");
+    const applicationNumber = sessionStorage.getItem("applicationNumber");
+
+    if (!applicationNumber) {
+      alert("❌ Application number is missing!");
+      return;
+    }
+    if (!userId) {
+      alert("❌ User ID is missing!");
+      return;
+    }
+
+    const acceptedData = {
+      applicationDetail: {applicationNumber},
+      user: { userId },
+      loanAmount,
+      tenureMonths:tenure,
+      interestRate,
+      estimatedEmi:emi,
+      consentGiven:consent,
+      // acceptedAt: new Date().toISOString(),
+    };
+    console.log(acceptedData)
+    const response = await addOrUpdateAcceptOffer(acceptedData);
+    if (response.status == 500){
+      alert(response?.message);
+      return;
+    }else{
+      alert(response?.message);
+      onSubmitSuccess();
+    }
+    // alert("Loan offer accepted and saved!");
   };
 
   return (
@@ -1050,7 +803,7 @@ const AcceptOfferForm = () => {
 };
 
 
-const ReviewAgreementForm = ({ formData, onSubmitFinal }) => {
+const ReviewAgreementForm = ({ formData, onSubmitFinal, onSubmitSuccess }) => {
   const [consents, setConsents] = useState({
     confirmAccuracy: false,
     agreeToTerms: false,
@@ -1126,25 +879,73 @@ const ReviewAgreementForm = ({ formData, onSubmitFinal }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const payload = {
-      ...formData,
-      consents,
+    const userId = sessionStorage.getItem("username");
+    const applicationNumber = sessionStorage.getItem("applicationNumber");
+
+    if (!applicationNumber) {
+      alert("❌ Application number is missing!");
+      return;
+    }
+    if (!userId) {
+      alert("❌ User ID is missing!");
+      return;
+    }
+
+// "applicationNumber": "APP123456",
+
+// "userId": "USR001",
+
+// "infoConfirmed": true,
+
+// "termsAgreed": true,
+
+// "identityAuthorized": true,
+
+// "fullName": "John Doe",
+
+// "signatureType": "Digital",
+
+// "signatureMethod": "Draw",
+
+// "signaturePath": "/uploads/signatures/signature_123.png"
+
+    const acceptedData = {
+      applicationNumber,
+      userId ,
+      
+      infoConfirmed:consents.confirmAccuracy,
+      termsAgreed:consents.agreeToTerms,
+      identityAuthorized:consents.authorizeVerification,
+
       fullName,
       signatureType,
-      signedAt: new Date().toISOString(),
-      signatureData:
+      signatureMethod:signatureMode,
+
+      signaturePath: 
         signatureMode === "upload"
           ? signatureURL
           : canvasRef.current.toDataURL("image/png"),
+      
+      // acceptedAt: new Date().toISOString(),
     };
 
-    sessionStorage.setItem("signedAgreement", JSON.stringify(payload));
-    alert("Agreement submitted successfully.");
-    onSubmitFinal();
+   
+    console.table(acceptedData)
+    const response = await addOrUpdateReviewAgreement(acceptedData);
+    if (response.status == 500){
+      alert(response?.message);
+      return;
+    }else if(response?.status == 200){
+      alert(response?.message);
+      onSubmitSuccess();
+    }
+    // sessionStorage.setItem("signedAgreement", JSON.stringify(payload));
+    // alert("Agreement submitted successfully.");
+    // onSubmitFinal();  
   };
 
   return (
@@ -1318,49 +1119,210 @@ const ReviewAgreementForm = ({ formData, onSubmitFinal }) => {
   );
 };
 
-const FundedForm = ({ onSubmitSuccess }) => {
-  const [amount, setAmount] = useState("");
-  const [fundDate, setFundDate] = useState("");
+// const FundedForm = ({ onSubmitSuccess }) => {
+//   const [amount, setAmount] = useState("");
+//   const [fundDate, setFundDate] = useState("");
 
-  const handleSubmit = (e) => {
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     alert(`Funding confirmed: ₹${amount} on ${fundDate}`);
+// //     {
+
+// // "applicationNumber": "APP1001",
+
+// // "userId": "USR2001",
+
+// // "fundingAmount": 15000.0,
+
+// // "fundingDate": "2025-06-30",
+
+// // "confirmFunding": true,
+
+// // "createdBy": "admin",
+
+// // "updatedBy": "admin"
+
+// // }
+
+//     onSubmitSuccess();
+//   };
+
+//   return (
+//     <form onSubmit={handleSubmit} className="w-full h-screen p-6">
+//       <h2 className="text-2xl font-bold mb-6">Funded</h2>
+
+//       <div className="grid grid-cols-2 gap-6">
+//         <div>
+//           <label className="block text-gray-700 mb-1">Funding Amount</label>
+//           <input
+//             type="number"
+//             className="border-b w-full focus:outline-none py-1"
+//             value={amount}
+//             onChange={(e) => setAmount(e.target.value)}
+//             required
+//           />
+//         </div>
+//         <div>
+//           <label className="block text-gray-700 mb-1">Funding Date</label>
+//           <input
+//             type="date"
+//             className="border-b w-full focus:outline-none py-1"
+//             value={fundDate}
+//             onChange={(e) => setFundDate(e.target.value)}
+//             required
+//           />
+//         </div>
+//       </div>
+
+//       <button
+//         type="submit"
+//         className="bg-[#029aaa] text-white px-6 py-2 rounded hover:bg-[#01c4d5] transition flex items-center gap-2"
+//       >
+//         Confirm Funding
+//       </button>
+//     </form>
+//   );
+// };
+
+
+
+
+
+
+const FundedForm = ({ onSubmitSuccess }) => {
+  const [form, setForm] = useState({
+    amount: "",
+    fundDate: "",
+    confirmFunding: false,
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!form.amount) newErrors.amount = "Funding amount is required";
+    if (!form.fundDate) newErrors.fundDate = "Funding date is required";
+    if (!form.confirmFunding) newErrors.confirmFunding = "You must confirm funding approval";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Funding confirmed: ₹${amount} on ${fundDate}`);
-    onSubmitSuccess();
+    if (!validate()) return;
+
+    const applicationNumber = sessionStorage.getItem("applicationNumber");
+    const userId = sessionStorage.getItem("username");
+    const role = sessionStorage.getItem("role");
+    if (!applicationNumber || !userId || !role)  {
+      alert("❌ Application number or user ID is missing.");
+      return;
+    }
+    // {
+
+    //   "applicationNumber": "APP1001",
+
+    //   "userId": "USR2001",
+
+    //   "fundingAmount": 15000.0,
+
+    //   "fundingDate": "2025-06-30",
+
+    //   "confirmFunding": true,
+
+    //   "createdBy": "admin",
+
+    //   "updatedBy": "admin"
+
+    //   }
+    const payload = {
+      applicationNumber,
+      userId,
+      fundingAmount: parseFloat(form.amount),
+      fundingDate: form.fundDate,
+      confirmFunding: form.confirmFunding,
+      createdBy: role,
+      updatedBy: role,
+    };
+
+    console.table(payload);
+
+    const response = await addOrUpdateFundedInfo(payload);
+    if (response?.status === 200) {
+      alert(response.message || "Funding information submitted successfully.");
+      onSubmitSuccess();
+    } else {
+      alert(response?.message || "Submission failed. Please try again.");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full h-screen p-6">
-      <h2 className="text-2xl font-bold mb-6">Funded</h2>
+    <div className="min-h-screen bg-white px-6 py-10">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        <h3 className="text-2xl font-bold col-span-2">Funding Information</h3>
 
-      <div className="grid grid-cols-2 gap-6">
         <div>
-          <label className="block text-gray-700 mb-1">Funding Amount</label>
+          <label className="block text-sm font-medium mb-1 text-gray-800">Funding Amount (₹)</label>
           <input
             type="number"
-            className="border-b w-full focus:outline-none py-1"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            required
+            name="amount"
+            value={form.amount}
+            onChange={handleChange}
+            className="w-full border-b border-gray-300 focus:border-blue-500 py-1 outline-none"
+            placeholder="e.g. 15000"
           />
+          {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
         </div>
+
         <div>
-          <label className="block text-gray-700 mb-1">Funding Date</label>
+          <label className="block text-sm font-medium mb-1 text-gray-800">Funding Date</label>
           <input
             type="date"
-            className="border-b w-full focus:outline-none py-1"
-            value={fundDate}
-            onChange={(e) => setFundDate(e.target.value)}
-            required
+            name="fundDate"
+            value={form.fundDate}
+            onChange={handleChange}
+            className="w-full border-b border-gray-300 focus:border-blue-500 py-1 outline-none"
           />
+          {errors.fundDate && <p className="text-red-500 text-sm mt-1">{errors.fundDate}</p>}
         </div>
-      </div>
 
-      <button
-        type="submit"
-        className="bg-[#029aaa] text-white px-6 py-2 rounded hover:bg-[#01c4d5] transition flex items-center gap-2"
-      >
-        Confirm Funding
-      </button>
-    </form>
+        <div className="col-span-2 mt-2">
+          <label className="flex items-start gap-2 text-sm text-black-700">
+            <input
+              type="checkbox"
+              name="confirmFunding"
+              checked={form.confirmFunding}
+              onChange={handleChange}
+              className="mt-1 accent-blue-600"
+            />
+            <span>I confirm the funding has been approved and processed.</span>
+          </label>
+          {errors.confirmFunding && (
+            <p className="text-red-500 text-sm mt-1">{errors.confirmFunding}</p>
+          )}
+        </div>
+
+        <div className="col-span-2 mt-8 flex justify-center">
+          <button
+            type="submit"
+            className="bg-[#029aaa] text-white px-6 py-2 rounded hover:bg-[#01c4d5] transition flex items-center gap-2"
+          >
+            Confirm Funding
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };

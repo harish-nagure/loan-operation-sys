@@ -856,8 +856,8 @@ export async function addAccountLinked(requestData){
 
 
 
-export async function addDocumentVerified(requestData) {
-  console.log(requestData);
+export async function addDocumentVerified(formData) {
+  console.log(formData);
   try{
       const response = await fetch(`${process.env.REACT_APP_API_URL}/addOrUpdate_Application_documentDeatils`,{
       method: "POST",
@@ -865,7 +865,7 @@ export async function addDocumentVerified(requestData) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem('token')}`
       },
-      body: JSON.stringify(requestData),
+      body: JSON.stringify(formData),
     });
 
     
@@ -886,6 +886,104 @@ export async function addDocumentVerified(requestData) {
   }
   
 }
+
+export async function addOrUpdateAcceptOffer(acceptedData) {
+  console.log(acceptedData);
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/addOrUpdate_Application_acceptOffer`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(acceptedData),
+      }
+    );
+
+    const data_json = await response.json();
+
+    if (!response.ok) {
+      console.error(data_json.message);
+    }
+
+    return data_json;
+
+  } catch (error) {
+    console.error(error.message);
+    return {
+      status: 500,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function addOrUpdateReviewAgreement(payload) {
+  console.log(payload);
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/addOrUpdate_Application_reviewAgreement`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const data_json = await response.json();
+
+    if (!response.ok) {
+      console.error(data_json.message);
+    }
+
+    return data_json;
+
+  } catch (error) {
+    console.error(error.message);
+    return {
+      status: 500,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function addOrUpdateFundedInfo(payload) {
+  console.log(payload);
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/addOrUpdate_Application_fundedInfo`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const data_json = await response.json();
+
+    if (!response.ok) {
+      console.error(data_json.message);
+    }
+
+    return data_json;
+
+  } catch (error) {
+    console.error(error.message);
+    return {
+      status: 500,
+      message: "Something went wrong",
+    };
+  }
+}
+
+
 
 
 export const getApplicationDetailsByNumber = async (applicationNumber) => {
