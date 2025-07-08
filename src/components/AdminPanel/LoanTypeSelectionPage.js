@@ -4,6 +4,7 @@ import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { saveLoanType, updateLoanType, getAllApplicationDetails } from "../api_service";
 import { fetchLoanTypes } from "../api_service"; 
+import ApprovalTypeSelectionPage from "./ApprovalTypeSelectionPage"
 
 
 
@@ -93,7 +94,7 @@ useEffect(() => {
       onContinue(selectedLoan.value);
     } else {
       if (userType === "admin") {
-        navigate("/selection_setup");
+        navigate("/approval_setup");
       } else {
         // navigate("/form_steps");
         const applicationNumber = sessionStorage.getItem("applicationNumber")
@@ -148,7 +149,9 @@ const handleAddLoanType = () => {
 
   return (
     <div className="flex min-h-screen pr-6 py-8">
-     
+     {/* <>
+     <ApprovalTypeSelectionPage/>
+     </> */}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">

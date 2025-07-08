@@ -38,6 +38,7 @@ import SubmittedApplication from "./components/AdminPanel/SubmittedApplication";
 import FormFieldSettings from "./components/AdminPanel/FormFieldSettings";
 import FormHeader from "./components/AdminPanel/FormHeader";
 import ApplicationDetailPage from "./components/AdminPanel/ApplicationDetailPage"
+import ApprovalTypeSelectionPage from "./components/AdminPanel/ApprovalTypeSelectionPage";
 import { getMenusWithPermissions } from "./components/api_service";
 
 // Field config
@@ -143,8 +144,11 @@ function AppWrapper() {
     
     "/application-form": <MultiStepForm />,
     "/corporate_form": <FormHeader />,
+    
     "/workflow/custom": <LoanTypeSelectionPage />,
+    "/approval_setup" : <ApprovalTypeSelectionPage/>,
     "/selection_setup": <SelectStepsPage />,
+
     "/form_steps": <FormsPage />,
     "/form_field_settings": <FormFieldSettings />
     

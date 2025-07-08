@@ -120,9 +120,9 @@ const ApplicationDetailPage = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <DashboardSidebar />
+
       <div className="flex-1">
-        <DashboardHead />
+      
         <div className="p-10">
           <h1 className="text-xl font-bold mb-4 text-blue-700">
             {tabTitleMap[activeTab]} - {applicationNumber}
