@@ -37,7 +37,7 @@ import FormsPage from "./components/AdminPanel/FormsPage";
 import SubmittedApplication from "./components/AdminPanel/SubmittedApplication";
 import FormFieldSettings from "./components/AdminPanel/FormFieldSettings";
 import FormHeader from "./components/AdminPanel/FormHeader";
-
+import ApplicationDetailPage from "./components/AdminPanel/ApplicationDetailPage"
 import { getMenusWithPermissions } from "./components/api_service";
 
 // Field config
@@ -129,14 +129,18 @@ function AppWrapper() {
   const routeComponentMap = {
     "/admin-dashboard": <AdminDashboard/>,
     "/submitted_application": <SubmittedApplication />,
-    "/application-details/applicationNumber":<ApplicationDetailPage/>,
+    "/application-details/:applicationNumber":<ApplicationDetailPage/>,
+    
     "/user-dashboard": <UserDashboard /> ,
     "/user": <UserMenuData />,
     "/roles": <AdminUserPanel />,
+    
     "/access-control": <AccessControlSetup />,
     "/access_control/:roleId": <AccessControl />,
+    
     "/organization": <OrganizationForm />,
     "/system-config": <LoanSystemConfig />,
+    
     "/application-form": <MultiStepForm />,
     "/corporate_form": <FormHeader />,
     "/workflow/custom": <LoanTypeSelectionPage />,

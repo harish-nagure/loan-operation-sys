@@ -363,23 +363,30 @@ export async function updateUserDeatils(userId,userData) {
 // Purpose: Retrieves a user by their userId.
 
 export async function getUserById(userId) {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/fetch-user/${userId}`,
-    {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
-      },
-    }
-  );
+  try{
 
-  const data = await response.json();
-  if (!response.ok) {
-    // const errorData = await response.json();
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/fetch-user/${userId}`,
+    {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error(data?.message)
+      return;
+    }
+
+    return data;
+    
+  }catch(error){
     console.error(data?.message)
     return;
   }
-
-  return data;
+  
 }
 
 
