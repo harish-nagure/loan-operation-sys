@@ -40,6 +40,7 @@ import FormHeader from "./components/AdminPanel/FormHeader";
 import ApplicationDetailPage from "./components/AdminPanel/ApplicationDetailPage"
 import ApprovalTypeSelectionPage from "./components/AdminPanel/ApprovalTypeSelectionPage";
 import { getMenusWithPermissions } from "./components/api_service";
+import ApprovalSetupPage from "./components/AdminPanel/ApprovalSetupPage";
 
 // Field config
 const fieldKeys = [
@@ -146,7 +147,8 @@ function AppWrapper() {
     "/corporate_form": <FormHeader />,
     
     "/workflow/custom": <LoanTypeSelectionPage />,
-    "/approval_setup" : <ApprovalTypeSelectionPage/>,
+    "/approval_setup": <ApprovalSetupPage/>,    
+    // "/approval_setup" : <ApprovalTypeSelectionPage/>,
     "/selection_setup": <SelectStepsPage />,
 
     "/form_steps": <FormsPage />,

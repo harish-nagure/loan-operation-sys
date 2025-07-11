@@ -110,8 +110,7 @@ useEffect(() => {
           return;
         }
         alert(data.message)
-        
-        
+
         if (applicationNumber != null) {
           navigate("/form_steps");
         } else {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ApprovalSetupPage from "./ApprovalSetupPage";
 
 const ApprovalTypeSelectionPage = ({ onContinue, canRead = false, canWrite = false }) => {
   const [approvalOptions, setApprovalOptions] = useState([
@@ -24,7 +25,8 @@ const ApprovalTypeSelectionPage = ({ onContinue, canRead = false, canWrite = fal
   }, [navigate]);
 
   const handleContinue = () => {
-    if (!canWrite) {
+    const role = sessionStorage.getItem("role")?.toLowerCase();
+    if (!canWrite && role !== "admin") {
       alert("❌ You don't have permission to continue.");
       return;
     }
@@ -36,20 +38,23 @@ const ApprovalTypeSelectionPage = ({ onContinue, canRead = false, canWrite = fal
     if (onContinue) {
       onContinue(approvalType);
     } else {
-      
-
-      alert(`✅ Approval type "${approvalType}" selected for application`);
-      navigate("/selection_setup");
+      navigate("/approval_setup", { state: { approvalType } });
     }
   };
 
   const handleAddApprovalType = () => {
     if (!newApprovalLabel.trim()) return;
 
+    const label = newApprovalLabel.trim().toUpperCase();
     const value = newApprovalLabel.toLowerCase().replace(/\s+/g, "_");
 
+    if (approvalOptions.some(option => option.label === label)) {
+      alert("❌ Approval type already exists.");
+      return;
+    }
+
     const newType = {
-      label: newApprovalLabel.trim().toUpperCase(),
+      label,
       value,
       description: newApprovalDescription.trim(),
     };
@@ -154,6 +159,9 @@ const ApprovalTypeSelectionPage = ({ onContinue, canRead = false, canWrite = fal
           </div>
         </div>
       )}
+      <>
+      {/* <ApprovalSetupPage/> */}
+      </>
     </div>
   );
 };
