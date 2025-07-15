@@ -125,8 +125,7 @@ const ApplicationDetailPage = () => {
 
   const currentData = {
     "Application Details": details,
-    LinkedBank: linkedBank,
-    LinkedBank: linkedBank,
+    "Linked Bank": linkedBank,
     Document: document,
     Offer: offer,
     Review: review,

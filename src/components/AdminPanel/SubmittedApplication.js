@@ -102,7 +102,8 @@ useEffect(() => {
 
     if (filterText) {
       if (filterType === "applicationNumber")
-        return d.applicationNumber?.toString().includes(filterText);
+        // alert(app?.loanTypeWorkflow?.applicationNumber);
+        return app.loanTypeWorkflow.applicationNumber?.toString().includes(filterText);
       if (filterType === "name") {
         const full = `${u.firstName || ""} ${u.lastName || ""}`.toLowerCase();
         return full.includes(filterText.toLowerCase());
@@ -233,14 +234,15 @@ useEffect(() => {
                 </thead>
                 <tbody>
                   {current.map((app, i) => {
-                    const d = app.applicationDetails || {}, u = app.userDetails || {};
-                    const appNum = d.applicationNumber;
+                    const d = app.applicationDetails || {}, u = app.userDetails || {}, l= app.loanTypeWorkflow || {};
+                    const appNum = l?.applicationNumber;
+                    console.log("Application Number:", appNum);
 
                     return (
                       <tr key={i} className="hover:bg-blue-50 transition-colors duration-200">
                         {Object.entries(selected).map(([k, v]) => {
                           if (!v) return null;
-                          const val = d[k] ?? u[k] ?? "-";
+                          const val = d[k] ?? u[k] ?? l[k] ?? "-";
                           return (
                             <td
                               key={k}

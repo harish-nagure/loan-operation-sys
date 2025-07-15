@@ -24,7 +24,7 @@ useEffect(() => {
 
     if (!loanType || !applicationNumber) {
       alert("Loan type or application number not found.");
-      navigate("/selection_setup"); // or back to user dashboard
+      navigate("/workflow/custom");
       return;
     }
 
@@ -498,7 +498,7 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
       issueDate: form.issueDate,
       expiryDate: form.expiryDate,
       issuingAuthority: form.issuingAuthority,
-      filePath: form.documentFiles,
+      // filePath: form.documentFiles,
       consentGiven: form.consent,
     };
     console.log(requestData)

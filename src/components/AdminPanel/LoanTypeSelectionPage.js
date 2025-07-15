@@ -123,7 +123,7 @@ useEffect(() => {
           alert("✅ Loan type submitted successfully. Application Number: " + data.data.applicationNumber);
           sessionStorage.setItem("selectedLoanType", selectedLoan.value);
           sessionStorage.setItem("applicationNumber", data.data.applicationNumber);
-
+          
           navigate("/form_steps");
 
         } catch (error) {
