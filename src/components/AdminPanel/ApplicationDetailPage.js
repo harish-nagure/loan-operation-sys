@@ -67,38 +67,52 @@ const ApplicationDetailPage = () => {
   };
 
   // Helper to nicely render object as "Label: Value" side-by-side
-  const renderObject = (obj) => (
-    <div className="space-y-3">
-      {Object.entries(obj).map(([k, v], i) => {
-        let displayValue = "";
-        if (typeof v === "boolean") {
-          displayValue = v ? "Yes" : "No";
-        } else if (typeof v === "object" && v !== null) {
-          displayValue = JSON.stringify(v, null, 2);
-        } else if (String(v).includes("T") && String(v).includes(":")) {
-          displayValue = new Date(v).toLocaleString();
-        } else {
-          displayValue = String(v ?? "-");
-        }
+ const renderObject = (obj) => {
+  const entries = Object.entries(obj);
 
-        const formattedKey = k
-          .replace(/([A-Z])/g, " $1")
-          .replace(/^./, (str) => str.toUpperCase());
+  const rows = [];
+  for (let i = 0; i < entries.length; i += 2) {
+    const [k1, v1] = entries[i];
+    const [k2, v2] = entries[i + 1] || [];
 
-        return (
-          <div
-            key={i}
-            className="flex flex-wrap md:flex-nowrap items-center gap-2 bg-white p-4 rounded-xl shadow hover:shadow-md transition"
-          >
-            <span className="w-full md:w-48 font-semibold text-gray-600 whitespace-nowrap">
-              {formattedKey}:
-            </span>
-            <span className="text-gray-800 break-words">{displayValue}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
+    const format = (key, value) => {
+      const formattedKey = key
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase());
+
+      let displayValue = "";
+      if (typeof value === "boolean") {
+        displayValue = value ? "Yes" : "No";
+      } else if (typeof value === "object" && value !== null) {
+        displayValue = JSON.stringify(value, null, 2);
+      } else if (String(value).includes("T") && String(value).includes(":")) {
+        displayValue = new Date(value).toLocaleString();
+      } else {
+        displayValue = String(value ?? "-");
+      }
+
+      return (
+        <div className="flex-1 min-w-[200px]">
+          <span className="block font-semibold text-gray-600 mb-1">{formattedKey}</span>
+          <span className="text-gray-800 break-words">{displayValue}</span>
+        </div>
+      );
+    };
+
+    rows.push(
+      <div
+        key={i}
+        className="flex flex-col md:flex-row gap-6 bg-white p-4 rounded-xl shadow hover:shadow-md transition mb-3"
+      >
+        {format(k1, v1)}
+        {k2 && format(k2, v2)}
+      </div>
+    );
+  }
+
+  return <div>{rows}</div>;
+};
+
 
   const tabTitleMap = {
     "Application Details": "Application Details",

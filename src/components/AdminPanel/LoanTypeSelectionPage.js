@@ -85,43 +85,54 @@ useEffect(() => {
   }
 
   // ✅ Save to backend using API
-  const result = await saveLoanType(selectedLoan.value, selectedLoan.description);
-
-  if (result.success) {
-    sessionStorage.setItem("selectedLoanType",selectedLoan.value);
 
     if (onContinue) {
       onContinue(selectedLoan.value);
     } else {
       if (userType === "admin") {
-        navigate("/approval_setup");
-      } else {
-        // navigate("/form_steps");
-        const applicationNumber = sessionStorage.getItem("applicationNumber")
+        const result = await saveLoanType(selectedLoan.value, selectedLoan.description);
 
+        if (result.success) {
+          sessionStorage.setItem("selectedLoanType",selectedLoan.value);
+          alert("✅ Loan type saved successfully.");
+        }
+        navigate("/approval_setup", { state: { selectedLoan } });
 
-        const response = await getAllApplicationDetails()
-        console.table(response)
-        // alert(applicationNumber +" "+ selectedLoan.value.replace(/_/g, " ").replace(/\d+$/, "").toUpperCase())
+     } else {
+        const userId = sessionStorage.getItem("username");
 
-        const data = await updateLoanType(applicationNumber,{lonetype:selectedLoan?.value.replace(/_/g, " ").replace(/\d+$/, "").toUpperCase()})
-        if(data == null){
-          alert("Promblem in submit");
+        if (!userId) {
+          alert("❌ User ID is missing in session.");
           return;
         }
-        alert(data.message)
 
-        if (applicationNumber != null) {
+        try {
+          const loanType = selectedLoan.value
+            .replace(/_/g, " ")
+            .replace(/\d+$/, "")
+            .toUpperCase();
+          console.log("🔍 loanType:", loanType, userId);
+          const data = await updateLoanType(loanType, userId);
+
+          if (!data) {
+            alert("❌ Problem in submitting loan type. Please try again.");
+            return;
+          }
+          console.log("🔍 loanType:", data);
+          // alert(data.message);
+          alert("✅ Loan type submitted successfully. Application Number: " + data.data.applicationNumber);
+          sessionStorage.setItem("selectedLoanType", selectedLoan.value);
+          sessionStorage.setItem("applicationNumber", data.data.applicationNumber);
+
           navigate("/form_steps");
-        } else {
-          alert("❌ Application number is missing!");
+
+        } catch (error) {
+          console.error("❌ Error during loan type update:", error);
+          alert("An unexpected error occurred. Please check console.");
         }
       }
 
     }
-  } else {
-    alert("❌ Failed to save loan type: " + result.message);
-  }
 };
 
 

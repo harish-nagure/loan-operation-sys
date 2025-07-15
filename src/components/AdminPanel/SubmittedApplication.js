@@ -31,6 +31,7 @@ const PAGE_SIZE = 10;
 
 const SubmittedApplication = () => {
   const [step, setStep] = useState(1);
+  const [userRole, setUserRole] = useState("");
   const [selected, setSelected] = useState({});
   const [applications, setApplications] = useState([]);
   const [filterType, setFilterType] = useState("");
@@ -45,13 +46,17 @@ const SubmittedApplication = () => {
 
   const fetchData = async () => {
     const res = await getAllApplicationDetails().catch(console.error);
+    console.log("Fetched Application:",res);
     setApplications(res?.data || []);
   };
 
   const handleContinue = () => {
-    setStep(2);
-    fetchData();
-  };
+  // Save selected columns in sessionStorage
+  sessionStorage.setItem("selectedColumns", JSON.stringify(selected));
+  setStep(2);
+  fetchData();
+};
+
 
   const handleDelete = async (appNumber) => {
     if (!window.confirm("Delete application " + appNumber + "?")) return;
@@ -68,13 +73,28 @@ const SubmittedApplication = () => {
     }
   };
 
-  // apply filter
+useEffect(() => {
+  const role = sessionStorage.getItem("role")?.toLowerCase() || "";
+  setUserRole(role);
+
+  const stored = sessionStorage.getItem("selectedColumns");
+  if (stored) {
+    setSelected(JSON.parse(stored));
+  }
+
+  if (role === "approver") {
+    setStep(2);
+    fetchData();
+  }
+}, []);
+
+  // filter
   let filtered = applications.filter(app => {
     if (!filterType) return true;
     const d = app.applicationDetails || {}, u = app.userDetails || {};
 
     if (filterType === "createdDate" && (filterFrom || filterTo)) {
-      const cd = new Date(d.createdDate).setHours(0,0,0,0);
+      const cd = new Date(d.createdDate).setHours(0, 0, 0, 0);
       const from = filterFrom ? new Date(filterFrom).getTime() : -Infinity;
       const to = filterTo ? new Date(filterTo).getTime() : Infinity;
       return cd >= from && cd <= to;
@@ -94,7 +114,6 @@ const SubmittedApplication = () => {
     return true;
   });
 
-  // sort ascending by createdDate
   filtered.sort((a, b) => new Date(a.applicationDetails?.createdDate) - new Date(b.applicationDetails?.createdDate));
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -103,53 +122,53 @@ const SubmittedApplication = () => {
   return (
     <div className="min-h-screen bg-gray-100 pt-6 pr-8">
       <div className="max-w-6xl mx-auto bg-white shadow px-4 py-6 rounded-xl">
-        {step === 1 ? (
+        {step === 1 && userRole === "admin" ? (
           <>
             <h2 className="text-2xl font-bold mb-4 text-accent hover:text-secondary">Select Columns to Display</h2>
             <table className="min-w-full text-sm text-left border rounded-lg overflow-hidden">
-  <thead className="bg-gray-100 text-gray-800">
-    <tr>
-      <th className="p-3 font-medium">Label</th>
-      <th className="p-3 font-medium text-center">Show</th>
-    </tr>
-  </thead>
-  <tbody>
-    {allColumns.map(col => (
-      <tr key={col.key} className="hover:bg-blue-50 transition-colors">
-        <td className="p-3">{col.label}</td>
-        <td className="p-3 text-center">
-          <input
-            type="checkbox"
-            checked={!!selected[col.key]}
-            onChange={() => toggleColumn(col.key)}
-            className="accent-blue-600 w-4 h-4"
-          />
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+              <thead className="bg-gray-100 text-gray-800">
+                <tr>
+                  <th className="p-3 font-medium">Label</th>
+                  <th className="p-3 font-medium text-center">Show</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allColumns.map(col => (
+                  <tr key={col.key} className="hover:bg-blue-50 transition-colors">
+                    <td className="p-3">{col.label}</td>
+                    <td className="p-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={!!selected[col.key]}
+                        onChange={() => userRole === "admin" && toggleColumn(col.key)}
+                        className={`accent-blue-600 w-4 h-4 ${userRole !== "admin" ? "cursor-not-allowed opacity-50" : ""}`}
+                        disabled={userRole !== "admin"}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
             <button
               onClick={handleContinue}
               className="mt-4 px-6 py-2 rounded bg-accent text-white hover:bg-secondary transition"
-            >Continue</button>
+            >
+              Continue
+            </button>
           </>
         ) : (
           <>
-<div className="flex items-center justify-between mb-4">
-  <h2 className="text-2xl font-bold text-accent hover:text-secondary">Submitted Applications</h2>
-  <button
-  onClick={() => setShowFilter(!showFilter)}
-  className="text-sm font-medium px-4 py-2 rounded-md bg-accent text-white hover:bg-secondary transition duration-200"
->
-  {showFilter ? "Hide Filter" : "Show Filter"}
-</button>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-accent hover:text-secondary">Submitted Applications</h2>
+              <button
+                onClick={() => setShowFilter(!showFilter)}
+                className="text-sm font-medium px-4 py-2 rounded-md bg-accent text-white hover:bg-secondary transition duration-200"
+              >
+                {showFilter ? "Hide Filter" : "Show Filter"}
+              </button>
+            </div>
 
-</div>
-    
-
-            {/* Filters */}
             {showFilter && (
               <div className="mb-4 flex flex-col md:flex-row gap-4 items-start">
                 <select
@@ -198,87 +217,91 @@ const SubmittedApplication = () => {
               </div>
             )}
 
-            {/* Table */}
-           {/* Table */}
-<div className="overflow-x-auto border rounded-lg">
-  <table className="min-w-full text-sm text-left">
-    <thead className="bg-gray-100 text-gray-800">
-      <tr>
-        {Object.entries(selected).map(([k, v]) =>
-          v ? (
-            <th key={k} className="p-3 font-medium">
-              {allColumns.find(col => col.key === k)?.label}
-            </th>
-          ) : null
-        )}
-        <th className="p-3 font-medium">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {current.map((app, i) => {
-        const d = app.applicationDetails || {}, u = app.userDetails || {};
-        const appNum = d.applicationNumber;
+            <div className="overflow-x-auto border rounded-lg">
+              <table className="min-w-full text-sm text-left">
+                <thead className="bg-gray-100 text-gray-800">
+                  <tr>
+                    {Object.entries(selected).map(([k, v]) =>
+                      v ? (
+                        <th key={k} className="p-3 font-medium">
+                          {allColumns.find(col => col.key === k)?.label}
+                        </th>
+                      ) : null
+                    )}
+                    <th className="p-3 font-medium">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {current.map((app, i) => {
+                    const d = app.applicationDetails || {}, u = app.userDetails || {};
+                    const appNum = d.applicationNumber;
 
-        return (
-          <tr
-            key={i}
-            className="hover:bg-blue-50 transition-colors duration-200"
-          >
-            {Object.entries(selected).map(([k, v]) => {
-              if (!v) return null;
-              const val = d[k] ?? u[k] ?? "-";
-              return (
-                <td
-                  key={k}
-                  className="p-3 cursor-pointer"
-                  onClick={() => navigate(`/application-details/${appNum}`)}
-                >
-                  {String(val)}
-                </td>
-              );
-            })}
-            <td className="p-3">
+                    return (
+                      <tr key={i} className="hover:bg-blue-50 transition-colors duration-200">
+                        {Object.entries(selected).map(([k, v]) => {
+                          if (!v) return null;
+                          const val = d[k] ?? u[k] ?? "-";
+                          return (
+                            <td
+                              key={k}
+                              className="p-3 cursor-pointer"
+                              onClick={() => navigate(`/application-details/${appNum}`)}
+                            >
+                              {String(val)}
+                            </td>
+                          );
+                        })}
+                        { /*<td className="p-3">
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      handleDelete(appNum);
+    }}
+    className="text-red-600 hover:text-red-800"
+  >
+    <TrashIcon className="w-5 h-5" />
+  </button>
+</td>
+ */}
+                        <td className="p-3">
+                          {userRole === "admin" && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(appNum);
+                              }}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              {/* <TrashIcon className="w-5 h-5" />    */}
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex justify-between items-center mt-4 text-sm">
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(appNum);
-                }}
-                className="text-red-600 hover:text-red-800"
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
               >
-                {/* <TrashIcon className="w-5 h-5" /> */}
+                Previous
               </button>
-            </td>
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
-</div>
-
-{/* Pagination */}
-<div className="flex justify-between items-center mt-4 text-sm">
-  <button
-    className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-    disabled={currentPage === 1}
-    onClick={() => setCurrentPage((p) => p - 1)}
-  >
-    Previous
-  </button>
-  <span>
-    Page {currentPage} of {totalPages}
-  </span>
-  <button
-    className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-    disabled={currentPage === totalPages}
-    onClick={() => setCurrentPage((p) => p + 1)}
-  >
-    Next
-  </button>
-</div>
-
-
-            {/* Pagination */}
-           
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+              >
+                Next
+              </button>
+            </div>
           </>
         )}
       </div>

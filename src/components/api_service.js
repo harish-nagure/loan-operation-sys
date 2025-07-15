@@ -621,6 +621,8 @@ export const saveLoanType = async (loanType, description) => {
     description,
   };
 
+  console.log("Saving loan type:", payload);
+
   try {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/loan-type/save`, {
       method: "POST",
@@ -656,7 +658,49 @@ export const saveLoanType = async (loanType, description) => {
     return { success: false, ...errorResponse };
   }
 };
+export const updateApprovalSetup = async (loanType, approvalSetup) => {
 
+  const payload = {
+    approvalSetup
+  };
+
+  console.log("Saving loan type:", approvalSetup,loanType);
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/loan-type/update-approval-setup/${loanType}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(approvalSetup),
+    });
+
+    const result = await response.json();
+
+    const fullResponse = {
+      status: result.status || response.status,
+      message: result.message || "Something went wrong",
+      data: result.data || null,
+    };
+
+    if (response.ok && result.status === 200) {
+      console.log("✅ Response:", fullResponse); // Show full structured response
+      return { success: true, ...fullResponse };
+    } else {
+      console.error("❌ Response:", fullResponse);
+      return { success: false, ...fullResponse };
+    }
+  } catch (error) {
+    const errorResponse = {
+      status: 0,
+      message: "Network error",
+      data: null,
+    };
+    console.error("❌ Response:", errorResponse, error);
+    return { success: false, ...errorResponse };
+  }
+};
 export const saveWorkflow = async (loanType, steps) => {
   
 
@@ -836,28 +880,57 @@ export async function addAccountLinked(requestData){
   
 }
 
-export async function updateLoanType(applicationNumber,lonetype){
-    console.log(applicationNumber,lonetype)
-  try{      
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/update_loantype/${applicationNumber}`,{
-        method: "PUT",
-        headers:{
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem('token')}`
-        },
-        body: JSON.stringify( lonetype ),
-      });
-      console.log("Sending token:", sessionStorage.getItem("token"));
+// export async function updateLoanType(lonetype,userId){
+//     console.log(lonetype,userId)
+//   try{      
+//       // const response = await fetch(`${process.env.REACT_APP_API_URL}/update_loantype/${userId}`,{
+        
+//       const response = await fetch(`${process.env.REACT_APP_API_URL}/add_loan_type`,{
+//         method: "POST",
+//         headers:{
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${sessionStorage.getItem('token')}`
+//         },
+//         body: JSON.stringify( {lonetype,userId} ),
+//       });
+//       console.log("Sending token:", sessionStorage.getItem("token"));
 
       
-      const data_json = await response.json();
+//       const data_json = await response.json();
 
-      if(!response.ok){
-        console.error(data_json.message);
-      }
+//       if(!response.ok){
+//         console.error(data_json.message);
+//       }
       
-      return data_json;
-  }catch(error){
+//       return data_json;
+//   }catch(error){
+//     console.log(error.message);
+//     return;
+//   }
+// }
+export async function updateLoanType(loanType, userId) {
+  console.log({loanType, userId});
+
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/add_loan_type`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({ loanType, userId }),
+    });
+
+    console.log("Sending token:", sessionStorage.getItem("token"));
+
+    const data_json = await response.json();
+
+    if (!response.ok) {
+      console.error(data_json.message);
+    }
+
+    return data_json;
+  } catch (error) {
     console.log(error.message);
     return;
   }

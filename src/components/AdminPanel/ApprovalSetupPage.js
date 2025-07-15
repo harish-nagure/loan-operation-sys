@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getAllApplicationDetails, getRoles } from "../api_service";
+import { useNavigate,useLocation } from "react-router-dom";
+import { getAllApplicationDetails, getRoles, updateApprovalSetup } from "../api_service";
+import LoanTypeSelectionPage from "./LoanTypeSelectionPage";
 
 const ApprovalSetupPage = () => {
+  const location = useLocation();
+  const { selectedLoan } = location.state || {};
   const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
   const [selectedRoles, setSelectedRoles] = useState({});
@@ -13,6 +16,7 @@ const ApprovalSetupPage = () => {
         const rolesRes = await getRoles();
         const rolesData = rolesRes?.data || [];
         setRoles(rolesData);
+        // console.log("Roles fetched:", selectedLoan);
 
       } catch (error) {
         console.error("Error fetching roles or application details:", error);
@@ -54,7 +58,7 @@ const ApprovalSetupPage = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
     const hasInvalid = Object.entries(selectedRoles).some(
       ([_, { value }]) => value === "" || value === "0"
@@ -64,21 +68,30 @@ const ApprovalSetupPage = () => {
       alert("❌ Please enter a number greater than 0 for all selected roles.");
       return; 
     }
-    const selected = Object.entries(selectedRoles).map(([roleId, { value }]) => {
+    const approvalSetup = Object.entries(selectedRoles).map(([roleId, { value }]) => {
 
       const role = roles.find((r) => r.id === parseInt(roleId));
       
       
       return {
-        roleId: role.id,
-        roleName: role.roleName,
-        number: Number(value),
+        // roleId: role.id,
+        role: role.roleName,
+        sequence: Number(value),
       };
     });
 
-    console.log("Submitted JSON:", JSON.stringify(selected, null, 2));
-    alert("✅ Data saved. Check console for JSON output.");
-    navigate("/selection_setup")
+    console.log("Submitted JSON:", JSON.stringify(approvalSetup, null, 2));
+
+    const result = await updateApprovalSetup(selectedLoan.value, approvalSetup);
+    console.log("Save result:", result);
+    if (result.success) {
+      sessionStorage.setItem("selectedLoanType", selectedLoan.value);
+      alert("✅ Data saved. Check console for JSON output.");
+      navigate("/selection_setup");
+    } else {
+      alert(`❌ Failed to save: ${result.message}`);
+    }
+
   };
 
   return (

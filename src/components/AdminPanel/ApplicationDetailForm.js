@@ -3,25 +3,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { submitApplicationDetails } from "../api_service";
 import { saveApplicationDetails } from "../api_service";
-import { getAllApplicationDetails } from "../api_service";
+import { getAllApplicationDetails,getApplicationDetailsByNumber } from "../api_service";
 
 
 const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead = false, canWrite = false }) => {
   const navigate = useNavigate();
-  const [dob, setDob] = useState("");
-  const [monthlyIncome, setMonthlyIncome] = useState("");
-  const [ssn, setSsn] = useState("");
-  const [confirmSsn, setConfirmSsn] = useState("");
-  const [amountNeeded, setAmountNeeded] = useState("");
-  const [homeAddress, setHomeAddress] = useState("");
-  const [homeAddress2, setHomeAddress2] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [homeowner, setHomeowner] = useState("");
-  const [agreeTerms, setAgreeTerms] = useState(false);
-  const [authorizeCredit, setAuthorizeCredit] = useState(false);
+  
   const [applications, setApplications] = useState([]); 
+
+  const applicationNumber = sessionStorage.getItem("applicationNumber");
+
+  
+  
+  const [loading, setLoading] = useState(true);
 
 
   console.log(canWrite,canRead)
@@ -41,8 +35,8 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
         );
         if (firstApp && firstApp.applicationDetails.applicationNumber) {
           const appNumber = firstApp.applicationDetails.applicationNumber;
-          console.log("Storing applicationNumber in sessionStorage:", appNumber);
-          sessionStorage.setItem("applicationNumber", appNumber);
+         
+          
         }
       }
     } catch (error) {
@@ -52,6 +46,10 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
 
   fetchApplications();
 }, []);
+
+
+
+
 
 
   const states = [
@@ -136,7 +134,9 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
   // };
 
     // alert(canWrite)
-   const handleSubmit = async (e) => {
+
+
+ const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!canWrite) {
@@ -146,8 +146,11 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
 
   if (validate()) {
     try {
+      const mode = sessionStorage.getItem("mode");
+      const applicationNumber = sessionStorage.getItem("applicationNumber");
+
       const requestData = {
-        userId: sessionStorage.getItem("username"),    // Example: "101"
+        userId: sessionStorage.getItem("username"),
         dateOfBirth: detail.dob,
         monthlyGrossIncome: parseFloat(detail.monthlyIncome),
         ssn: detail.ssn,
@@ -160,27 +163,25 @@ const ApplicationDetailForm = ({detail,handleDetailChange,fieldSettings, canRead
         state: detail.state,
         isHomeOwner: detail.homeowner === "yes",
         createdBy: sessionStorage.getItem("role").toLowerCase(),
-                
+        ...(mode === "edit" && applicationNumber ? { applicationNumber } : {}), // 👈 Only include in edit
       };
-
-      console.log("Submitting data:", requestData);
 
       const response = await saveApplicationDetails(requestData);
 
-      console.log("Response:", response);
-      sessionStorage.setItem("applicationNumber",response?.data?.applicationNumber)
+      // Set only if it's a new application
+      if (mode !== "edit" && response?.data?.applicationNumber) {
+        sessionStorage.setItem("applicationNumber", response.data.applicationNumber);
+      }
 
-      alert("Application submitted successfully!",response?.data?.applicationNumber);
-
-      // Optionally navigate
+      alert("Application submitted successfully! Application Number: " + response?.data?.applicationNumber);
       navigate("/workflow/custom");
-     
     } catch (error) {
       console.error("Submission failed:", error);
       alert("Failed to submit application: " + error.message);
     }
   }
 };
+
 
 
   return (

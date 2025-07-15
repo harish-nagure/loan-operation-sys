@@ -4,7 +4,7 @@ import DashboardSidebar from "./DashboardSidebar";
 import DashboardHead from "./DashboardHead";
 import { CheckCircle,Check } from "lucide-react";
 import { FaFolderPlus } from "react-icons/fa6";
-import {addAccountLinked, fetchWorkflowByLoanType, addDocumentVerified, addOrUpdateAcceptOffer, addOrUpdateReviewAgreement, addOrUpdateFundedInfo} from "../api_service";
+import {addAccountLinked, fetchWorkflowByLoanType, addDocumentVerified, addOrUpdateAcceptOffer, addOrUpdateReviewAgreement,getLinkedBankAccount,getDocumentVerification,getAcceptOffer,getReviewAgreement,getFunded,addOrUpdateFundedInfo} from "../api_service";
 
 const   FormsPage = () => {
   const navigate = useNavigate();
@@ -19,19 +19,27 @@ const   FormsPage = () => {
 
 useEffect(() => {
   const fetchStepsFromAPI = async () => {
-    const loanType = sessionStorage.getItem("selectedLoanType"); // this should be the full ID like "personal_loan_001"
+    const loanType = sessionStorage.getItem("loanType"); // ✅ changed key
+    const applicationNumber = sessionStorage.getItem("applicationNumber"); // ✅ new
 
-    if (!loanType) {
-      alert("Loan type not selected.");
-      navigate("/selection_setup"); // redirect user if loanType not found
+    if (!loanType || !applicationNumber) {
+      alert("Loan type or application number not found.");
+      navigate("/selection_setup"); // or back to user dashboard
       return;
     }
+
+    console.log("🟢 loanType:", loanType);
+    console.log("🟢 applicationNumber:", applicationNumber);
 
     const result = await fetchWorkflowByLoanType(loanType);
 
     if (result.status === 200 && Array.isArray(result.data?.steps)) {
       setSteps(result.data.steps);
       setActive(result.data.steps[0]);
+
+      // 🔄 Optionally: fetch existing form data using applicationNumber
+      // const formData = await getApplicationDetailByNumber(applicationNumber);
+      // prefillForms(formData);
     } else {
       alert("No workflow steps found for this loan type.");
     }
@@ -39,6 +47,7 @@ useEffect(() => {
 
   fetchStepsFromAPI();
 }, []);
+
 
   const goToNextStep = (currentStep) => {
     const index = steps.indexOf(currentStep);
@@ -61,6 +70,7 @@ useEffect(() => {
   const renderForm = (step) => {
     const props = {
       onSubmitSuccess: () => markAsSubmitted(step),
+      applicationNumber: sessionStorage.getItem("applicationNumber"), // ✅ added
     };
 
     switch (step) {
@@ -142,14 +152,6 @@ useEffect(() => {
   );
 };
 
-
-
-
-
-
-
-
-
 export default FormsPage;
 
 
@@ -166,6 +168,34 @@ const LinkBankForm = ({ onSubmitSuccess }) => {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const applicationNumber = sessionStorage.getItem("applicationNumber");
+      if (!applicationNumber) return;
+
+      const result = await getLinkedBankAccount(applicationNumber);
+      console.log("Result",result);
+
+      if (Array.isArray(result.data) && result.data.length > 0) {
+  const data = result.data[0];
+  setForm({
+    holderName: data.accountHolderName || "",
+    bankName: data.bankName || "",
+    accountNumber: data.accountNumber || "",
+    confirmAccountNumber: data.accountNumber || "",
+    ifsc: data.ifscCode || "",
+    accountType: data.accountType || "",
+    consent: data.isAuthorized || false,
+  });
+} else {
+  console.warn("Bank account data not found.");
+}
+
+    };
+
+    fetchDetails();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -357,6 +387,36 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
 
   const [errors, setErrors] = useState({});
   const [newFile, setNewFile] = useState(null);
+
+  useEffect(() => {
+  const fetchDocumentData = async () => {
+    const applicationNumber = sessionStorage.getItem("applicationNumber");
+    if (!applicationNumber) return;
+
+    try {
+      const result = await getDocumentVerification(applicationNumber);
+      console.log("Fetched Document Verification:", result);
+
+      if (result?.data && result.data.length > 0) {
+        const data = result.data[0];
+        setForm({
+          documentType: data.documentType || "",
+          documentNumber: data.documentNumber || "",
+          issueDate: data.issueDate || "",
+          expiryDate: data.expiryDate || "",
+          issuingAuthority: data.issuingAuthority || "",
+          consent: data.consentGiven || false,
+          documentFiles: [], // Can't pre-fill uploaded files
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching document verification data:", error);
+    }
+  };
+
+  fetchDocumentData();
+}, []);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -611,13 +671,52 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
 };
 
 
-const AcceptOfferForm = ({onSubmitSuccess}) => {
+
+
+const AcceptOfferForm = ({ onSubmitSuccess }) => {
   const [loanAmount, setLoanAmount] = useState(100000);
   const [tenure, setTenure] = useState(12);
   const [interestRate, setInterestRate] = useState(12);
   const [emi, setEmi] = useState(0);
   const [consent, setConsent] = useState(false);
 
+  // 👉 Fetch backend data when component mounts
+  useEffect(() => {
+    const fetchOfferData = async () => {
+      const applicationNumber = sessionStorage.getItem("applicationNumber");
+      const userId = sessionStorage.getItem("username");
+
+      if (!applicationNumber || !userId) return;
+
+      try {
+        const response = await getAcceptOffer(applicationNumber, userId);
+        if (response?.status === 200 && response.data) {
+          const data = response.data;
+
+          setLoanAmount(data.loanAmount || 100000);
+          setTenure(data.tenureMonths || 12);
+          setInterestRate(data.interestRate || 12);
+          setConsent(data.consentGiven || false);
+
+          // Auto-calculate EMI
+          const P = data.loanAmount;
+          const R = data.interestRate / 12 / 100;
+          const N = data.tenureMonths;
+          if (P && R && N) {
+            const calculatedEmi =
+              (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+            setEmi(Math.round(calculatedEmi));
+          }
+        }
+      } catch (err) {
+        console.error("❌ Error fetching accept offer data", err);
+      }
+    };
+
+    fetchOfferData();
+  }, []);
+
+  // Recalculate EMI on changes
   useEffect(() => {
     const P = loanAmount;
     const R = interestRate / 12 / 100;
@@ -638,62 +737,37 @@ const AcceptOfferForm = ({onSubmitSuccess}) => {
       return;
     }
 
-//     {
-//     "applicationDetail": {
-
-// "applicationnumber": "APP123456"
-
-// },
-
-// "user": {
-
-// "userId": "USR001"
-
-// },
-
-// "loanAmount": 100000,
-
-// "tenureMonths": 12,
-
-// "interestRate": 10.5,
-
-// "estimatedEmi": 8792.00,
-
-// "consentGiven": true
-
-// }
     const userId = sessionStorage.getItem("username");
     const applicationNumber = sessionStorage.getItem("applicationNumber");
 
-    if (!applicationNumber) {
-      alert("❌ Application number is missing!");
-      return;
-    }
-    if (!userId) {
-      alert("❌ User ID is missing!");
+    if (!applicationNumber || !userId) {
+      alert("❌ Application number or user ID is missing!");
       return;
     }
 
     const acceptedData = {
-      applicationDetail: {applicationNumber},
+      applicationDetail: { applicationNumber },
       user: { userId },
       loanAmount,
-      tenureMonths:tenure,
+      tenureMonths: tenure,
       interestRate,
-      estimatedEmi:emi,
-      consentGiven:consent,
-      // acceptedAt: new Date().toISOString(),
+      estimatedEmi: emi,
+      consentGiven: consent,
     };
-    console.log(acceptedData)
-    const response = await addOrUpdateAcceptOffer(acceptedData);
-    if (response.status == 500){
-      alert(response?.message);
-      return;
-    }else{
-      alert(response?.message);
-      onSubmitSuccess();
+
+    try {
+      const response = await addOrUpdateAcceptOffer(acceptedData);
+      if (response.status === 500) {
+        alert(response?.message || "Something went wrong");
+        return;
+      } else {
+        alert(response?.message || "Offer accepted successfully");
+        onSubmitSuccess();
+      }
+    } catch (error) {
+      alert("❌ Failed to submit offer");
+      console.error(error);
     }
-    // alert("Loan offer accepted and saved!");
   };
 
   return (
@@ -704,7 +778,7 @@ const AcceptOfferForm = ({onSubmitSuccess}) => {
       }}
       className="min-h-screen w-full px-6 py-10 bg-white"
     >
-       <h3 className="text-2xl font-bold mb-10">Accept Offer</h3>
+      <h3 className="text-2xl font-bold mb-10">Accept Offer</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
         {/* Loan Amount */}
@@ -803,6 +877,9 @@ const AcceptOfferForm = ({onSubmitSuccess}) => {
 };
 
 
+
+
+
 const ReviewAgreementForm = ({ formData, onSubmitFinal, onSubmitSuccess }) => {
   const [consents, setConsents] = useState({
     confirmAccuracy: false,
@@ -818,6 +895,47 @@ const ReviewAgreementForm = ({ formData, onSubmitFinal, onSubmitSuccess }) => {
   const [errors, setErrors] = useState({});
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+
+  useEffect(() => {
+  const fetchAgreement = async () => {
+    const applicationNumber = sessionStorage.getItem("applicationNumber");
+    const userId = sessionStorage.getItem("username");
+
+    if (!applicationNumber || !userId) return;
+
+    try {
+      const response = await getReviewAgreement(applicationNumber, userId);
+
+      if (response?.status === 200 && response.data) {
+        const data = response.data;
+
+        setConsents({
+          confirmAccuracy: data.infoConfirmed || false,
+          agreeToTerms: data.termsAgreed || false,
+          authorizeVerification: data.identityAuthorized || false,
+        });
+
+        setFullName(data.fullName || "");
+        setSignatureType(data.signatureType || "");
+
+        if (data.signatureMethod === "upload") {
+          setSignatureMode("upload");
+          setSignatureURL(data.signaturePath || null);
+        } else if (data.signatureMethod === "draw") {
+          setSignatureMode("draw");
+
+          // Optionally load signaturePath into canvas if possible
+          // Example: Not needed unless you're rendering the drawn image
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch agreement data", err);
+    }
+  };
+
+  fetchAgreement();
+}, []);
+
 
   const handleConsentChange = (e) => {
     const { name, checked } = e.target;
@@ -1198,6 +1316,33 @@ const FundedForm = ({ onSubmitSuccess }) => {
 
   const [errors, setErrors] = useState({});
 
+  // ✅ Fetch existing data from backend
+  useEffect(() => {
+    const fetchFundedData = async () => {
+      const applicationNumber = sessionStorage.getItem("applicationNumber");
+      const userId = sessionStorage.getItem("username");
+
+      if (!applicationNumber || !userId) return;
+
+      try {
+        const response = await getFunded(applicationNumber, userId);
+        if (response?.status === 200 && response.data) {
+          const data = response.data;
+
+          setForm({
+            amount: data.fundingAmount?.toString() || "",
+            fundDate: data.fundingDate || "",
+            confirmFunding: data.confirmFunding || false,
+          });
+        }
+      } catch (error) {
+        console.error("❌ Error fetching funded data", error);
+      }
+    };
+
+    fetchFundedData();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -1223,27 +1368,12 @@ const FundedForm = ({ onSubmitSuccess }) => {
     const applicationNumber = sessionStorage.getItem("applicationNumber");
     const userId = sessionStorage.getItem("username");
     const role = sessionStorage.getItem("role");
-    if (!applicationNumber || !userId || !role)  {
+
+    if (!applicationNumber || !userId || !role) {
       alert("❌ Application number or user ID is missing.");
       return;
     }
-    // {
 
-    //   "applicationNumber": "APP1001",
-
-    //   "userId": "USR2001",
-
-    //   "fundingAmount": 15000.0,
-
-    //   "fundingDate": "2025-06-30",
-
-    //   "confirmFunding": true,
-
-    //   "createdBy": "admin",
-
-    //   "updatedBy": "admin"
-
-    //   }
     const payload = {
       applicationNumber,
       userId,
@@ -1326,3 +1456,4 @@ const FundedForm = ({ onSubmitSuccess }) => {
     </div>
   );
 };
+
