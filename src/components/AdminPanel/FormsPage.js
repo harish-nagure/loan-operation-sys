@@ -19,7 +19,7 @@ const   FormsPage = () => {
 
 useEffect(() => {
   const fetchStepsFromAPI = async () => {
-    const loanType = sessionStorage.getItem("loanType"); // ✅ changed key
+    const loanType = sessionStorage.getItem("selectedLoanType"); // ✅ changed key
     const applicationNumber = sessionStorage.getItem("applicationNumber"); // ✅ new
 
     if (!loanType || !applicationNumber) {
