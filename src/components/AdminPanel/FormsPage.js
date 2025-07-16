@@ -106,7 +106,7 @@ useEffect(() => {
                 <div key={step} className="relative z-10 flex flex-col items-center flex-1">
                   {/* Circle */}
                   <div
-                    onClick={() => !submitted && setActive(step)}
+                    onClick={() => setActive(step)}
                     className={`w-6 h-6 rounded-full border-4 flex items-center justify-center cursor-pointer transition
                       ${submitted
                         ? "bg-green-500 border-green-500 text-white"
@@ -397,8 +397,9 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
       const result = await getDocumentVerification(applicationNumber);
       console.log("Fetched Document Verification:", result);
 
-      if (result?.data && result.data.length > 0) {
-        const data = result.data[0];
+      if (result?.data) {
+        const data = result.data;
+        console.log("Fetched Document Data:Hiiiii ", data);
         setForm({
           documentType: data.documentType || "",
           documentNumber: data.documentNumber || "",

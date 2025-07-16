@@ -212,6 +212,7 @@ useEffect(() => {
             ) : (
               <ApplicationDetailForm
                 detail={detail}
+                setDetail={setDetail}
                 handleDetailChange={handleDetailChange}
                 onBack={() => setStep(1)}
                 onContinue={() => alert("Form Submitted!")}

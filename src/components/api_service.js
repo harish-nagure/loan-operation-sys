@@ -1324,9 +1324,9 @@ export const deleteFunded = async (applicationNumber) => {
 
 
 
-export async function getAllApplicationUserId(userId) {
+export async function getApplicationUserId(userId) {
   try{
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/get_allApplicationDetails_by_user/${userId}`,{
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/get_applicationdetailsonly_by_user/${userId}`,{
       method:"GET",
       headers:{
         "Content-Type":"application/json",
@@ -1351,4 +1351,28 @@ export async function getAllApplicationUserId(userId) {
 
 
 
+export const getApplicationDetailsByUserId = async (userId) => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/get_applicationDetails/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      }
+    );
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Console Data",data);
+    return data;
+    
+  } catch (error) {
+    console.error("Fetch error in getApplicationDetailsByUserId:", error);
+    return { status: 500, message: "Fetch failed", data: [] };
+  }
+};

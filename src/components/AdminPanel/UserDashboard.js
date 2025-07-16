@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllApplicationDetails, fetchWorkflowByLoanType } from "../api_service";
+import {
+  getAllApplicationDetails,
+  fetchWorkflowByLoanType,
+  getApplicationDetailsByUserId,
+} from "../api_service";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
@@ -11,7 +15,7 @@ const UserDashboard = () => {
 
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null); // ✅ NEW
+  const [selectedUser, setSelectedUser] = useState(null);
   const [submittedSteps, setSubmittedSteps] = useState([]);
   const [stepDetailData, setStepDetailData] = useState(null);
   const [selectedStepName, setSelectedStepName] = useState("");
@@ -19,51 +23,45 @@ const UserDashboard = () => {
   const [steps, setSteps] = useState([]);
 
   useEffect(() => {
-    const dummyUsers = [
-      {
-        applicationId: 107,
-        applicationNumber: "USR002-107",
-        loantype: "vehicle",
-        email: "-",
-        firstName: "-",
-        lastName: "-",
-        isHomeOwner: false,
-        status: "pending",
-      },
-      {
-        applicationId: 111,
-        applicationNumber: "USR002-111",
-        loantype: "personal",
-        email: "harish.nagure@whitestones.co.in",
-        firstName: "Harish",
-        lastName: "Nagure",
-        isHomeOwner: false,
-        status: "submitted",
-      },
-      {
-        applicationId: 139,
-        applicationNumber: "USR002-139",
-        loantype: "personal",
-        email: "john.wick@gmail.com",
-        firstName: "John",
-        lastName: "Wick",
-        isHomeOwner: true,
-        status: "submitted",
-      },
-    ];
-    setUsers(dummyUsers);
+    const fetchApplications = async () => {
+      const userId = sessionStorage.getItem("username") || "USR002";
+
+      const response = await getApplicationDetailsByUserId(userId);
+      console.log("Detail", response);
+
+      if (response?.status === 200 && Array.isArray(response.data)) {
+        const formattedUsers = response.data.map((item) => ({
+          applicationId: item.applicationDetails?.applicationId,
+          applicationNumber: item.loanTypeWorkflow?.applicationNumber,
+          loantype: item.loanTypeWorkflow?.loanType,
+          email: item.userDetails?.email || "-",
+          firstName: item.userDetails?.firstName || "-",
+          lastName: item.userDetails?.lastName || "-",
+          isHomeOwner: item.applicationDetails?.isHomeOwner || false,
+          status: item.acceptOfferDetails ? "submitted" : "pending",
+        }));
+        setUsers(formattedUsers);
+      } else {
+        console.warn("No applications found or error in response.");
+        setUsers([]);
+      }
+    };
+
+    fetchApplications();
   }, []);
 
   const handleRowClick = async (user) => {
     setSelectedUserId(user.applicationId);
-    setSelectedUser(user); // ✅ Store full selected user
+    setSelectedUser(user);
     setStepDetailData(null);
 
-    sessionStorage.setItem("loanType", user.loantype); // ✅ Store loanType now
+    // Save loanType & applicationNumber in sessionStorage
+    sessionStorage.setItem("loanType", user.loantype || "");
+    sessionStorage.setItem("applicationNumber", user.applicationNumber || "");
 
     try {
       let dynamicSteps = ["Application Form"];
-      const workflowRes = await fetchWorkflowByLoanType(user.loantype?.toLowerCase());
+      const workflowRes = await fetchWorkflowByLoanType(user.loantype?.replace(" ", "_").toLowerCase());
       const workflowSteps = workflowRes?.data?.steps || [];
       dynamicSteps = [...dynamicSteps, ...workflowSteps];
       setSteps(dynamicSteps);
@@ -72,7 +70,7 @@ const UserDashboard = () => {
 
       if (result?.data && Array.isArray(result.data)) {
         const selectedApp = result.data.find(
-          (app) => app.applicationDetails?.applicationNumber === user.applicationNumber
+          (app) => app.loanTypeWorkflow?.applicationNumber === user.applicationNumber
         );
 
         if (!selectedApp) {
@@ -85,7 +83,7 @@ const UserDashboard = () => {
         const stepsCompleted = [];
         if (selectedApp.applicationDetails) stepsCompleted.push("Application Form");
         if (selectedApp.linkedBankAccounts?.length > 0) stepsCompleted.push("Link Bank Account");
-        if (selectedApp.documentVerification) stepsCompleted.push("Document Verification");
+        if (selectedApp.documentVerifications?.length > 0) stepsCompleted.push("Document Verification");
         if (selectedApp.acceptOfferDetails) stepsCompleted.push("Accept Offer");
         if (selectedApp.reviewAndAgreementDetails) stepsCompleted.push("Review and Sign Agreement");
         if (selectedApp.fundedInfo) stepsCompleted.push("Funded");
@@ -106,25 +104,20 @@ const UserDashboard = () => {
 
     const isCompleted = submittedSteps.includes(step);
 
-      if (step === "Application Form") {
-    if (!isCompleted) {
-      // Not completed → navigate to application form page
-      sessionStorage.setItem("mode", "edit");
-      sessionStorage.setItem("loanType", selectedUser?.loantype || "");
-      sessionStorage.setItem(
-        "applicationNumber",
-        selectedUser?.applicationNumber || ""
-      );
-      navigate("/application_form");
-      return;
-    } else {
-      // Completed → show detail below
-      if (!selectedApplicationData) return;
-      const dataToShow = selectedApplicationData.applicationDetails || {};
-      setStepDetailData(dataToShow);
-      return;
+    if (step === "Application Form") {
+      if (!isCompleted) {
+        sessionStorage.setItem("mode", "edit");
+        sessionStorage.setItem("loanType", selectedUser?.loantype || "");
+        sessionStorage.setItem("applicationNumber", selectedUser?.applicationNumber || "");
+        navigate("/application_form");
+        return;
+      } else {
+        if (!selectedApplicationData) return;
+        const dataToShow = selectedApplicationData.applicationDetails || {};
+        setStepDetailData(dataToShow);
+        return;
+      }
     }
-  }
 
     if (!isCompleted) {
       navigate(`/form_steps`);
@@ -147,7 +140,7 @@ const UserDashboard = () => {
       case "Review and Sign Agreement":
         dataToShow = selectedApplicationData.reviewAndAgreementDetails || {};
         break;
-       case "Funded":
+      case "Funded":
         dataToShow = selectedApplicationData.fundedInfo || {};
         break;
       default:
@@ -186,7 +179,7 @@ const UserDashboard = () => {
             <table className="min-w-full border border-gray-200 text-sm text-left">
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
-                  <th className="px-4 py-2 border">Application ID</th>
+                  {/* <th className="px-4 py-2 border">Application ID</th> */}
                   <th className="px-4 py-2 border">Application Number</th>
                   <th className="px-4 py-2 border">Loan Type</th>
                   <th className="px-4 py-2 border">Email</th>
@@ -198,11 +191,13 @@ const UserDashboard = () => {
               <tbody>
                 {users.map((user) => (
                   <tr
-                    key={user.applicationId}
+                    key={user.applicationNumber}
                     onClick={() => handleRowClick(user)}
-                    className={`cursor-pointer ${selectedUserId === user.applicationId ? "bg-blue-50" : "bg-white"} even:bg-gray-50`}
+                    className={`cursor-pointer ${
+                      selectedUserId === user.applicationId ? "bg-blue-50" : "bg-white"
+                    } even:bg-gray-50`}
                   >
-                    <td className="px-4 py-2 border">{user.applicationId}</td>
+                    {/* <td className="px-4 py-2 border">{user.applicationId}</td> */}
                     <td className="px-4 py-2 border">{user.applicationNumber}</td>
                     <td className="px-4 py-2 border">{user.loantype}</td>
                     <td className="px-4 py-2 border">{user.email}</td>
@@ -235,9 +230,7 @@ const UserDashboard = () => {
                     return (
                       <tr key={index} className="bg-white even:bg-gray-50">
                         <td className="px-4 py-2 border">{step}</td>
-                        <td className="px-4 py-2 border text-center">
-                          {isCompleted ? "✅" : "⏳"}
-                        </td>
+                        <td className="px-4 py-2 border text-center">{isCompleted ? "✅" : "⏳"}</td>
                         <td className="px-4 py-2 border">—</td>
                         <td className="px-4 py-2 border">System</td>
                         <td className="px-4 py-2 border">—</td>
@@ -271,26 +264,23 @@ const UserDashboard = () => {
                 ))}
               </div>
               <div className="mt-4">
-             <button
-  onClick={() => {
-    sessionStorage.setItem("mode", "edit");
-    sessionStorage.setItem("loanType", selectedUser?.loantype || "");
-    sessionStorage.setItem(
-      "applicationNumber",
-      selectedApplicationData?.applicationDetails?.applicationNumber || ""
-    );
+                <button
+                 onClick={() => {
+  sessionStorage.setItem("mode", "edit");
+  sessionStorage.setItem("loanType", selectedUser?.loantype || "");
+  sessionStorage.setItem("applicationNumber", selectedUser?.applicationNumber || "");
 
-    if (selectedStepName === "Application Form") {
-      navigate("/application-form");
-    } else {
-      navigate("/form_steps");
-    }
-  }}
-  className="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
->
-  Edit
-</button>
+  if (selectedStepName === "Application Form") {
+    navigate("/application-form");
+  } else {
+    navigate("/form_steps");
+  }
+}}
 
+                  className="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+                >
+                  Edit
+                </button>
               </div>
             </div>
           )}
