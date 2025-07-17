@@ -171,13 +171,21 @@
 
         const response = await saveApplicationDetails(requestData);
         // console.log("Submission response:", response);
-        alert("Application submitted successfully! Application Number: " + response?.data?.applicationNumber);
-        navigate("/workflow/custom");
+        // alert("Application submitted successfully! Application Number: " + response?.data?.applicationNumber);
+        if(response.status === 200) {
+          alert("Application submitted successfully!");
+          navigate("/workflow/custom");
+        }
+        if(response.status === 400) {
+          alert("Application already exists, please select the loan type!");
+          navigate("/workflow/custom");
+        }
 
       } catch (error) {
-        console.error("Submission failed:", error);
-        alert("Failed to submit application: " + error.message);
-      }
+        console.log("Submission failed:", error);
+        // alert("Failed to submit application: " + error.message);
+      } 
+      
     }
   };
 

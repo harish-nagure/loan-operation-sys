@@ -797,16 +797,17 @@ export const saveApplicationDetails = async (requestData) => {
       },
       body: JSON.stringify(requestData),
     });
+    const data = await response.json();
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to submit application");
+      console.error("Error saving application details:", data);
     }
 
-    const data = await response.json();
+    
     return data;
   } catch (error) {
-    throw error;
+    console.error("Error saving application details:", error);
+    return;
   }
 };
 
