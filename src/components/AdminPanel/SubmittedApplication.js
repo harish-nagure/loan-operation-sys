@@ -6,6 +6,8 @@ import {
   fetchColumnPreferencesAPI,
 } from "../api_service";
 import { useNavigate } from "react-router-dom";
+import { FaCheckCircle, FaTimesCircle, FaTrashAlt } from "react-icons/fa";
+
 
 const allColumns = [
   { key: "applicationId", label: "Application ID" },
@@ -204,19 +206,31 @@ const SubmittedApplication = () => {
 
                             if (k === "action") {
                               return (
-                                <td key="action" className="p-3 space-x-2">
-                                  <button className="px-3 py-1 bg-green-600 text-white rounded">Approve</button>
-                                  <button className="px-3 py-1 bg-red-600 text-white rounded">Reject</button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDelete(appNum);
-                                    }}
-                                    className="px-3 py-1 text-red-600 border border-red-300 rounded hover:text-red-800"
-                                  >
-                                    Delete
-                                  </button>
-                                </td>
+                               <td key="action" className="p-3 flex items-center space-x-3">
+                                <button
+                                  className="text-green-600 hover:text-green-800"
+                                  title="Approve"
+                                >
+                                  <FaCheckCircle size={18} />
+                                </button>
+                                <button
+                                  className="text-red-600 hover:text-red-800"
+                                  title="Reject"
+                                >
+                                  <FaTimesCircle size={18} />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(appNum);
+                                  }}
+                                  className="text-gray-500 hover:text-red-600"
+                                  title="Delete"
+                                >
+                                  <FaTrashAlt size={18} />
+                                </button>
+                              </td>
+
                               );
                             }
 
