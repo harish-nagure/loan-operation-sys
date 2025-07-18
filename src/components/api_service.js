@@ -1377,3 +1377,83 @@ export const getApplicationDetailsByUserId = async (userId) => {
     return { status: 500, message: "Fetch failed", data: [] };
   }
 };
+
+
+export async function updateApplicationDetails(requestData,userId) {
+  console.log(requestData,userId);
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/update_applicationdetails/${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(requestData),
+      }
+    );
+
+    const data_json = await response.json();
+
+    if (!response.ok) {
+      console.error(data_json.message);
+    }
+
+    return data_json;
+
+  } catch (error) {
+    console.error(error.message);
+    return {
+      status: 500,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function fetchColumnPreferencesAPI() {
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/getColumnPreferences`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch preferences");
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching preferences:", error);
+    return { status: 500, message: error.message, data: [] };
+  }
+}
+
+export async function saveColumnPreferencesAPI(preferences) {
+  console.log(preferences);
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/saveColumnPreferences`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(preferences),
+    });
+
+    const data_json = await response.json();
+
+    if (!response.ok) {
+      console.error(data_json.message);
+    }
+
+    return data_json;
+  } catch (error) {
+    console.log(error.message);
+    return {
+      status: 500,
+      message: "Something went wrong",
+    };
+  }
+}

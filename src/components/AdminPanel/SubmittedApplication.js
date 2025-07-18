@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { getAllApplicationDetails, deleteApplicationByNumber } from "../api_service";
-// import { TrashIcon } from "@heroicons/react/24/outline";
+import {
+  getAllApplicationDetails,
+  deleteApplicationByNumber,
+  saveColumnPreferencesAPI,
+  fetchColumnPreferencesAPI,
+} from "../api_service";
 import { useNavigate } from "react-router-dom";
 
 const allColumns = [
   { key: "applicationId", label: "Application ID" },
-  { key: "applicationNumber", label: "Application Number" },
   { key: "city", label: "City" },
   { key: "confirmSsn", label: "Confirm SSN" },
   { key: "createdBy", label: "Created By" },
@@ -15,6 +18,7 @@ const allColumns = [
   { key: "homeAddress2", label: "Home Address 2" },
   { key: "howMuchDoYouNeed", label: "Loan Amount" },
   { key: "isHomeOwner", label: "Is Home Owner" },
+  { key: "loanType", label: "Loan Type" },
   { key: "monthlyGrossIncome", label: "Monthly Gross Income" },
   { key: "ssn", label: "SSN" },
   { key: "state", label: "State" },
@@ -25,285 +29,215 @@ const allColumns = [
   { key: "firstName", label: "First Name" },
   { key: "lastName", label: "Last Name" },
   { key: "phone", label: "Phone" },
+  { key: "action", label: "Action" },
 ];
-
-const PAGE_SIZE = 10;
 
 const SubmittedApplication = () => {
   const [step, setStep] = useState(1);
   const [userRole, setUserRole] = useState("");
   const [selected, setSelected] = useState({});
   const [applications, setApplications] = useState([]);
-  const [filterType, setFilterType] = useState("");
-  const [filterText, setFilterText] = useState("");
-  const [filterFrom, setFilterFrom] = useState("");
-  const [filterTo, setFilterTo] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [showFilter, setShowFilter] = useState(true);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const toggleColumn = (k) => setSelected(prev => ({ ...prev, [k]: !prev[k] }));
-
-  const fetchData = async () => {
-    const res = await getAllApplicationDetails().catch(console.error);
-    console.log("Fetched Application:",res);
-    setApplications(res?.data || []);
+  const toggleColumn = (key) => {
+    setSelected((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleContinue = () => {
-  // Save selected columns in sessionStorage
-  sessionStorage.setItem("selectedColumns", JSON.stringify(selected));
-  setStep(2);
-  fetchData();
-};
+  const fetchApplications = async () => {
+    try {
+      const res = await getAllApplicationDetails();
+      setApplications(res?.data || []);
+    } catch (err) {
+      console.error("Failed to fetch applications", err);
+    }
+  };
 
+  const storePreferences = async () => {
+    const payload = allColumns.map(({ key, label }) => ({
+      columnName: label,
+      visible: !!selected[key], 
+    }));
+
+    console.log("Saving Payload:", payload);
+
+    try {
+      await saveColumnPreferencesAPI(payload);
+      console.log("Data submitted");
+    } catch (e) {
+      console.error("Error saving preferences", e);
+    }
+  };
+
+  const loadPreferences = async () => {
+    try {
+      const res = await fetchColumnPreferencesAPI();
+      console.log("✅ Column Preferences API Response:", res);
+
+      if (res.status === 200 && Array.isArray(res.data)) {
+        const mapped = {};
+        allColumns.forEach((col) => {
+          const match = res.data.find((item) => item.columnName === col.label);
+          mapped[col.key] = match ? match.visible : false;
+        });
+        console.log("🟢 Selected columns mapped:", mapped);
+        setSelected(mapped);
+      }
+    } catch (error) {
+      console.error("❌ Error loading column preferences:", error);
+    }
+  };
+
+  const handleContinue = async () => {
+    await storePreferences();
+    await fetchApplications();
+    setStep(2);
+  };
 
   const handleDelete = async (appNumber) => {
-    if (!window.confirm("Delete application " + appNumber + "?")) return;
+    if (!window.confirm(`Delete application ${appNumber}?`)) return;
     try {
       const res = await deleteApplicationByNumber(appNumber);
-      if (res.status === 200) {
-        alert("Deleted successfully ✅");
-        fetchData();
-      } else {
-        alert("❌ Failed to delete");
-      }
-    } catch (err) {
-      alert("❌ Error deleting");
+      if (res.status === 200) fetchApplications();
+      else alert("Failed to delete");
+    } catch {
+      alert("Error deleting");
     }
   };
 
-useEffect(() => {
-  const role = sessionStorage.getItem("role")?.toLowerCase() || "";
-  setUserRole(role);
+  const hasVisibleColumns = Object.values(selected).some((val) => val === true);
 
-  const stored = sessionStorage.getItem("selectedColumns");
-  if (stored) {
-    setSelected(JSON.parse(stored));
-  }
+  useEffect(() => {
+    const role = (sessionStorage.getItem("role") || "").toLowerCase();
+    setUserRole(role);
 
-  if (role === "approver") {
-    setStep(2);
-    fetchData();
-  }
-}, []);
+    const init = async () => {
+      // Initialize all columns as false
+      const defaultSelected = {};
+      allColumns.forEach((col) => {
+        defaultSelected[col.key] = false;
+      });
+      setSelected(defaultSelected);
 
-  // filter
-  let filtered = applications.filter(app => {
-    if (!filterType) return true;
-    const d = app.applicationDetails || {}, u = app.userDetails || {};
+      await loadPreferences();
 
-    if (filterType === "createdDate" && (filterFrom || filterTo)) {
-      const cd = new Date(d.createdDate).setHours(0, 0, 0, 0);
-      const from = filterFrom ? new Date(filterFrom).getTime() : -Infinity;
-      const to = filterTo ? new Date(filterTo).getTime() : Infinity;
-      return cd >= from && cd <= to;
-    }
-
-    if (filterText) {
-      if (filterType === "applicationNumber")
-        // alert(app?.loanTypeWorkflow?.applicationNumber);
-        return app.loanTypeWorkflow.applicationNumber?.toString().includes(filterText);
-      if (filterType === "name") {
-        const full = `${u.firstName || ""} ${u.lastName || ""}`.toLowerCase();
-        return full.includes(filterText.toLowerCase());
+      if (role === "approver") {
+        await fetchApplications();
+        setStep(2);
       }
-      if (filterType === "howMuchDoYouNeed")
-        return parseFloat(d.howMuchDoYouNeed) === parseFloat(filterText);
-    }
 
-    return true;
-  });
+      setLoading(false);
+    };
 
-  filtered.sort((a, b) => new Date(a.applicationDetails?.createdDate) - new Date(b.applicationDetails?.createdDate));
+    init();
+  }, []);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const current = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  if (loading) return <div className="p-6">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 pt-6 pr-8">
       <div className="max-w-6xl mx-auto bg-white shadow px-4 py-6 rounded-xl">
         {step === 1 && userRole === "admin" ? (
           <>
-            <h2 className="text-2xl font-bold mb-4 text-accent hover:text-secondary">Select Columns to Display</h2>
-            <table className="min-w-full text-sm text-left border rounded-lg overflow-hidden">
-              <thead className="bg-gray-100 text-gray-800">
+            <h2 className="text-2xl font-bold mb-4 text-accent">Select Columns to Display</h2>
+            <table className="min-w-full text-sm border rounded-lg overflow-hidden">
+              <thead className="bg-gray-100">
                 <tr>
                   <th className="p-3 font-medium">Label</th>
                   <th className="p-3 font-medium text-center">Show</th>
                 </tr>
               </thead>
               <tbody>
-                {allColumns.map(col => (
-                  <tr key={col.key} className="hover:bg-blue-50 transition-colors">
+                {allColumns.map((col) => (
+                  <tr key={col.key}>
                     <td className="p-3">{col.label}</td>
                     <td className="p-3 text-center">
                       <input
                         type="checkbox"
                         checked={!!selected[col.key]}
-                        onChange={() => userRole === "admin" && toggleColumn(col.key)}
-                        className={`accent-blue-600 w-4 h-4 ${userRole !== "admin" ? "cursor-not-allowed opacity-50" : ""}`}
-                        disabled={userRole !== "admin"}
+                        onChange={() => toggleColumn(col.key)}
+                        className="accent-blue-600 w-4 h-4"
                       />
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
             <button
               onClick={handleContinue}
-              className="mt-4 px-6 py-2 rounded bg-accent text-white hover:bg-secondary transition"
+              className="mt-4 px-6 py-2 rounded bg-accent text-white hover:bg-secondary"
             >
               Continue
             </button>
           </>
         ) : (
           <>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-accent hover:text-secondary">Submitted Applications</h2>
-              <button
-                onClick={() => setShowFilter(!showFilter)}
-                className="text-sm font-medium px-4 py-2 rounded-md bg-accent text-white hover:bg-secondary transition duration-200"
-              >
-                {showFilter ? "Hide Filter" : "Show Filter"}
-              </button>
-            </div>
+            <h2 className="text-2xl font-bold mb-4 text-accent">Submitted Applications</h2>
+            {!hasVisibleColumns ? (
+              <p className="text-gray-500">No visible columns selected by admin.</p>
+            ) : (
+              <div className="overflow-x-auto border rounded-lg">
+                <table className="min-w-full text-sm text-left">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      {Object.entries(selected).map(
+                        ([k, v]) =>
+                          v && (
+                            <th key={k} className="p-3 font-medium">
+                              {allColumns.find((col) => col.key === k)?.label}
+                            </th>
+                          )
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {applications.map((app, i) => {
+                      const d = app.applicationDetails || {};
+                      const u = app.userDetails || {};
+                      const l = app.loanTypeWorkflow || {};
+                      const appNum = l?.applicationNumber;
 
-            {showFilter && (
-              <div className="mb-4 flex flex-col md:flex-row gap-4 items-start">
-                <select
-                  className="border px-3 py-2 rounded"
-                  value={filterType}
-                  onChange={e => {
-                    setFilterType(e.target.value);
-                    setFilterText("");
-                    setFilterFrom("");
-                    setFilterTo("");
-                    setCurrentPage(1);
-                  }}
-                >
-                  <option value="">-- Select Filter --</option>
-                  <option value="applicationNumber">Application Number</option>
-                  <option value="name">Name</option>
-                  <option value="howMuchDoYouNeed">Loan Amount</option>
-                  <option value="createdDate">Created Date</option>
-                </select>
+                      return (
+                        <tr key={i} className="hover:bg-blue-50">
+                          {Object.entries(selected).map(([k, v]) => {
+                            if (!v) return null;
 
-                {filterType === "createdDate" ? (
-                  <>
-                    <input
-                      type="date"
-                      className="border px-3 py-2 rounded"
-                      value={filterFrom}
-                      onChange={e => setFilterFrom(e.target.value)}
-                    />
-                    <span className="self-center">to</span>
-                    <input
-                      type="date"
-                      className="border px-3 py-2 rounded"
-                      value={filterTo}
-                      onChange={e => setFilterTo(e.target.value)}
-                    />
-                  </>
-                ) : filterType ? (
-                  <input
-                    type={filterType === "howMuchDoYouNeed" ? "number" : "text"}
-                    placeholder={`Enter ${filterType}`}
-                    className="border px-3 py-2 rounded"
-                    value={filterText}
-                    onChange={e => setFilterText(e.target.value)}
-                  />
-                ) : null}
+                            if (k === "action") {
+                              return (
+                                <td key="action" className="p-3 space-x-2">
+                                  <button className="px-3 py-1 bg-green-600 text-white rounded">Approve</button>
+                                  <button className="px-3 py-1 bg-red-600 text-white rounded">Reject</button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDelete(appNum);
+                                    }}
+                                    className="px-3 py-1 text-red-600 border border-red-300 rounded hover:text-red-800"
+                                  >
+                                    Delete
+                                  </button>
+                                </td>
+                              );
+                            }
+
+                            const val = d[k] ?? u[k] ?? l[k] ?? "-";
+                            return (
+                              <td
+                                key={k}
+                                className="p-3 cursor-pointer"
+                                onClick={() => navigate(`/application-details/${appNum}`)}
+                              >
+                                {String(val)}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             )}
-
-            <div className="overflow-x-auto border rounded-lg">
-              <table className="min-w-full text-sm text-left">
-                <thead className="bg-gray-100 text-gray-800">
-                  <tr>
-                    {Object.entries(selected).map(([k, v]) =>
-                      v ? (
-                        <th key={k} className="p-3 font-medium">
-                          {allColumns.find(col => col.key === k)?.label}
-                        </th>
-                      ) : null
-                    )}
-                    <th className="p-3 font-medium">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {current.map((app, i) => {
-                    const d = app.applicationDetails || {}, u = app.userDetails || {}, l= app.loanTypeWorkflow || {};
-                    const appNum = l?.applicationNumber;
-                    console.log("Application Number:", appNum);
-
-                    return (
-                      <tr key={i} className="hover:bg-blue-50 transition-colors duration-200">
-                        {Object.entries(selected).map(([k, v]) => {
-                          if (!v) return null;
-                          const val = d[k] ?? u[k] ?? l[k] ?? "-";
-                          return (
-                            <td
-                              key={k}
-                              className="p-3 cursor-pointer"
-                              onClick={() => navigate(`/application-details/${appNum}`)}
-                            >
-                              {String(val)}
-                            </td>
-                          );
-                        })}
-                        { /*<td className="p-3">
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      handleDelete(appNum);
-    }}
-    className="text-red-600 hover:text-red-800"
-  >
-    <TrashIcon className="w-5 h-5" />
-  </button>
-</td>
- */}
-                        <td className="p-3">
-                          {userRole === "admin" && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(appNum);
-                              }}
-                              className="text-red-600 hover:text-red-800"
-                            >
-                              {/* <TrashIcon className="w-5 h-5" />    */}
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="flex justify-between items-center mt-4 text-sm">
-              <button
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-              >
-                Previous
-              </button>
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => p + 1)}
-              >
-                Next
-              </button>
-            </div>
           </>
         )}
       </div>

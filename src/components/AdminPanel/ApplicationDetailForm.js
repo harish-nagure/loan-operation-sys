@@ -3,7 +3,7 @@
 
   import { submitApplicationDetails } from "../api_service";
   import { saveApplicationDetails } from "../api_service";
-  import { getAllApplicationDetails,getApplicationUserId } from "../api_service";
+  import { getAllApplicationDetails,getApplicationUserId,updateApplicationDetails } from "../api_service";
 
 
   const ApplicationDetailForm = ({detail,setDetail,handleDetailChange,fieldSettings, canRead = false, canWrite = false }) => {
@@ -141,6 +141,43 @@
 
       // alert(canWrite)
 
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!canWrite) {
+      alert("You don't have permission to submit the form.");
+      return;
+    }
+    if (validate()) {
+      const userId = sessionStorage.getItem("username");
+      try {
+        const requestData = {
+          dateOfBirth: detail.dob,
+          monthlyGrossIncome: parseFloat(detail.monthlyIncome),
+          ssn: detail.ssn,
+          confirmSsn: detail.confirmSsn,
+          howMuchDoYouNeed: parseFloat(detail.amountNeeded),
+          homeAddress: detail.homeAddress,
+          homeAddress2: detail.homeAddress2,
+          zipCode: parseInt(detail.zipCode),
+          city: detail.city,
+          state: detail.state,
+          isHomeOwner: detail.homeowner === "yes",
+          updatedBy: sessionStorage.getItem("role").toLowerCase(), // 👈 Only include in edit
+        };
+        console.log("Update request data:", requestData);
+        const response = await updateApplicationDetails(requestData,userId);
+        console.log("Update response:", response);
+        alert("Application updated successfully!"+response?.message);
+         if(response.status === 200) {
+          alert(response?.message);
+          navigate("/workflow/custom");
+        }
+      } catch (error) {
+        console.error("Update failed:", error);
+        alert("Failed to update application: " + error.message);
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -525,6 +562,15 @@
           >
             Cancel
           </button>
+          <div 
+          className="flex gap-4">
+          <button
+            type="button"
+            onClick={handleUpdate}
+            className="bg-[#029aaa] text-white px-6 py-2 rounded hover:bg-[#01c4d5] transition"
+          >
+            Update
+          </button>
 
           <button
             type="submit"
@@ -532,6 +578,7 @@
           >
             Submit
           </button>
+          </div>
         </div>
       </form>
     );
