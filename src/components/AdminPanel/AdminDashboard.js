@@ -62,7 +62,7 @@ const AdminDashboard = ({ canRead = false, canWrite = false }) => {
 
           {/* Status Section */}
           <div className="bg-white rounded-xl shadow p-6 border border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Loan Application Status</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Loan Application Status</h2>
             {[
               ["Application Submitted", "Lead", "Verifications"],
               ["Pending Approval", "Offer Generated", "Agreement Docs Out"],
@@ -106,12 +106,12 @@ const StatusBox = ({ label, value, onClick, disabled }) => (
     onClick={!disabled ? () => onClick(label) : undefined}
     // className="bg-white rounded-lg p-4 border border-blue-200 cursor-pointer hover:shadow-md transition"
     className={`bg-white rounded-lg p-4 border border-primary/50 ${
-      !disabled ? "cursor-pointer hover:shadow-md" : "cursor-not-allowed opacity-60"
+      !disabled ? "cursor-pointer hover:shadow-lg hover:z-20" : "cursor-not-allowed opacity-60"
     } transition`}
   >
-    <div className="flex justify-between items-center text-sm font-medium text-gray-700">
+    <div className="flex justify-between items-center text-base font-medium text-gray-700">
       <span>{label}</span>
-      <div className="ml-2 px-3 py-1 bg-primary/20 text-accent text-sm font-bold rounded-md">
+      <div className="ml-2 px-3 py-1 bg-primary/20 text-accent text-base font-bold rounded-md">
         {value}
       </div>
     </div>

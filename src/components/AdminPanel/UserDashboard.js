@@ -24,7 +24,7 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const fetchApplications = async () => {
-      const userId = sessionStorage.getItem("username") || "USR002";
+      const userId = sessionStorage.getItem("username");
 
       const response = await getApplicationDetailsByUserId(userId);
       console.log("Detail", response);
@@ -61,7 +61,7 @@ const UserDashboard = () => {
 
     try {
       let dynamicSteps = ["Application Form"];
-      const workflowRes = await fetchWorkflowByLoanType(user.loantype?.toLowerCase());
+      const workflowRes = await fetchWorkflowByLoanType(user.loantype?.replace(" ", "_").toLowerCase());
       const workflowSteps = workflowRes?.data?.steps || [];
       dynamicSteps = [...dynamicSteps, ...workflowSteps];
       setSteps(dynamicSteps);
@@ -153,7 +153,7 @@ const UserDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex">
       <div className="flex-1 pr-8 py-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 ml-4">Loan and Application</h1>
+        {/* <h1 className="text-2xl font-bold text-gray-800 mb-6 ml-4">Loan and Application</h1> */}
 
         <div className="bg-white rounded-xl shadow border border-[#e0f3f4] p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Welcome, {username}</h2>

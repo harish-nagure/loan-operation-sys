@@ -226,6 +226,7 @@ function AppWrapper() {
               <Routes>
 
                 <Route path="/" element={<Navigate to={dashboardPath} replace />} />
+                <Route path="/reset_password" element={<ResetPassword />} />
                 {Object.entries(routeComponentMap).map(([path, component]) =>
                   createProtectedRoute({
                     path,

@@ -135,7 +135,7 @@ const ApplicationDetailPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-start py-10 px-4">
       <div className="max-w-5xl w-full bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-2xl font-bold mb-6 text-blue-700">
+        <h1 className="text-2xl font-bold mb-6 text-accent">
           {tabTitleMap[activeTab]} - {applicationNumber}
         </h1>
 
