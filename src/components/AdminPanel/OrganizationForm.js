@@ -9,6 +9,9 @@ const OrganizationForm = ({canRead = false, canWrite = false}) => {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
+    phone:"",
+    email:"",
+    webURL:"",
     logo: null,
     logoPreview: null,
   });
@@ -52,72 +55,120 @@ const OrganizationForm = ({canRead = false, canWrite = false}) => {
     //   <main className="flex-1 lg:ml-72">
     //     <DashboardHead />
 
-    <div className="flex items-center justify-center bg-gray-100 pr-8 py-12">
-      <div className="bg-white p-6 rounded-xl shadow-md max-w-xl w-full">
+    <div className="flex items-center justify-center bg-gray-100 pr-8 py-12 pt-6">
+      <div className="bg-white p-6 rounded-xl shadow-md max-w-6xl w-full">
         <h2 className="text-2xl font-semibold mb-6 text-accent">🏢 Organization Details</h2>
         
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="block mb-1 font-medium text-gray-700">Organization Name:</label>
-            <input
-              id="name"
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              disabled={!canWrite}
-              placeholder="e.g., Infinity Corp"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-            />
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+  {/* Row 1: Organization Name + Website URL */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label htmlFor="name" className="block mb-1 font-medium text-gray-700">Organization Name:</label>
+      <input
+        id="name"
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleChange}
+        required
+        disabled={!canWrite}
+        placeholder="e.g., Infinity Corp"
+        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+      />
+    </div>
 
-          {/* Address */}
-          <div>
-            <label htmlFor="address" className="block mb-1 font-medium text-gray-700">Address:</label>
-            <textarea
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-              disabled={!canWrite}
-              placeholder="Street, City, ZIP"
-              className="w-full px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-accent"
-              rows="3"
-            />
-          </div>
+    <div>
+      <label htmlFor="webURL" className="block mb-1 font-medium text-gray-700">Website URL:</label>
+      <input
+        id="webURL"
+        type="url"
+        name="webURL"
+        value={formData.webURL}
+        onChange={handleChange}
+        disabled={!canWrite}
+        placeholder="e.g., https://www.company.com"
+        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+      />
+    </div>
+  </div>
 
-          {/* Logo Upload */}
-          <div>
-            <label htmlFor="logo" className="block mb-1 font-medium text-gray-700">Upload Logo:</label>
-            <input
-              id="logo"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              disabled={!canWrite}
-              className="w-full text-gray-600"
-            />
-          </div>
+  {/* Row 2: Phone + Email */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label htmlFor="phone" className="block mb-1 font-medium text-gray-700">Phone:</label>
+      <input
+        id="phone"
+        type="tel"
+        name="phone"
+        value={formData.phone}
+        onChange={handleChange}
+        disabled={!canWrite}
+        placeholder="e.g., +91 9876543210"
+        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+      />
+    </div>
 
-          {/* Logo Preview */}
-          {formData.logoPreview && (
-            <div className="mt-4">
-              <p className="text-gray-600 mb-1">Logo Preview:</p>
-              <img src={formData.logoPreview} alt="Logo Preview" className="h-24 rounded border" />
-            </div>
-          )}
+    <div>
+      <label htmlFor="email" className="block mb-1 font-medium text-gray-700">Email:</label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        disabled={!canWrite}
+        placeholder="e.g., contact@company.com"
+        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+      />
+    </div>
+  </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full bg-accent text-white py-2 rounded-lg hover:bg-secondary transition"
-          >
-            ✅ Save Organization
-          </button>
-        </form>
+  {/* Row 3: Address + Logo */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label htmlFor="address" className="block mb-1 font-medium text-gray-700">Address:</label>
+      <textarea
+        id="address"
+        name="address"
+        value={formData.address}
+        onChange={handleChange}
+        required
+        disabled={!canWrite}
+        placeholder="Street, City, ZIP"
+        className="w-full px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-accent"
+        rows="3"
+      />
+    </div>
+
+    <div>
+      <label htmlFor="logo" className="block mb-1 font-medium text-gray-700">Upload Logo:</label>
+      <input
+        id="logo"
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        disabled={!canWrite}
+        className="w-full text-gray-600"
+      />
+
+      {formData.logoPreview && (
+        <div className="mt-3">
+          <p className="text-gray-600 mb-1">Logo Preview:</p>
+          <img src={formData.logoPreview} alt="Logo Preview" className="h-20 rounded border" />
+        </div>
+      )}
+    </div>
+  </div>
+
+  {/* Submit Button */}
+  <button
+    type="submit"
+    className="w-full bg-accent text-white py-2 rounded-lg hover:bg-secondary transition"
+  >
+    ✅ Save Organization
+  </button>
+</form>
+
       </div>
     </div>
         // </main> 

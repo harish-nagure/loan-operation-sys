@@ -25,9 +25,6 @@ const SessionValidator = ({ children }) => {
 
   const logout = (message) => {
     sessionStorage.clear();
-    
-    // if (message) alert(message);
-   
     navigate('/login' , { replace: true } );
        window.location.reload(); 
   };
@@ -60,8 +57,8 @@ const SessionValidator = ({ children }) => {
     const token = sessionStorage.getItem('token');
     const refreshToken = sessionStorage.getItem('refreshToken');
     const loginTimeStr = sessionStorage.getItem('loginTime');
-
-    if (!token || !refreshToken || !loginTimeStr) {
+    const username = sessionStorage.getItem('username');
+    if (!token || !refreshToken || !loginTimeStr ) {
       logout('Session invalid or missing. Please login again.');
       navigate("/login");
       return;

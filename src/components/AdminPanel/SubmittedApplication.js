@@ -6,7 +6,7 @@ import {
   fetchColumnPreferencesAPI,
 } from "../api_service";
 import { useNavigate } from "react-router-dom";
-import { FaCheckCircle, FaTimesCircle, FaTrashAlt } from "react-icons/fa";
+import { FaCheckCircle, FaTimesCircle, FaTrashAlt,FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const allColumns = [
   { key: "applicationId", label: "Application ID" },
@@ -99,6 +99,7 @@ const SubmittedApplication = () => {
   const fetchApplications = async () => {
     try {
       const res = await getAllApplicationDetails();
+      console.log("Fetched Application:",res);
       setApplications(res?.data || []);
     } catch (err) {
       console.error("Failed to fetch applications", err);
@@ -364,38 +365,40 @@ const SubmittedApplication = () => {
                     })}
                   </tbody>
                 </table>
+               </div>
+            )}
 
-                {/* Pagination Controls */}
-                <div className="flex justify-between items-center mt-4 px-2">
+          <div className="mt-4 flex justify-center items-center gap-4">
   <button
     onClick={() => goToPage(currentPage - 1)}
     disabled={currentPage === 1}
-    className={`px-2 py-1 text-sm rounded ${
+    className={`p-1.5 rounded-full transition-colors duration-200 ${
       currentPage === 1
-        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-        : "bg-accent text-white hover:bg-secondary"
+        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+        : "bg-gray-100 border border-gray-300 hover:bg-sky-100 text-gray-700"
     }`}
+    title="Previous Page"
   >
-    Prev
+    <FaChevronLeft size={14} />
   </button>
 
-  <div className="text-sm">Page {currentPage} of {totalPages}</div>
+  <span className="text-sm font-medium text-gray-700">
+    Page {currentPage} of {totalPages}
+  </span>
 
   <button
     onClick={() => goToPage(currentPage + 1)}
     disabled={currentPage === totalPages}
-    className={`px-2 py-1 text-sm rounded ${
+    className={`p-1.5 rounded-full transition-colors duration-200 ${
       currentPage === totalPages
-        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-        : "bg-accent text-white hover:bg-secondary"
+        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+        : "bg-gray-100 border border-gray-300 hover:bg-sky-100 text-gray-700"
     }`}
+    title="Next Page"
   >
-    Next
+    <FaChevronRight size={14} />
   </button>
-</div>
-
-              </div>
-            )}
+         </div>  
           </>
         )}
       </div>
