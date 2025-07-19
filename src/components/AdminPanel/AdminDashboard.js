@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate,useLocation  } from "react-router-dom";
-import DashboardSidebar from "./DashboardSidebar";
-import DashboardHead from "./DashboardHead";
-import { AwardIcon } from "lucide-react";
+import { useNavigate  } from "react-router-dom";
 import { getApplicationCount } from "../api_service";
 
 const AdminDashboard = ({ canRead = false, canWrite = false }) => {

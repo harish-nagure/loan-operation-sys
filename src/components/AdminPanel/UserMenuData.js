@@ -197,7 +197,7 @@ const UserMenuData = () => {
       
 //       console.log(roles,UserInfo);
 //     if (formUser.id) {
-//       const userId = formUser.userId;
+//       const userId = fvjhjhbbjbbjormUser.userId;
 //       const response = await updateUserDeatils(userId,UserInfo)
 //       alert(response);
 //       setUserData(userData.map(user => (user.id === formUser.id ? formUser : user)));
