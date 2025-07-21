@@ -161,12 +161,14 @@ const OrganizationForm = ({canRead = false, canWrite = false}) => {
   </div>
 
   {/* Submit Button */}
+  <div className="flex justify-center">
   <button
     type="submit"
-    className="w-full bg-accent text-white py-2 rounded-lg hover:bg-secondary transition"
+    className="w-60 bg-accent text-white py-2 px-4 rounded-lg hover:bg-secondary transition"
   >
     ✅ Save Organization
   </button>
+  </div>
 </form>
 
       </div>

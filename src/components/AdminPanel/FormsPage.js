@@ -19,7 +19,7 @@ const   FormsPage = () => {
 
 useEffect(() => {
   const fetchStepsFromAPI = async () => {
-    const loanType = sessionStorage.getItem("selectedLoanType"); // ✅ changed key
+    const loanType = sessionStorage.getItem("loanType"); // ✅ changed key
     const applicationNumber = sessionStorage.getItem("applicationNumber"); // ✅ new
 
     if (!loanType || !applicationNumber) {
@@ -31,7 +31,7 @@ useEffect(() => {
     console.log("🟢 loanType:", loanType);
     console.log("🟢 applicationNumber:", applicationNumber);
 
-    const result = await fetchWorkflowByLoanType(loanType);
+    const result = await fetchWorkflowByLoanType(loanType.replace(" ", "_").toLowerCase());
 
     if (result.status === 200 && Array.isArray(result.data?.steps)) {
       setSteps(result.data.steps);
@@ -473,47 +473,155 @@ const DocumentVerificationForm = ({ onSubmitSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const filePath = form.documentFile;
-    console.log(filePath);
-    if (!validate()) return;
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const filePath = form.documentFile;
+  //   console.log(filePath);
+  //   if (!validate()) return;
 
-    const userId = sessionStorage.getItem("username");
-    const applicationNumber = sessionStorage.getItem("applicationNumber");
+  //   const userId = sessionStorage.getItem("username");
+  //   const applicationNumber = sessionStorage.getItem("applicationNumber");
 
-    if (!applicationNumber) {
-      alert("❌ Application number is missing!");
-      return;
-    }
-    if (!userId) {
-      alert("❌ User ID is missing!");
-      return;
-    }
+  //   if (!applicationNumber) {
+  //     alert("❌ Application number is missing!");
+  //     return;
+  //   }
+  //   if (!userId) {
+  //     alert("❌ User ID is missing!");
+  //     return;
+  //   }
 
     
-    const requestData = {
-      applicationNumber,
-      user: { userId },
-      documentNumber: form.documentNumber,
-      issueDate: form.issueDate,
-      expiryDate: form.expiryDate,
-      issuingAuthority: form.issuingAuthority,
-      // filePath: form.documentFiles,
-      consentGiven: form.consent,
-    };
-    console.log(requestData)
-    const { documentFiles, ...formData } = form;
-    // sessionStorage.setItem("documentVerification", JSON.stringify(formData));
-    const response = await addDocumentVerified(requestData);
-    if (response.status == 500){
-      alert(response?.message);
-      return;
-    }else{
-      alert(response?.message);
+  //   const requestData = {
+  //     applicationNumber,
+  //     user: { userId },
+  //     documentNumber: form.documentNumber,
+  //     // documentType: form.documentType,
+  //     issueDate: form.issueDate,
+  //     expiryDate: form.expiryDate,
+  //     issuingAuthority: form.issuingAuthority,
+  //     // filePath: form.documentFiles,
+  //     consentGiven: form.consent,
+  //   };
+  //   console.log("Hii",requestData)
+  //   const { documentFiles, ...formData } = form;
+  //   // sessionStorage.setItem("documentVerification", JSON.stringify(formData));
+  //   const response = await addDocumentVerified(requestData);
+  //   if (response.status !== 200){
+  //     alert(response?.message);
+  //     return;
+  //   }else{
+  //     alert(response?.message);
+  //     onSubmitSuccess();
+  //   }
+  // };
+ 
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   if (!validate()) return;
+
+//   const userId = sessionStorage.getItem("username");
+//   const applicationNumber = sessionStorage.getItem("applicationNumber");
+//   const file = form.documentFiles;
+
+//   if (!applicationNumber) {
+//     alert("❌ Application number is missing!");
+//     return;
+//   }
+//   if (!userId) {
+//     alert("❌ User ID is missing!");
+//     return;
+//   }
+//   // if (!file) {
+//   //   alert("❌ Document file is missing!");
+//   //   return;
+//   // }
+
+//   // Build the metadata for "documentData"
+//   const documentMeta = {
+//     applicationNumber,
+//     user: { userId },
+//     documentType: form.documentType, // Uncomment if you have it
+//     documentNumber: form.documentNumber,
+//     issueDate: form.issueDate,
+//     expiryDate: form.expiryDate,
+//     issuingAuthority: form.issuingAuthority,
+//     consentGiven: form.consent,
+//   };
+
+//   const formData = new FormData();
+//   formData.append("documentData", JSON.stringify(documentMeta));
+//   formData.append("file", file); // file should be a File object
+//   console.log("Form Data:", formData);
+//   try {
+//     const response = await addDocumentVerified(formData);
+//     if (response.status !== 200) {
+//       alert(response?.message || "❌ Upload failed");
+//     } else {
+//       alert(response?.message || "✅ Upload successful");
+//       onSubmitSuccess();
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     alert("❌ Something went wrong while uploading the document.");
+//   }
+// };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!validate()) return;
+
+  const userId = sessionStorage.getItem("username");
+  const applicationNumber = sessionStorage.getItem("applicationNumber");
+
+  if (!applicationNumber) {
+    alert("❌ Application number is missing!");
+    return;
+  }
+  if (!userId) {
+    alert("❌ User ID is missing!");
+    return;
+  }
+  if (form.documentFiles.length === 0) {
+    alert("❌ Please upload a document.");
+    return;
+  }
+
+  const formData = new FormData();
+
+  const documentMeta = {
+    applicationNumber,
+    user: { userId },
+    documentType: form.documentType,
+    documentNumber: form.documentNumber,
+    issueDate: form.issueDate,
+    expiryDate: form.expiryDate,
+    issuingAuthority: form.issuingAuthority,
+    consentGiven: form.consent,
+    // filePath: form.documentFiles[0]
+  };
+  console.log("Document Metadata:", documentMeta);
+  formData.append("documentData", JSON.stringify(documentMeta));
+  formData.append("file", form.documentFiles[0]); 
+
+  for (let pair of formData.entries()) {
+  console.log(`${pair[0]}:`, pair[1]);
+}
+ console.log("Form Data:", formData.getAll("file"));
+  try {
+    const response = await addDocumentVerified(formData);
+    if (response.status !== 200) {
+      alert(response?.message || "❌ Upload failed");
+    } else {
+      alert(response?.message || "✅ Upload successful");
       onSubmitSuccess();
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("❌ Something went wrong while uploading the document.");
+  }
+};
 
   return (
     <div className="min-h-screen bg-white px-6 py-10">

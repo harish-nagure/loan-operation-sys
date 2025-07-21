@@ -943,10 +943,9 @@ export async function addDocumentVerified(formData) {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/addOrUpdate_Application_documentDeatils`,{
       method: "POST",
       headers:{
-        "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem('token')}`
       },
-      body: JSON.stringify(formData),
+      body: formData,
     });
 
     

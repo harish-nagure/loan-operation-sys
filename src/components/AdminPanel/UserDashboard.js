@@ -110,7 +110,6 @@ const UserDashboard = () => {
 
     if (step === "Application Form") {
       if (!isCompleted) {
-        sessionStorage.setItem("mode", "edit");
         sessionStorage.setItem("loanType", selectedUser?.loantype || "");
         sessionStorage.setItem("applicationNumber", selectedUser?.applicationNumber || "");
         navigate("/application_form");
@@ -262,10 +261,10 @@ const UserDashboard = () => {
               <tbody>
                 {users.map((user) => (
                   <tr
-                    key={user.applicationId}
+                    key={user.applicationNumber}
                     onClick={() => handleRowClick(user)}
                     className={`cursor-pointer ${
-                      selectedUserId === user.applicationId ? "bg-primary/30" : "bg-white"
+                      selectedUserId === user.applicationNumber ? "bg-primary/30" : "bg-white"
                     } even:bg-gray-50`}
                   >
                     
