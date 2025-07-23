@@ -163,7 +163,7 @@ const DashboardSidebar = () => {
   }, [navigate]);
 
   return (
-    <aside className="w-72 bg-white h-screen flex flex-col">
+    <aside className="w-72 bg-primary/20 h-screen flex flex-col">
       <div className="px-4 py-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-blue-200" />

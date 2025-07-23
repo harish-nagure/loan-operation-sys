@@ -167,10 +167,10 @@
         console.log("Update request data:", requestData);
         const response = await updateApplicationDetails(requestData,userId);
         console.log("Update response:", response);
-        alert("Application updated successfully!"+response?.message);
+        // alert(response?.message);
          if(response.status === 200) {
           alert(response?.message);
-          navigate("/workflow/custom");
+          // navigate("/workflow/custom");
         }
       } catch (error) {
         console.error("Update failed:", error);
@@ -211,11 +211,11 @@
         // alert("Application submitted successfully! Application Number: " + response?.data?.applicationNumber);
         if(response.status === 200) {
           alert("Application submitted successfully!");
-          navigate("/workflow/custom");
+          // navigate("/workflow/custom");
         }
         if(response.status === 400) {
           alert("Application already exists, please select the loan type!");
-          navigate("/workflow/custom");
+          // navigate("/workflow/custom");
         }
 
       } catch (error) {

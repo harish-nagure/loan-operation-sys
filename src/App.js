@@ -216,13 +216,14 @@ function AppWrapper() {
 
       {isAuthenticated ? (
         <div className="lg:flex md:block font-inter">
+          
           <div className="h-screen hidden lg:block fixed z-20">
             <DashboardSidebar permissions={menus} />
           </div>
-          <div className="flex-1 lg:ml-80 mt-2">
+          <div className="flex-1 lg:ml-72">
             <DashboardHead />
-            <main>
-              
+            <main className="lg:ml-8 px-6 py-2 lg:p-0">
+
               <Routes>
 
                 <Route path="/" element={<Navigate to={dashboardPath} replace />} />

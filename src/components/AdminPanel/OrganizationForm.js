@@ -12,6 +12,11 @@ const OrganizationForm = ({canRead = false, canWrite = false}) => {
     phone:"",
     email:"",
     webURL:"",
+    companyNo: "",
+  
+  taxNo: "",
+  panNo: "",
+  tanNo: "",
     logo: null,
     logoPreview: null,
   });
@@ -122,6 +127,87 @@ const OrganizationForm = ({canRead = false, canWrite = false}) => {
       />
     </div>
   </div>
+
+
+  {/* Row 3: Company No + Register No */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div>
+    <label htmlFor="companyNo" className="block mb-1 font-medium text-gray-700">Company Registeration Number:</label>
+    <input
+      id="companyNo"
+      type="text"
+      name="companyNo"
+      value={formData.companyNo}
+      onChange={handleChange}
+      required
+      disabled={!canWrite}
+      placeholder="e.g., C123456"
+      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+    />
+  </div>
+
+  <div>
+    <label htmlFor="taxNo" className="block mb-1 font-medium text-gray-700">Tax Number:</label>
+    <input
+      id="taxNo"
+      type="text"
+      name="taxNo"
+      value={formData.taxNo}
+      onChange={handleChange}
+      required
+      disabled={!canWrite}
+      placeholder="e.g., T123456789"
+      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+    />
+  </div>
+
+ 
+</div>
+
+{/* Row 4: Tax No + PAN No */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  
+
+  <div>
+    <label htmlFor="panNo" className="block mb-1 font-medium text-gray-700">PAN Number:</label>
+    <input
+      id="panNo"
+      type="text"
+      name="panNo"
+      value={formData.panNo}
+      onChange={handleChange}
+      required
+      disabled={!canWrite}
+      pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+      title="Enter valid PAN (e.g., ABCDE1234F)"
+      placeholder="e.g., ABCDE1234F"
+      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+    />
+  </div>
+
+   <div>
+    <label htmlFor="tanNo" className="block mb-1 font-medium text-gray-700">TAN Number:</label>
+    <input
+      id="tanNo"
+      type="text"
+      name="tanNo"
+      value={formData.tanNo}
+      onChange={handleChange}
+      required
+      disabled={!canWrite}
+      pattern="[A-Z]{4}[0-9]{5}[A-Z]{1}"
+      title="Enter valid TAN (e.g., ABCD12345E)"
+      placeholder="e.g., ABCD12345E"
+      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+    />
+  </div>
+</div>
+
+{/* Row 5: TAN No */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+ 
+</div>
+
 
   {/* Row 3: Address + Logo */}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

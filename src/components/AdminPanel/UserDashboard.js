@@ -14,7 +14,7 @@ const UserDashboard = () => {
   const dealerName = "ABC Finance Co.";
 
   const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedUserapplicationNumber, setSelectedUserapplicationNumber] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [submittedSteps, setSubmittedSteps] = useState([]);
   const [stepDetailData, setStepDetailData] = useState(null);
@@ -54,7 +54,7 @@ const UserDashboard = () => {
   }, []);
 
   const handleRowClick = async (user) => {
-    setSelectedUserId(user.applicationId);
+    setSelectedUserapplicationNumber(user.applicationNumber);
     setSelectedUser(user);
     setStepDetailData(null);
 
@@ -103,13 +103,14 @@ const UserDashboard = () => {
 
   const handleDetailsClick = (step) => {
     sessionStorage.setItem("selectedStep", step);
-    sessionStorage.setItem("selectedAppId", selectedUserId);
+    sessionStorage.setItem("selectedAppId", selectedUserapplicationNumber);
     setSelectedStepName(step);
 
     const isCompleted = submittedSteps.includes(step);
 
     if (step === "Application Form") {
       if (!isCompleted) {
+        sessionStorage.setItem("mode", "edit");
         sessionStorage.setItem("loanType", selectedUser?.loantype || "");
         sessionStorage.setItem("applicationNumber", selectedUser?.applicationNumber || "");
         navigate("/application_form");
@@ -261,12 +262,15 @@ const UserDashboard = () => {
               <tbody>
                 {users.map((user) => (
                   <tr
-                    key={user.applicationNumber}
-                    onClick={() => handleRowClick(user)}
-                    className={`cursor-pointer ${
-                      selectedUserId === user.applicationNumber ? "bg-primary/30" : "bg-white"
-                    } even:bg-gray-50`}
-                  >
+    key={user.applicationNumber}
+    onClick={() => handleRowClick(user)}
+    className={`cursor-pointer transition ${
+      selectedUserapplicationNumber === user.applicationNumber
+        ? "bg-primary/30 hover:bg-primary/40"
+        : "bg-white hover:bg-primary/10"
+    } even:bg-gray-50`}
+  >
+
                     
                     <td className="px-4 py-2 border">{user.applicationNumber}</td>
                     <td className="px-4 py-2 border">{user.loantype}</td>
@@ -279,7 +283,7 @@ const UserDashboard = () => {
             </table>
           </div>
 
-          {selectedUserId && (
+          {selectedUserapplicationNumber && (
             <div className="mt-8">
               <div className="font-semibold mb-2 text-gray-700">Application Progress</div>
               <table className="min-w-full border border-gray-300 text-sm text-left">

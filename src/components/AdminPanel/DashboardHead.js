@@ -6,19 +6,23 @@ import {
 } from 'react-icons/io5';
 import { TiThMenu, TiArrowBack } from 'react-icons/ti';
 import DashboardSidebar from './DashboardSidebar';
+import { FaArrowRightLong } from "react-icons/fa6";
 
 const DashboardHead = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [username, setUsername] = useState('');
+  const [role, setRole] = useState('');
   const [profileImage, setProfileImage] = useState('');
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     const storedUsername = sessionStorage.getItem('username');
     const storedImage = sessionStorage.getItem('profileImage');
+    const role = sessionStorage.getItem("role");
     if (storedUsername) setUsername(storedUsername);
+    if (role) setRole(role);
     if (storedImage) setProfileImage(storedImage);
   }, []);
 
@@ -72,7 +76,7 @@ const DashboardHead = () => {
       </div>
 
       {/* Header */}
-      <div className="w-full h-14 bg-transparent px-4 flex items-center justify-between relative">
+      <div className="w-full h-14 bg-primary/20 px-4 flex items-center justify-between relative">
         <div className="lg:hidden">
           <TiThMenu
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -80,7 +84,7 @@ const DashboardHead = () => {
           />
         </div>
 
-        <div className="flex-1 mx-4"></div>
+        <div className="flex-1 mx-4">  <p className='flex items-center gap-2 text-base font-bold'>Role <FaArrowRightLong /> {role}</p> </div>
 
         <div className="flex items-center gap-2 sm:gap-4 relative" ref={dropdownRef}>
           <button>
