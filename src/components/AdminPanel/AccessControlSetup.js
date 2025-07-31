@@ -60,6 +60,7 @@ const AccessControlSetup = ({ canRead = false, canWrite = false }) => {
           onChange={(e) => setCurrentUserRole(e.target.value)}
           className="border rounded-xl px-6 py-3 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
+          
           {roles.map((role) => (
             <option key={role.id} value={role.id}>
               {role.roleName}

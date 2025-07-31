@@ -41,7 +41,7 @@ try {
         firstName: form.firstname,
         lastName: form.lastname,
         password: form.password,
-        roleId: "1", 
+        roleId: "2", 
         phone: form.phonenumber,
       };
 

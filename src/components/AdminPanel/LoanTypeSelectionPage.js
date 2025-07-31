@@ -93,7 +93,7 @@ useEffect(() => {
         const result = await saveLoanType(selectedLoan.value, selectedLoan.description);
 
         if (result.success) {
-          sessionStorage.setItem("selectedLoanType",selectedLoan.value);
+          sessionStorage.setItem("loanType",selectedLoan.value);
           alert("✅ Loan type saved successfully.");
         }
         navigate("/approval_setup", { state: { selectedLoan } });
@@ -121,7 +121,7 @@ useEffect(() => {
           console.log("🔍 loanType:", data);
           // alert(data.message);
           alert("✅ Loan type submitted successfully. Application Number: " + data.data.applicationNumber);
-          sessionStorage.setItem("selectedLoanType", selectedLoan.value);
+          sessionStorage.setItem("loanType", selectedLoan.value);
           sessionStorage.setItem("applicationNumber", data.data.applicationNumber);
           
           navigate("/form_steps");

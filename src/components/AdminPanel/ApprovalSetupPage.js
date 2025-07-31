@@ -85,7 +85,7 @@ const ApprovalSetupPage = () => {
     const result = await updateApprovalSetup(selectedLoan.value, approvalSetup);
     console.log("Save result:", result);
     if (result.success) {
-      sessionStorage.setItem("selectedLoanType", selectedLoan.value);
+      sessionStorage.setItem("loanType", selectedLoan.value);
       alert("✅ Data saved. Check console for JSON output.");
       navigate("/selection_setup");
     } else {

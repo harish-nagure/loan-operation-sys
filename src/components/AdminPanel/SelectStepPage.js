@@ -18,7 +18,7 @@ const SelectStepsPage = ({canRead = false, canWrite = false}) => {
   const [selected, setSelected] = useState([]);
   const navigate = useNavigate();
  const userType = sessionStorage.getItem("role")?.toLowerCase();
-  const loanType = sessionStorage.getItem("selectedLoanType");
+  const loanType = sessionStorage.getItem("loanType"); // Default to personal loan if not set
   
   
   useEffect(() => {
@@ -30,7 +30,7 @@ const SelectStepsPage = ({canRead = false, canWrite = false}) => {
 
 useEffect(() => {
   const fetchExistingWorkflow = async () => {
-    const loanType = sessionStorage.getItem("selectedLoanType"); 
+    const loanType = sessionStorage.getItem("loanType"); 
     console.log("🔍 loanType before fetch:", loanType);
 
     if (!loanType) return;

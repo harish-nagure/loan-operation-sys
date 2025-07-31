@@ -110,7 +110,6 @@ const UserDashboard = () => {
 
     if (step === "Application Form") {
       if (!isCompleted) {
-        sessionStorage.setItem("mode", "edit");
         sessionStorage.setItem("loanType", selectedUser?.loantype || "");
         sessionStorage.setItem("applicationNumber", selectedUser?.applicationNumber || "");
         navigate("/application_form");
@@ -334,7 +333,6 @@ const UserDashboard = () => {
               <div className="mt-4">
                 <button
                   onClick={() => {
-                    sessionStorage.setItem("mode", "edit");
                     sessionStorage.setItem("loanType", selectedUser?.loantype || "");
                     sessionStorage.setItem("applicationNumber", selectedUser?.applicationNumber || "");
 
